@@ -3,10 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Zürn Gartenanlagen – Garten- und Landschaftsbau in Beilstein. GESTALTEN. PFLANZEN. LEBENSRÄUME." />
+  <meta name="description" content="Zürn Gartenanlagen in Beilstein. GESTALTEN. PFLANZEN. LEBENSRÄUME. Garten- und Landschaftsbau mit 3D-Planung, persönlich umgesetzt von Marcel Zürn." />
   <meta name="theme-color" content="#1F3A36" />
   <title>Zürn Gartenanlagen | Garten- und Landschaftsbau Beilstein</title>
   <link rel="icon" href="assets/logo/primary-color.svg" type="image/svg+xml" />
+  <link rel="preload" href="fonts/montserrat-bold.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="fonts/montserrat-regular.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -15,154 +17,411 @@
   <header class="site-header" id="top">
     <div class="header-inner">
       <a class="logo" href="#top">
-        <img src="assets/logo/primary-color.svg" alt="Zürn Gartenanlagen" width="2000" height="1118" />
+        <img src="assets/logo/primary-color.svg" alt="Zürn Gartenanlagen" width="2941" height="1644" />
       </a>
-      <nav class="nav" aria-label="Hauptnavigation">
+
+      <a class="header-phone" href="tel:+491758270998">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M8.5 3.8h-2A1.5 1.5 0 0 0 5 5.3c0 8 6.5 14.5 14.5 14.5a1.5 1.5 0 0 0 1.5-1.5v-2a1.5 1.5 0 0 0-1.1-1.45l-2.7-.7a1.5 1.5 0 0 0-1.5.5l-1.1 1.3a11.6 11.6 0 0 1-5.1-5.1l1.3-1.1a1.5 1.5 0 0 0 .5-1.5l-.7-2.7A1.5 1.5 0 0 0 8.5 3.8Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+        </svg>
+        <span>0175 8270998</span>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+        <span class="sr-only">Menü</span>
+        <span class="nav-toggle-bars" aria-hidden="true"></span>
+      </button>
+
+      <nav class="nav" id="site-nav" aria-label="Hauptnavigation">
         <a href="#leistungen">Leistungen</a>
-        <a href="#ueber-uns">Über uns</a>
+        <a href="#planung">3D-Planung</a>
+        <a href="#ablauf">Ablauf</a>
+        <a href="#ueber-mich">Über mich</a>
         <a href="#kontakt">Kontakt</a>
       </nav>
     </div>
   </header>
 
   <main id="inhalt">
-    <section class="hero">
+    <section class="hero" aria-label="Einstieg">
+      <div class="hero-media" role="img" aria-label="Projektfoto folgt">
+        <p class="media-label">Projektfoto folgt</p>
+      </div>
+      <div class="hero-shade" aria-hidden="true"></div>
       <div class="hero-inner">
-        <div class="hero-copy">
-          <p class="kicker">Garten- und Landschaftsbau · Beilstein</p>
-          <h1>
-            <img class="hero-lockup" src="assets/logo/primary-color-claim.svg" alt="GESTALTEN. PFLANZEN. LEBENSRÄUME." width="2000" height="1227" />
-          </h1>
-          <p class="hero-lead">
-            Sorgfältig geplant, handwerklich umgesetzt — Ihr Partner für Garten und Landschaft in Beilstein und Umgebung.
-          </p>
-          <a class="btn" href="#kontakt">Unverbindlich anfragen</a>
+        <p class="eyebrow eyebrow--light">Garten- &amp; Landschaftsbau · Beilstein</p>
+        <h1>
+          <span class="hero-line">GESTALTEN.</span>
+          <span class="hero-line">PFLANZEN.</span>
+          <span class="hero-line hero-line--messing">LEBENSRÄUME.</span>
+        </h1>
+        <p class="hero-lead">
+          Ihr Garten — geplant in 3D, bevor der erste Spaten sticht, und umgesetzt vom staatlich geprüften Techniker persönlich. Zwischen Heilbronn, Ludwigsburg und Stuttgart.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#kontakt">KOSTENLOSE BERATUNG</a>
+          <a class="btn btn-secondary" href="#planung">3D-PLANUNG ANSEHEN</a>
         </div>
       </div>
     </section>
 
-    <ul class="values" aria-label="Haltung">
-      <li>Nachhaltig</li>
-      <li>Zuverlässig</li>
-      <li>Natürlich</li>
-      <li>Handwerklich</li>
-      <li>Leidenschaftlich</li>
-    </ul>
-
-    <section class="section" id="leistungen">
-      <p class="eyebrow">Was wir anbieten</p>
-      <h2>Leistungen</h2>
-      <p class="section-intro">
-        Von der ersten Idee bis zur dauerhaften Pflege: wir gestalten Außenräume, die zum Leben und Verweilen einladen.
-      </p>
-      <div class="cards">
-        <article class="card">
-          <svg class="card-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M4 26h24" />
-            <path d="M16 26V14" />
-            <path d="M16 18c-4-.6-7.5-4-7.5-8.5 4 .2 7.5 3.2 7.5 8.5z" />
-            <path d="M16 16.5c4-.7 8.2-4 8.2-8.8-4.2.2-8.2 3.4-8.2 8.8z" />
-          </svg>
-          <h3>Gartenanlage</h3>
-          <p>
-            Planung und Neuanlage von Gärten — Beete, Rasen, Gestaltungselemente und ein stimmiges Gesamtbild.
-          </p>
-        </article>
-        <article class="card">
-          <svg class="card-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <rect x="5" y="6" width="10" height="8" />
-            <rect x="17" y="6" width="10" height="8" />
-            <rect x="5" y="16" width="7" height="8" />
-            <rect x="14" y="16" width="13" height="8" />
-          </svg>
-          <h3>Pflaster &amp; Wege</h3>
-          <p>
-            Wege, Plätze und Einfahrten aus Pflaster und Naturstein — stabil, sauber verlegt und langlebig.
-          </p>
-        </article>
-        <article class="card">
-          <svg class="card-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="8" cy="23" r="3" />
-            <circle cx="24" cy="23" r="3" />
-            <path d="M10.6 21.2 22 8" />
-            <path d="M21.4 21.2 10 8" />
-          </svg>
-          <h3>Pflege &amp; Unterhalt</h3>
-          <p>
-            Regelmäßige Gartenpflege und Unterhalt, damit Ihre Anlage über Jahre gepflegt und ansprechend bleibt.
-          </p>
-        </article>
-        <article class="card">
-          <svg class="card-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <rect x="6" y="10" width="16" height="14" />
-            <path d="M22 14h3v6h-3" />
-            <path d="M11 17h6" />
-            <path d="M14 14v6" />
-          </svg>
-          <h3>Maschinen &amp; Akku-Geräte</h3>
-          <p>
-            Moderne Maschinen und Akku-Geräte für effiziente, leise und umweltbewusste Arbeit auf Ihrer Fläche.
-          </p>
-        </article>
-      </div>
+    <section class="trust" aria-label="Kurz und klar">
+      <ul class="trust-list">
+        <li>3D PLANUNG INKLUSIVE</li>
+        <li>10 J. ERFAHRUNG IM GALABAU</li>
+        <li>1 ANSPRECHPARTNER</li>
+      </ul>
     </section>
 
-    <section class="about" id="ueber-uns">
-      <div class="about-inner">
-        <div class="about-text">
-          <p class="eyebrow">Das Unternehmen</p>
-          <h2>Über uns</h2>
+    <section class="band band--patina" aria-labelledby="intro-title">
+      <div class="wrap intro">
+        <p class="eyebrow eyebrow--light">Wer dahintersteht</p>
+        <h2 id="intro-title">SIE SEHEN IHREN GARTEN, BEVOR ES IHN GIBT.</h2>
+        <div class="prose">
           <p>
-            Zürn Gartenanlagen ist ein junges Unternehmen für Garten- und Landschaftsbau mit Sitz in Beilstein.
-            Gegründet von Marcel Zürn, verbinden wir handwerkliche Sorgfalt mit einem ruhigen, klaren Blick für Gestaltung.
+            Zürn Gartenanlagen ist der Garten- und Landschaftsbau von Marcel Zürn in Beilstein. Als staatlich geprüfter Techniker plane ich Ihren Garten in 3D und setze ihn persönlich um — nicht als weitergereichtes Gewerk.
           </p>
           <p>
-            Ob Neubau, Umgestaltung oder Pflege — wir arbeiten zuverlässig, transparent und mit Respekt vor Natur und Grundstück.
+            Ein Ansprechpartner begleitet das Vorhaben vom ersten Gespräch auf dem Grundstück bis zur Pflanzung. Materialien, Höhen und Räume sind sichtbar, solange Änderungen noch nichts kosten.
           </p>
         </div>
-        <dl class="about-highlight">
-          <dt>Gründung</dt>
-          <dd>ab 01. Oktober 2026</dd>
-          <dt>Standort</dt>
-          <dd>Beilstein</dd>
-          <dt>Inhaber</dt>
-          <dd>Marcel Zürn</dd>
-          <dt>Branche</dt>
-          <dd>Garten- und Landschaftsbau</dd>
-        </dl>
       </div>
     </section>
 
-    <section class="section" id="kontakt">
-      <p class="eyebrow">Schreiben Sie uns</p>
-      <h2>Kontakt</h2>
-      <p class="section-intro">
-        Fragen zu einem Projekt oder Interesse an einer Zusammenarbeit? Melden Sie sich gerne per E-Mail.
-      </p>
-      <div class="kontakt-box">
-        <p>Wir freuen uns auf Ihre Nachricht.</p>
-        <ul class="kontakt-list">
+    <section class="band band--stone" id="leistungen" aria-labelledby="leistungen-title">
+      <div class="wrap">
+        <p class="eyebrow">Leistungen</p>
+        <h2 id="leistungen-title">Vom Plan bis zur Pflege — aus einer Hand.</h2>
+        <div class="cards">
+          <article class="card">
+            <h3>CAD- &amp; 3D-Planung</h3>
+            <ul>
+              <li>Grundriss</li>
+              <li>3D-Ansicht</li>
+              <li>Materialbild</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Gartengestaltung</h3>
+            <ul>
+              <li>Gesamtkonzept</li>
+              <li>Aufenthalt</li>
+              <li>Übergang Haus–Garten</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Pflaster &amp; Naturstein</h3>
+            <ul>
+              <li>Wege</li>
+              <li>Plätze</li>
+              <li>Einfahrten</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Pflanzung &amp; Rasen</h3>
+            <ul>
+              <li>Stauden</li>
+              <li>Gehölze</li>
+              <li>Rasen</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Gartenpflege</h3>
+            <ul>
+              <li>Saisonpflege</li>
+              <li>Beete</li>
+              <li>Unterhalt</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Hecken- &amp; Gehölzschnitt</h3>
+            <ul>
+              <li>Formschnitt</li>
+              <li>Pflegeschnitt</li>
+              <li>Hecken</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="band band--patina" id="planung" aria-labelledby="planung-title">
+      <div class="wrap planung">
+        <div class="planung-copy">
+          <p class="eyebrow eyebrow--light">3D-Planung</p>
+          <h2 id="planung-title">Erst sehen. Dann bauen.</h2>
+          <div class="prose">
+            <p>
+              Ein Garten lässt sich schlecht vom Grundriss allein beurteilen. Die 3D-Planung zeigt Wege, Beläge, Höhen und Bepflanzung im Zusammenhang — bevor der erste Spaten sticht.
+            </p>
+            <p>
+              Sie entscheiden am Bild. Die Umsetzung folgt dem abgestimmten Plan, im Maßstab 1:1, durch mich persönlich.
+            </p>
+          </div>
+          <ul class="chips chips--on-dark" aria-label="Was die Planung umfasst">
+            <li>2D Plan</li>
+            <li>3D Ansicht</li>
+            <li>1:1 Umsetzung</li>
+          </ul>
+        </div>
+        <figure class="placeholder">
+          <div class="placeholder-frame" role="img" aria-label="Visualisierung folgt">
+            <span>Visualisierung folgt</span>
+          </div>
+        </figure>
+      </div>
+    </section>
+
+    <section class="band band--stone" id="ablauf" aria-labelledby="ablauf-title">
+      <div class="wrap">
+        <p class="eyebrow">Ablauf</p>
+        <h2 id="ablauf-title">Vier Schritte, ein Ansprechpartner.</h2>
+        <ol class="steps">
           <li>
-            <span class="label">Ort</span>
-            <span class="value">Beilstein</span>
+            <span class="step-no">01</span>
+            <h3>Vor-Ort</h3>
+            <p>Wir gehen das Grundstück ab: Wünsche, Bestand, Boden, Zugänge und ein realistischer Rahmen.</p>
           </li>
           <li>
-            <span class="label">E-Mail</span>
-            <a class="value" href="mailto:marcel@zuern-gartenanlagen.de">marcel@zuern-gartenanlagen.de</a>
+            <span class="step-no">02</span>
+            <h3>Plan &amp; 3D</h3>
+            <p>Daraus entstehen der 2D-Plan und die 3D-Ansicht. Sie sehen den Garten, bevor gebaut wird.</p>
           </li>
           <li>
-            <span class="label">Unternehmen</span>
-            <span class="value">Zürn Gartenanlagen</span>
+            <span class="step-no">03</span>
+            <h3>Umsetzung</h3>
+            <p>Ich setze den abgestimmten Plan handwerklich um — von der ersten Markierung bis zur Abnahme.</p>
           </li>
+          <li>
+            <span class="step-no">04</span>
+            <h3>Pflege</h3>
+            <p>Auf Wunsch bleibt der Garten in Pflege: Schnitt, Rasen und Beete, damit die Anlage hält, was der Plan verspricht.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="band band--patina" id="ueber-mich" aria-labelledby="ueber-title">
+      <div class="wrap about">
+        <div class="about-copy">
+          <p class="eyebrow eyebrow--light">Über mich</p>
+          <h2 id="ueber-title">Handwerk und Planung in einer Person.</h2>
+          <div class="prose">
+            <p>
+              Ich bin Marcel Zürn. Seit 2018 arbeite ich im Garten- und Landschaftsbau, 2024 habe ich den Abschluss als staatlich geprüfter Techniker gemacht. Zum 1. Oktober 2026 gründe ich Zürn Gartenanlagen in Beilstein.
+            </p>
+            <p>
+              Planung und Ausführung bleiben bei mir. Sie sprechen mit der Person, die den Garten zeichnet und auf der Fläche steht.
+            </p>
+          </div>
+          <ul class="stats">
+            <li>
+              <span class="stat-num">2018</span>
+              <span class="stat-label">Einstieg im GaLaBau</span>
+            </li>
+            <li>
+              <span class="stat-num">2024</span>
+              <span class="stat-label">Staatlich geprüfter Techniker</span>
+            </li>
+            <li>
+              <span class="stat-num">50 km</span>
+              <span class="stat-label">Einsatzgebiet um Beilstein</span>
+            </li>
+          </ul>
+        </div>
+        <figure class="portrait">
+          <div class="placeholder-frame placeholder-frame--portrait" role="img" aria-label="Porträt folgt">
+            <span>Porträt folgt</span>
+            <strong>Marcel Zürn</strong>
+          </div>
+        </figure>
+      </div>
+    </section>
+
+    <section class="band band--stone" aria-labelledby="gebiet-title">
+      <div class="wrap gebiet">
+        <p class="eyebrow">Haltung</p>
+        <h2 id="gebiet-title">Im Umkreis von 50 Kilometern.</h2>
+        <ul class="chips" aria-label="Haltung">
+          <li>Natürlich</li>
+          <li>Nachhaltig</li>
+          <li>Zuverlässig</li>
+          <li>Handwerklich</li>
+          <li>Leidenschaftlich</li>
         </ul>
+        <p class="gebiet-copy">
+          Das Einsatzgebiet liegt rund 50 km um Beilstein — Heilbronn, Ludwigsburg, Stuttgart und die Orte dazwischen.
+        </p>
+      </div>
+    </section>
+
+    <section class="band band--patina" id="kontakt" aria-labelledby="kontakt-title">
+      <div class="wrap kontakt">
+        <div class="kontakt-copy">
+          <p class="eyebrow eyebrow--light">Kontakt</p>
+          <h2 id="kontakt-title">Reden wir über Ihren Garten.</h2>
+          <p class="prose">
+            Schildern Sie kurz Grundstück und Vorhaben. Ich melde mich persönlich.
+          </p>
+          <ul class="kontakt-list">
+            <li>
+              <span class="label">Telefon</span>
+              <a href="tel:+491758270998">0175 8270998</a>
+            </li>
+            <li>
+              <span class="label">E-Mail</span>
+              <a href="mailto:marcel@zuern-gartenanlagen.de">marcel@zuern-gartenanlagen.de</a>
+            </li>
+            <li>
+              <span class="label">Adresse</span>
+              <span>Entengasse 13, 71717 Beilstein</span>
+            </li>
+          </ul>
+        </div>
+
+        <form class="anfrage" id="anfrage" action="mailto:marcel@zuern-gartenanlagen.de" method="post" enctype="text/plain" novalidate>
+          <div class="form-grid">
+            <div class="field">
+              <label for="name">Name <abbr title="Pflichtfeld">*</abbr></label>
+              <input id="name" name="name" type="text" autocomplete="name" required />
+            </div>
+            <div class="field">
+              <label for="tel">Tel</label>
+              <input id="tel" name="tel" type="tel" autocomplete="tel" inputmode="tel" />
+            </div>
+            <div class="field">
+              <label for="email">Mail <abbr title="Pflichtfeld">*</abbr></label>
+              <input id="email" name="email" type="email" autocomplete="email" inputmode="email" required />
+            </div>
+            <div class="field">
+              <label for="anliegen">Anliegen</label>
+              <select id="anliegen" name="anliegen">
+                <option value="">Bitte wählen</option>
+                <option>Neuanlage</option>
+                <option>Umgestaltung</option>
+                <option>Pflaster &amp; Naturstein</option>
+                <option>Pflanzung</option>
+                <option>Pflege</option>
+                <option>3D-Planung</option>
+                <option>Sonstiges</option>
+              </select>
+            </div>
+            <div class="field field--full">
+              <label for="nachricht">Nachricht <abbr title="Pflichtfeld">*</abbr></label>
+              <textarea id="nachricht" name="nachricht" rows="5" required></textarea>
+            </div>
+            <div class="field field--full field--check">
+              <input id="dsgvo" name="dsgvo" type="checkbox" value="ja" required />
+              <label for="dsgvo">Ich willige ein, dass meine Angaben zur Beantwortung dieser Anfrage verwendet werden. <abbr title="Pflichtfeld">*</abbr></label>
+            </div>
+          </div>
+          <button class="btn btn-primary" type="submit">ANFRAGE SENDEN</button>
+          <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+          <p class="form-note">Es wird nichts auf einem Server gespeichert. Das Formular öffnet Ihr E-Mail-Programm.</p>
+        </form>
       </div>
     </section>
   </main>
 
   <footer class="site-footer">
-    <p class="footer-claim">GESTALTEN. PFLANZEN. LEBENSRÄUME.</p>
-    <p>Zürn Gartenanlagen · Garten- und Landschaftsbau · Beilstein</p>
-    <p class="footer-copy">&copy; 2026 Marcel Zürn</p>
+    <div class="wrap">
+      <p class="footer-brand">Zürn Gartenanlagen</p>
+      <p class="footer-claim">GESTALTEN. PFLANZEN. LEBENSRÄUME.</p>
+      <p>Garten- und Landschaftsbau · Entengasse 13, 71717 Beilstein</p>
+      <p class="footer-copy">© 2026 Marcel Zürn, Beilstein</p>
+    </div>
   </footer>
+
+  <script>
+    (function () {
+      var toggle = document.querySelector(".nav-toggle");
+      var nav = document.getElementById("site-nav");
+
+      function setNav(open) {
+        nav.classList.toggle("is-open", open);
+        toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      }
+
+      toggle.addEventListener("click", function () {
+        setNav(!nav.classList.contains("is-open"));
+      });
+
+      nav.addEventListener("click", function (event) {
+        if (event.target.closest("a")) setNav(false);
+      });
+
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") setNav(false);
+      });
+
+      var form = document.getElementById("anfrage");
+      var status = document.getElementById("form-status");
+      var dsgvo = document.getElementById("dsgvo");
+
+      function setDsgvoValidity() {
+        dsgvo.setCustomValidity(
+          dsgvo.checked
+            ? ""
+            : "Bitte stimmen Sie der Verarbeitung zur Beantwortung Ihrer Anfrage zu."
+        );
+      }
+
+      var name = document.getElementById("name");
+      var email = document.getElementById("email");
+      var nachricht = document.getElementById("nachricht");
+
+      function setControlValidity(control, missingMessage) {
+        control.setCustomValidity("");
+        if (control.validity.valueMissing) {
+          control.setCustomValidity(missingMessage);
+        } else if (control.validity.typeMismatch) {
+          control.setCustomValidity("Bitte geben Sie eine gültige E-Mail-Adresse ein.");
+        }
+      }
+
+      function setAllValidity() {
+        setControlValidity(name, "Bitte geben Sie Ihren Namen ein.");
+        setControlValidity(email, "Bitte geben Sie Ihre E-Mail-Adresse ein.");
+        setControlValidity(nachricht, "Bitte schreiben Sie eine kurze Nachricht.");
+        setDsgvoValidity();
+      }
+
+      [name, email, nachricht, dsgvo].forEach(function (control) {
+        control.addEventListener("input", setAllValidity);
+        control.addEventListener("change", setAllValidity);
+      });
+
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        setAllValidity();
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          status.textContent = "Bitte prüfen Sie die markierten Felder.";
+          return;
+        }
+
+        var name = form.name.value.trim();
+        var tel = form.tel.value.trim();
+        var mail = form.email.value.trim();
+        var anliegen = form.anliegen.value.trim();
+        var nachricht = form.nachricht.value.trim();
+        var body = [
+          "Name: " + name,
+          "Telefon: " + (tel || "—"),
+          "E-Mail: " + mail,
+          "Anliegen: " + (anliegen || "—"),
+          "",
+          nachricht
+        ].join("\n");
+
+        status.textContent = "Ihr E-Mail-Programm öffnet sich mit der Anfrage an marcel@zuern-gartenanlagen.de.";
+        window.location.href =
+          "mailto:marcel@zuern-gartenanlagen.de?subject=" +
+          encodeURIComponent("Anfrage Garten — " + name) +
+          "&body=" +
+          encodeURIComponent(body);
+      });
+    })();
+  </script>
 </body>
 </html>
