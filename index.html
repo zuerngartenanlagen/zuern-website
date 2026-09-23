@@ -3,14 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Zürn Gartenanlagen – Garten- und Landschaftsbau in Beilstein. Planung, Anlage und Pflege Ihres Gartens." />
+  <meta name="description" content="Zürn Gartenanlagen – Garten- und Landschaftsbau in Beilstein. GESTALTEN. PFLANZEN. LEBENSRÄUME." />
+  <meta name="theme-color" content="#1F3A36" />
   <title>Zürn Gartenanlagen | Garten- und Landschaftsbau Beilstein</title>
+  <link rel="icon" href="assets/logo/primary-color.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="site-header">
+  <a class="skip" href="#inhalt">Zum Inhalt</a>
+
+  <header class="site-header" id="top">
     <div class="header-inner">
-      <a class="logo" href="#">Zürn <span>Gartenanlagen</span></a>
+      <a class="logo" href="#top">
+        <img src="assets/logo/primary-color.svg" alt="Zürn Gartenanlagen" width="2000" height="1118" />
+      </a>
       <nav class="nav" aria-label="Hauptnavigation">
         <a href="#leistungen">Leistungen</a>
         <a href="#ueber-uns">Über uns</a>
@@ -19,48 +25,80 @@
     </div>
   </header>
 
-  <main>
+  <main id="inhalt">
     <section class="hero">
       <div class="hero-inner">
-        <p class="hero-badge">GaLaBau · Beilstein</p>
-        <h1>Zürn Gartenanlagen</h1>
-        <p class="hero-lead">
-          Sorgfältig geplant, handwerklich umgesetzt — Ihr Partner für Garten und Landschaft in Beilstein und Umgebung.
-        </p>
-        <a class="hero-cta" href="#kontakt">Unverbindlich anfragen</a>
+        <div class="hero-copy">
+          <p class="kicker">Garten- und Landschaftsbau · Beilstein</p>
+          <h1>
+            <img class="hero-lockup" src="assets/logo/primary-color-claim.svg" alt="GESTALTEN. PFLANZEN. LEBENSRÄUME." width="2000" height="1227" />
+          </h1>
+          <p class="hero-lead">
+            Sorgfältig geplant, handwerklich umgesetzt — Ihr Partner für Garten und Landschaft in Beilstein und Umgebung.
+          </p>
+          <a class="btn" href="#kontakt">Unverbindlich anfragen</a>
+        </div>
       </div>
     </section>
 
+    <ul class="values" aria-label="Haltung">
+      <li>Nachhaltig</li>
+      <li>Zuverlässig</li>
+      <li>Natürlich</li>
+      <li>Handwerklich</li>
+      <li>Leidenschaftlich</li>
+    </ul>
+
     <section class="section" id="leistungen">
-      <p class="section-label">Was wir anbieten</p>
+      <p class="eyebrow">Was wir anbieten</p>
       <h2>Leistungen</h2>
       <p class="section-intro">
         Von der ersten Idee bis zur dauerhaften Pflege: wir gestalten Außenräume, die zum Leben und Verweilen einladen.
       </p>
       <div class="cards">
         <article class="card">
-          <div class="card-icon" aria-hidden="true">🌿</div>
+          <svg class="card-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 26h24" />
+            <path d="M16 26V14" />
+            <path d="M16 18c-4-.6-7.5-4-7.5-8.5 4 .2 7.5 3.2 7.5 8.5z" />
+            <path d="M16 16.5c4-.7 8.2-4 8.2-8.8-4.2.2-8.2 3.4-8.2 8.8z" />
+          </svg>
           <h3>Gartenanlage</h3>
           <p>
             Planung und Neuanlage von Gärten — Beete, Rasen, Gestaltungselemente und ein stimmiges Gesamtbild.
           </p>
         </article>
         <article class="card">
-          <div class="card-icon" aria-hidden="true">🪨</div>
+          <svg class="card-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="5" y="6" width="10" height="8" />
+            <rect x="17" y="6" width="10" height="8" />
+            <rect x="5" y="16" width="7" height="8" />
+            <rect x="14" y="16" width="13" height="8" />
+          </svg>
           <h3>Pflaster &amp; Wege</h3>
           <p>
             Wege, Plätze und Einfahrten aus Pflaster und Naturstein — stabil, sauber verlegt und langlebig.
           </p>
         </article>
         <article class="card">
-          <div class="card-icon" aria-hidden="true">✂️</div>
+          <svg class="card-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="8" cy="23" r="3" />
+            <circle cx="24" cy="23" r="3" />
+            <path d="M10.6 21.2 22 8" />
+            <path d="M21.4 21.2 10 8" />
+          </svg>
           <h3>Pflege &amp; Unterhalt</h3>
           <p>
             Regelmäßige Gartenpflege und Unterhalt, damit Ihre Anlage über Jahre gepflegt und ansprechend bleibt.
           </p>
         </article>
         <article class="card">
-          <div class="card-icon" aria-hidden="true">🔋</div>
+          <svg class="card-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="6" y="10" width="16" height="14" />
+            <path d="M22 14h3v6h-3" />
+            <path d="M11 17h6" />
+            <path d="M14 14v6" />
+          </svg>
           <h3>Maschinen &amp; Akku-Geräte</h3>
           <p>
             Moderne Maschinen und Akku-Geräte für effiziente, leise und umweltbewusste Arbeit auf Ihrer Fläche.
@@ -72,7 +110,7 @@
     <section class="about" id="ueber-uns">
       <div class="about-inner">
         <div class="about-text">
-          <p class="section-label">Das Unternehmen</p>
+          <p class="eyebrow">Das Unternehmen</p>
           <h2>Über uns</h2>
           <p>
             Zürn Gartenanlagen ist ein junges Unternehmen für Garten- und Landschaftsbau mit Sitz in Beilstein.
@@ -96,7 +134,7 @@
     </section>
 
     <section class="section" id="kontakt">
-      <p class="section-label">Schreiben Sie uns</p>
+      <p class="eyebrow">Schreiben Sie uns</p>
       <h2>Kontakt</h2>
       <p class="section-intro">
         Fragen zu einem Projekt oder Interesse an einer Zusammenarbeit? Melden Sie sich gerne per E-Mail.
@@ -122,8 +160,9 @@
   </main>
 
   <footer class="site-footer">
-    <p><strong>Zürn Gartenanlagen</strong> · Garten- und Landschaftsbau · Beilstein</p>
-    <p style="margin-top: 0.4rem;">&copy; 2026 Marcel Zürn</p>
+    <p class="footer-claim">GESTALTEN. PFLANZEN. LEBENSRÄUME.</p>
+    <p>Zürn Gartenanlagen · Garten- und Landschaftsbau · Beilstein</p>
+    <p class="footer-copy">&copy; 2026 Marcel Zürn</p>
   </footer>
 </body>
 </html>
