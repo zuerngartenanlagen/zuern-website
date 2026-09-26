@@ -14,3 +14,5 @@ Erscheinungsbild: Corporate Design **Patina & Messing**.
 - Logos: `assets/logo/primary-color.svg`, `assets/logo/primary-color-claim.svg`
 
 Statische HTML/CSS-Seite für GitHub Pages (Branch `main`, Root). Domain: zuern-gartenanlagen.de
+
+Seiten: `index.html`, `impressum.html`, `datenschutz.html`. Skript: `site.js`.

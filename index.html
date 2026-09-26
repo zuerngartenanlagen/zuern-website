@@ -44,28 +44,26 @@
 
   <main id="inhalt">
     <section class="hero" aria-label="Einstieg">
-      <div class="hero-media" role="img" aria-label="Projektfoto folgt">
-        <p class="media-label">Projektfoto folgt</p>
-      </div>
+      <div class="hero-media" role="img" aria-label="Gartenatmosphäre — Projektfoto folgt"></div>
       <div class="hero-shade" aria-hidden="true"></div>
       <div class="hero-inner">
-        <p class="eyebrow eyebrow--light">Garten- &amp; Landschaftsbau · Beilstein</p>
+        <p class="eyebrow eyebrow--light hero-anim" style="--delay: 0ms">Garten- &amp; Landschaftsbau · Beilstein</p>
         <h1>
-          <span class="hero-line">GESTALTEN.</span>
-          <span class="hero-line">PFLANZEN.</span>
-          <span class="hero-line hero-line--messing">LEBENSRÄUME.</span>
+          <span class="hero-line hero-anim" style="--delay: 80ms">GESTALTEN.</span>
+          <span class="hero-line hero-anim" style="--delay: 160ms">PFLANZEN.</span>
+          <span class="hero-line hero-line--messing hero-anim" style="--delay: 240ms">LEBENSRÄUME.</span>
         </h1>
-        <p class="hero-lead">
+        <p class="hero-lead hero-anim" style="--delay: 320ms">
           Ihr Garten — geplant in 3D, bevor der erste Spaten sticht, und umgesetzt vom staatlich geprüften Techniker persönlich. Zwischen Heilbronn, Ludwigsburg und Stuttgart.
         </p>
-        <div class="hero-actions">
+        <div class="hero-actions hero-anim" style="--delay: 400ms">
           <a class="btn btn-primary" href="#kontakt">KOSTENLOSE BERATUNG</a>
           <a class="btn btn-secondary" href="#planung">3D-PLANUNG ANSEHEN</a>
         </div>
       </div>
     </section>
 
-    <section class="trust" aria-label="Kurz und klar">
+    <section class="trust reveal" aria-label="Kurz und klar">
       <ul class="trust-list">
         <li>3D PLANUNG INKLUSIVE</li>
         <li>10 J. ERFAHRUNG IM GALABAU</li>
@@ -73,7 +71,7 @@
       </ul>
     </section>
 
-    <section class="band band--patina" aria-labelledby="intro-title">
+    <section class="band band--patina reveal" aria-labelledby="intro-title">
       <div class="wrap intro">
         <p class="eyebrow eyebrow--light">Wer dahintersteht</p>
         <h2 id="intro-title">SIE SEHEN IHREN GARTEN, BEVOR ES IHN GIBT.</h2>
@@ -89,7 +87,7 @@
     </section>
 
     <section class="band band--stone" id="leistungen" aria-labelledby="leistungen-title">
-      <div class="wrap">
+      <div class="wrap reveal">
         <p class="eyebrow">Leistungen</p>
         <h2 id="leistungen-title">Vom Plan bis zur Pflege — aus einer Hand.</h2>
         <div class="cards">
@@ -146,7 +144,7 @@
     </section>
 
     <section class="band band--patina" id="planung" aria-labelledby="planung-title">
-      <div class="wrap planung">
+      <div class="wrap planung reveal">
         <div class="planung-copy">
           <p class="eyebrow eyebrow--light">3D-Planung</p>
           <h2 id="planung-title">Erst sehen. Dann bauen.</h2>
@@ -165,15 +163,16 @@
           </ul>
         </div>
         <figure class="placeholder">
-          <div class="placeholder-frame" role="img" aria-label="Visualisierung folgt">
-            <span>Visualisierung folgt</span>
+          <div class="placeholder-frame placeholder-frame--viz" role="img" aria-label="3D-Visualisierung folgt">
+            <span class="placeholder-kicker">3D-Visualisierung</span>
+            <strong>folgt</strong>
           </div>
         </figure>
       </div>
     </section>
 
     <section class="band band--stone" id="ablauf" aria-labelledby="ablauf-title">
-      <div class="wrap">
+      <div class="wrap reveal">
         <p class="eyebrow">Ablauf</p>
         <h2 id="ablauf-title">Vier Schritte, ein Ansprechpartner.</h2>
         <ol class="steps">
@@ -202,7 +201,7 @@
     </section>
 
     <section class="band band--patina" id="ueber-mich" aria-labelledby="ueber-title">
-      <div class="wrap about">
+      <div class="wrap about reveal">
         <div class="about-copy">
           <p class="eyebrow eyebrow--light">Über mich</p>
           <h2 id="ueber-title">Handwerk und Planung in einer Person.</h2>
@@ -231,14 +230,14 @@
         </div>
         <figure class="portrait">
           <div class="placeholder-frame placeholder-frame--portrait" role="img" aria-label="Porträt folgt">
-            <span>Porträt folgt</span>
+            <span class="placeholder-kicker">Porträt</span>
             <strong>Marcel Zürn</strong>
           </div>
         </figure>
       </div>
     </section>
 
-    <section class="band band--stone" aria-labelledby="gebiet-title">
+    <section class="band band--stone reveal" aria-labelledby="gebiet-title">
       <div class="wrap gebiet">
         <p class="eyebrow">Haltung</p>
         <h2 id="gebiet-title">Im Umkreis von 50 Kilometern.</h2>
@@ -256,7 +255,7 @@
     </section>
 
     <section class="band band--patina" id="kontakt" aria-labelledby="kontakt-title">
-      <div class="wrap kontakt">
+      <div class="wrap kontakt reveal">
         <div class="kontakt-copy">
           <p class="eyebrow eyebrow--light">Kontakt</p>
           <h2 id="kontakt-title">Reden wir über Ihren Garten.</h2>
@@ -312,7 +311,7 @@
             </div>
             <div class="field field--full field--check">
               <input id="dsgvo" name="dsgvo" type="checkbox" value="ja" required />
-              <label for="dsgvo">Ich willige ein, dass meine Angaben zur Beantwortung dieser Anfrage verwendet werden. <abbr title="Pflichtfeld">*</abbr></label>
+              <label for="dsgvo">Ich willige ein, dass meine Angaben zur Beantwortung dieser Anfrage verwendet werden. Details in der <a href="datenschutz.html">Datenschutzerklärung</a>. <abbr title="Pflichtfeld">*</abbr></label>
             </div>
           </div>
           <button class="btn btn-primary" type="submit">ANFRAGE SENDEN</button>
@@ -328,100 +327,14 @@
       <p class="footer-brand">Zürn Gartenanlagen</p>
       <p class="footer-claim">GESTALTEN. PFLANZEN. LEBENSRÄUME.</p>
       <p>Garten- und Landschaftsbau · Entengasse 13, 71717 Beilstein</p>
+      <nav class="footer-legal" aria-label="Rechtliches">
+        <a href="impressum.html">Impressum</a>
+        <a href="datenschutz.html">Datenschutz</a>
+      </nav>
       <p class="footer-copy">© 2026 Marcel Zürn, Beilstein</p>
     </div>
   </footer>
 
-  <script>
-    (function () {
-      var toggle = document.querySelector(".nav-toggle");
-      var nav = document.getElementById("site-nav");
-
-      function setNav(open) {
-        nav.classList.toggle("is-open", open);
-        toggle.setAttribute("aria-expanded", open ? "true" : "false");
-      }
-
-      toggle.addEventListener("click", function () {
-        setNav(!nav.classList.contains("is-open"));
-      });
-
-      nav.addEventListener("click", function (event) {
-        if (event.target.closest("a")) setNav(false);
-      });
-
-      document.addEventListener("keydown", function (event) {
-        if (event.key === "Escape") setNav(false);
-      });
-
-      var form = document.getElementById("anfrage");
-      var status = document.getElementById("form-status");
-      var dsgvo = document.getElementById("dsgvo");
-
-      function setDsgvoValidity() {
-        dsgvo.setCustomValidity(
-          dsgvo.checked
-            ? ""
-            : "Bitte stimmen Sie der Verarbeitung zur Beantwortung Ihrer Anfrage zu."
-        );
-      }
-
-      var name = document.getElementById("name");
-      var email = document.getElementById("email");
-      var nachricht = document.getElementById("nachricht");
-
-      function setControlValidity(control, missingMessage) {
-        control.setCustomValidity("");
-        if (control.validity.valueMissing) {
-          control.setCustomValidity(missingMessage);
-        } else if (control.validity.typeMismatch) {
-          control.setCustomValidity("Bitte geben Sie eine gültige E-Mail-Adresse ein.");
-        }
-      }
-
-      function setAllValidity() {
-        setControlValidity(name, "Bitte geben Sie Ihren Namen ein.");
-        setControlValidity(email, "Bitte geben Sie Ihre E-Mail-Adresse ein.");
-        setControlValidity(nachricht, "Bitte schreiben Sie eine kurze Nachricht.");
-        setDsgvoValidity();
-      }
-
-      [name, email, nachricht, dsgvo].forEach(function (control) {
-        control.addEventListener("input", setAllValidity);
-        control.addEventListener("change", setAllValidity);
-      });
-
-      form.addEventListener("submit", function (event) {
-        event.preventDefault();
-        setAllValidity();
-        if (!form.checkValidity()) {
-          form.reportValidity();
-          status.textContent = "Bitte prüfen Sie die markierten Felder.";
-          return;
-        }
-
-        var name = form.name.value.trim();
-        var tel = form.tel.value.trim();
-        var mail = form.email.value.trim();
-        var anliegen = form.anliegen.value.trim();
-        var nachricht = form.nachricht.value.trim();
-        var body = [
-          "Name: " + name,
-          "Telefon: " + (tel || "—"),
-          "E-Mail: " + mail,
-          "Anliegen: " + (anliegen || "—"),
-          "",
-          nachricht
-        ].join("\n");
-
-        status.textContent = "Ihr E-Mail-Programm öffnet sich mit der Anfrage an marcel@zuern-gartenanlagen.de.";
-        window.location.href =
-          "mailto:marcel@zuern-gartenanlagen.de?subject=" +
-          encodeURIComponent("Anfrage Garten — " + name) +
-          "&body=" +
-          encodeURIComponent(body);
-      });
-    })();
-  </script>
+  <script src="site.js"></script>
 </body>
 </html>
