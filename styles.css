@@ -95,6 +95,35 @@ a {
   border: 0;
 }
 
+/* Icons — Monoline aus CD-Ideenskizze, Farbe via currentColor */
+
+.icon-sprite {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.icon {
+  display: block;
+  width: 1.75rem;
+  height: 1.75rem;
+  flex: none;
+  color: var(--messing);
+}
+
+.icon--tab {
+  width: 1.35rem;
+  height: 1.35rem;
+}
+
+.icon--sprig {
+  width: 2.75rem;
+  height: 2.75rem;
+  margin: 0.15rem 0 0;
+  color: color-mix(in srgb, var(--messing) 70%, var(--salbei));
+}
+
 .skip {
   position: absolute;
   left: 1rem;
@@ -581,6 +610,9 @@ section[id] {
   font-weight: 700;
   cursor: pointer;
   box-shadow: inset 0 -2px 0 transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
 }
 
 .usp-tab:hover {
@@ -590,6 +622,15 @@ section[id] {
 .usp-tab.is-active {
   color: var(--patina);
   box-shadow: inset 0 -2px 0 var(--messing);
+}
+
+.usp-tab .icon {
+  color: color-mix(in srgb, var(--salbei) 40%, var(--messing));
+}
+
+.usp-tab.is-active .icon,
+.usp-tab:hover .icon {
+  color: var(--messing);
 }
 
 .usp-panels {
@@ -626,7 +667,7 @@ section[id] {
 
 .service-trigger {
   display: grid;
-  grid-template-columns: 2.5rem 1fr;
+  grid-template-columns: 2.75rem 1fr;
   gap: 1rem;
   width: 100%;
   margin: 0;
@@ -637,6 +678,19 @@ section[id] {
   font: inherit;
   text-align: left;
   cursor: pointer;
+}
+
+.service-icon {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 0.15rem;
+  color: var(--messing);
+}
+
+.service-icon .icon {
+  width: 1.85rem;
+  height: 1.85rem;
 }
 
 .service-label {
@@ -1231,8 +1285,13 @@ section[id] {
   }
 
   .service-trigger {
-    grid-template-columns: 2rem 1fr;
+    grid-template-columns: 2.35rem 1fr;
     gap: 0.75rem;
+  }
+
+  .service-icon .icon {
+    width: 1.65rem;
+    height: 1.65rem;
   }
 
   .service-detail {
@@ -1245,9 +1304,12 @@ section[id] {
   }
 
   .usp-tab {
-    padding: 0.85rem 0.4rem;
+    padding: 0.85rem 0.35rem;
     font-size: 0.78rem;
     text-align: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0.25rem;
   }
 
   .usp-panel h3 {
