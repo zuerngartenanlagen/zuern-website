@@ -16,3 +16,5 @@ Erscheinungsbild: Corporate Design **Patina & Messing**.
 Statische HTML/CSS-Seite für GitHub Pages (Branch `main`, Root). Domain: zuern-gartenanlagen.de
 
 Seiten: `index.html`, `impressum.html`, `datenschutz.html`. Skript: `site.js`.
+
+UX: Guided Scrolling (Fortschrittsbalken, nummerierte Kapitel, Journey-Leiste, aktive Navigation) im Corporate Design Patina & Messing.
