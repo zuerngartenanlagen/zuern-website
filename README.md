@@ -17,4 +17,4 @@ Statische HTML/CSS-Seite für GitHub Pages (Branch `main`, Root). Domain: zuern-
 
 Seiten: `index.html`, `impressum.html`, `datenschutz.html`. Skript: `site.js`.
 
-UX: Moderne Auslegung von Patina & Messing (Atmosphäre, Statement-Module, interaktive Leistungszeilen, Timeline) plus Guided Scrolling.
+UX: Ruhige Premium-Ausrichtung auf gehobene Privatgärten. CD (Patina & Messing, Montserrat) als Grundlage — ohne laute CD-Inszenierung. Interaktive Ausrichtung und Leistungsdetails.
