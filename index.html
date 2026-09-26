@@ -13,6 +13,7 @@
 </head>
 <body>
   <a class="skip" href="#inhalt">Zum Inhalt</a>
+  <div class="atmosphere" aria-hidden="true"></div>
 
   <div
     class="scroll-progress"
@@ -54,55 +55,37 @@
   </header>
 
   <nav class="journey" aria-label="Seitenweg">
-    <a href="#top" data-journey="top" class="is-active" aria-current="true">
-      <span class="journey-no">01</span>
-      <span class="journey-label">Einstieg</span>
-    </a>
-    <a href="#leistungen" data-journey="leistungen">
-      <span class="journey-no">02</span>
-      <span class="journey-label">Leistungen</span>
-    </a>
-    <a href="#planung" data-journey="planung">
-      <span class="journey-no">03</span>
-      <span class="journey-label">Planung</span>
-    </a>
-    <a href="#ablauf" data-journey="ablauf">
-      <span class="journey-no">04</span>
-      <span class="journey-label">Ablauf</span>
-    </a>
-    <a href="#ueber-mich" data-journey="ueber-mich">
-      <span class="journey-no">05</span>
-      <span class="journey-label">Über mich</span>
-    </a>
-    <a href="#kontakt" data-journey="kontakt">
-      <span class="journey-no">06</span>
-      <span class="journey-label">Kontakt</span>
-    </a>
+    <a href="#top" data-journey="top" class="is-active" aria-current="true"><span class="journey-no">01</span><span class="journey-label">Einstieg</span></a>
+    <a href="#leistungen" data-journey="leistungen"><span class="journey-no">02</span><span class="journey-label">Leistungen</span></a>
+    <a href="#planung" data-journey="planung"><span class="journey-no">03</span><span class="journey-label">Planung</span></a>
+    <a href="#ablauf" data-journey="ablauf"><span class="journey-no">04</span><span class="journey-label">Ablauf</span></a>
+    <a href="#ueber-mich" data-journey="ueber-mich"><span class="journey-no">05</span><span class="journey-label">Über mich</span></a>
+    <a href="#kontakt" data-journey="kontakt"><span class="journey-no">06</span><span class="journey-label">Kontakt</span></a>
   </nav>
 
   <main id="inhalt">
     <section class="hero" id="einstieg" aria-label="Einstieg" data-section="top">
       <div class="hero-media" role="img" aria-label="Gartenatmosphäre — Projektfoto folgt"></div>
+      <div class="hero-orbit" aria-hidden="true"></div>
       <div class="hero-shade" aria-hidden="true"></div>
       <div class="hero-inner">
-        <p class="chapter chapter--light hero-anim" style="--delay: 0ms">
-          <span class="chapter-no">01</span>
-          <span>Garten- &amp; Landschaftsbau · Beilstein</span>
-        </p>
+        <p class="brand-mark hero-anim" style="--delay: 0ms">Zürn Gartenanlagen</p>
         <h1>
-          <span class="hero-line hero-anim" style="--delay: 80ms">GESTALTEN.</span>
-          <span class="hero-line hero-anim" style="--delay: 160ms">PFLANZEN.</span>
-          <span class="hero-line hero-line--messing hero-anim" style="--delay: 240ms">LEBENSRÄUME.</span>
+          <span class="hero-line hero-anim" style="--delay: 70ms">GESTALTEN.</span>
+          <span class="hero-line hero-anim" style="--delay: 150ms">PFLANZEN.</span>
+          <span class="hero-line hero-line--messing hero-anim" style="--delay: 230ms">LEBENSRÄUME.</span>
         </h1>
-        <p class="hero-lead hero-anim" style="--delay: 320ms">
-          Geplant in 3D. Umgesetzt persönlich. Zwischen Heilbronn, Ludwigsburg und Stuttgart.
-        </p>
-        <div class="hero-actions hero-anim" style="--delay: 400ms">
-          <a class="btn btn-primary" href="#kontakt">Kostenlose Beratung</a>
-          <a class="text-link text-link--light" href="#planung">3D-Planung <span aria-hidden="true">›</span></a>
+        <div class="hero-footer hero-anim" style="--delay: 340ms">
+          <p class="hero-lead">
+            Geplant in 3D. Umgesetzt persönlich.<br />
+            Heilbronn · Ludwigsburg · Stuttgart.
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#kontakt">Kostenlose Beratung</a>
+            <a class="text-link text-link--light" href="#planung">3D-Planung <span aria-hidden="true">›</span></a>
+          </div>
         </div>
-
-        <ol class="path hero-anim" style="--delay: 520ms" aria-label="Weg durch die Seite">
+        <ol class="path hero-anim" style="--delay: 480ms" aria-label="Weg durch die Seite">
           <li class="is-current" data-path="top"><span>01</span> Einstieg</li>
           <li data-path="leistungen"><span>02</span> Leistungen</li>
           <li data-path="planung"><span>03</span> Planung</li>
@@ -112,91 +95,91 @@
       </div>
     </section>
 
-    <section class="trust reveal" aria-label="Kurz und klar">
-      <ul class="trust-list">
-        <li>3D PLANUNG INKLUSIVE</li>
-        <li>10 J. ERFAHRUNG IM GALABAU</li>
-        <li>1 ANSPRECHPARTNER</li>
-      </ul>
+    <section class="trust" aria-label="Kurz und klar">
+      <div class="trust-track">
+        <ul class="trust-list">
+          <li>3D Planung inklusive</li>
+          <li>10 Jahre Erfahrung</li>
+          <li>1 Ansprechpartner</li>
+          <li>50 km um Beilstein</li>
+          <li>3D Planung inklusive</li>
+          <li>10 Jahre Erfahrung</li>
+          <li>1 Ansprechpartner</li>
+          <li>50 km um Beilstein</li>
+        </ul>
+      </div>
     </section>
 
     <section class="band band--patina band--statement reveal" aria-labelledby="intro-title">
       <div class="wrap statement">
-        <p class="chapter chapter--light chapter--center">
-          <span class="chapter-no">01</span>
-          <span>Anspruch</span>
-        </p>
-        <h2 id="intro-title">Sie sehen Ihren Garten, bevor es ihn gibt.</h2>
+        <p class="chapter chapter--light chapter--center"><span class="chapter-no">01</span><span>Anspruch</span></p>
+        <h2 id="intro-title">Sie sehen Ihren Garten,<br />bevor es ihn gibt.</h2>
         <p class="statement-lead">
-          3D-Planung und Umsetzung vom staatlich geprüften Techniker — ein Ansprechpartner von Beilstein aus.
+          3D-Planung und Umsetzung vom staatlich geprüften Techniker — ein Ansprechpartner aus Beilstein.
         </p>
         <a class="text-link text-link--light" href="#leistungen">Leistungen <span aria-hidden="true">›</span></a>
       </div>
     </section>
 
-    <section class="band band--stone" id="leistungen" aria-labelledby="leistungen-title" data-section="leistungen">
+    <section class="band band--stone band--flush" id="leistungen" aria-labelledby="leistungen-title" data-section="leistungen">
       <div class="wrap reveal">
-        <p class="chapter">
-          <span class="chapter-no">02</span>
-          <span>Leistungen</span>
-        </p>
-        <h2 id="leistungen-title">Vom Plan bis zur Pflege.</h2>
-        <p class="section-lead">Alles aus einer Hand — Planung, Bau und Pflege.</p>
-        <div class="service-list">
-          <article class="service">
-            <span class="service-no" aria-hidden="true">01</span>
-            <div>
-              <h3>CAD- &amp; 3D-Planung</h3>
-              <p>Grundriss, 3D-Ansicht, Materialbild</p>
-            </div>
-          </article>
-          <article class="service">
-            <span class="service-no" aria-hidden="true">02</span>
-            <div>
-              <h3>Gartengestaltung</h3>
-              <p>Gesamtkonzept, Aufenthalt, Übergang Haus–Garten</p>
-            </div>
-          </article>
-          <article class="service">
-            <span class="service-no" aria-hidden="true">03</span>
-            <div>
-              <h3>Pflaster &amp; Naturstein</h3>
-              <p>Wege, Plätze, Einfahrten</p>
-            </div>
-          </article>
-          <article class="service">
-            <span class="service-no" aria-hidden="true">04</span>
-            <div>
-              <h3>Pflanzung &amp; Rasen</h3>
-              <p>Stauden, Gehölze, Rasen</p>
-            </div>
-          </article>
-          <article class="service">
-            <span class="service-no" aria-hidden="true">05</span>
-            <div>
-              <h3>Gartenpflege</h3>
-              <p>Saisonpflege, Beete, Unterhalt</p>
-            </div>
-          </article>
-          <article class="service">
-            <span class="service-no" aria-hidden="true">06</span>
-            <div>
-              <h3>Hecken- &amp; Gehölzschnitt</h3>
-              <p>Formschnitt, Pflegeschnitt, Hecken</p>
-            </div>
-          </article>
+        <div class="section-head">
+          <p class="chapter"><span class="chapter-no">02</span><span>Leistungen</span></p>
+          <h2 id="leistungen-title">Vom Plan bis zur Pflege.</h2>
+          <p class="section-lead">Alles aus einer Hand.</p>
         </div>
+      </div>
+      <div class="service-rail reveal">
+        <article class="service">
+          <span class="service-no" aria-hidden="true">01</span>
+          <div class="service-body">
+            <h3>CAD- &amp; 3D-Planung</h3>
+            <p>Grundriss · 3D-Ansicht · Materialbild</p>
+          </div>
+        </article>
+        <article class="service">
+          <span class="service-no" aria-hidden="true">02</span>
+          <div class="service-body">
+            <h3>Gartengestaltung</h3>
+            <p>Gesamtkonzept · Aufenthalt · Haus–Garten</p>
+          </div>
+        </article>
+        <article class="service">
+          <span class="service-no" aria-hidden="true">03</span>
+          <div class="service-body">
+            <h3>Pflaster &amp; Naturstein</h3>
+            <p>Wege · Plätze · Einfahrten</p>
+          </div>
+        </article>
+        <article class="service">
+          <span class="service-no" aria-hidden="true">04</span>
+          <div class="service-body">
+            <h3>Pflanzung &amp; Rasen</h3>
+            <p>Stauden · Gehölze · Rasen</p>
+          </div>
+        </article>
+        <article class="service">
+          <span class="service-no" aria-hidden="true">05</span>
+          <div class="service-body">
+            <h3>Gartenpflege</h3>
+            <p>Saisonpflege · Beete · Unterhalt</p>
+          </div>
+        </article>
+        <article class="service">
+          <span class="service-no" aria-hidden="true">06</span>
+          <div class="service-body">
+            <h3>Hecken- &amp; Gehölzschnitt</h3>
+            <p>Formschnitt · Pflegeschnitt · Hecken</p>
+          </div>
+        </article>
       </div>
     </section>
 
     <section class="band band--patina" id="planung" aria-labelledby="planung-title" data-section="planung">
       <div class="wrap planung reveal">
         <div class="planung-copy">
-          <p class="chapter chapter--light">
-            <span class="chapter-no">03</span>
-            <span>3D-Planung</span>
-          </p>
-          <h2 id="planung-title">Erst sehen. Dann bauen.</h2>
+          <p class="chapter chapter--light"><span class="chapter-no">03</span><span>3D-Planung</span></p>
+          <h2 id="planung-title">Erst sehen.<br />Dann bauen.</h2>
           <p class="section-lead section-lead--light">
             Wege, Beläge, Höhen und Bepflanzung im Zusammenhang — bevor der erste Spaten sticht.
           </p>
@@ -211,6 +194,7 @@
         </div>
         <figure class="placeholder">
           <div class="placeholder-frame placeholder-frame--viz" role="img" aria-label="3D-Visualisierung folgt">
+            <span class="placeholder-grid" aria-hidden="true"></span>
             <span class="placeholder-kicker">3D-Visualisierung</span>
             <strong>folgt</strong>
           </div>
@@ -220,32 +204,39 @@
 
     <section class="band band--stone" id="ablauf" aria-labelledby="ablauf-title" data-section="ablauf">
       <div class="wrap reveal">
-        <p class="chapter">
-          <span class="chapter-no">04</span>
-          <span>Ablauf</span>
-        </p>
-        <h2 id="ablauf-title">Vier Schritte.</h2>
-        <p class="section-lead">Ein Ansprechpartner — von der ersten Begehung bis zur Pflege.</p>
-        <ol class="steps" id="ablauf-steps">
+        <div class="section-head">
+          <p class="chapter"><span class="chapter-no">04</span><span>Ablauf</span></p>
+          <h2 id="ablauf-title">Vier Schritte.</h2>
+          <p class="section-lead">Ein Ansprechpartner — von der Begehung bis zur Pflege.</p>
+        </div>
+        <ol class="timeline" id="ablauf-steps">
           <li class="is-active" data-step="1">
             <span class="step-no">01</span>
-            <h3>Vor-Ort</h3>
-            <p>Grundstück, Wünsche, Bestand, Boden und realistischer Rahmen.</p>
+            <div>
+              <h3>Vor-Ort</h3>
+              <p>Grundstück, Wünsche, Bestand, Boden und realistischer Rahmen.</p>
+            </div>
           </li>
           <li data-step="2">
             <span class="step-no">02</span>
-            <h3>Plan &amp; 3D</h3>
-            <p>2D-Plan und 3D-Ansicht. Sie sehen den Garten, bevor gebaut wird.</p>
+            <div>
+              <h3>Plan &amp; 3D</h3>
+              <p>2D-Plan und 3D-Ansicht. Sie sehen den Garten, bevor gebaut wird.</p>
+            </div>
           </li>
           <li data-step="3">
             <span class="step-no">03</span>
-            <h3>Umsetzung</h3>
-            <p>Vom abgestimmten Plan bis zur Abnahme — handwerklich durch mich.</p>
+            <div>
+              <h3>Umsetzung</h3>
+              <p>Vom abgestimmten Plan bis zur Abnahme — handwerklich durch mich.</p>
+            </div>
           </li>
           <li data-step="4">
             <span class="step-no">04</span>
-            <h3>Pflege</h3>
-            <p>Schnitt, Rasen und Beete — damit die Anlage hält, was der Plan verspricht.</p>
+            <div>
+              <h3>Pflege</h3>
+              <p>Schnitt, Rasen und Beete — damit die Anlage hält, was der Plan verspricht.</p>
+            </div>
           </li>
         </ol>
       </div>
@@ -254,13 +245,10 @@
     <section class="band band--patina" id="ueber-mich" aria-labelledby="ueber-title" data-section="ueber-mich">
       <div class="wrap about reveal">
         <div class="about-copy">
-          <p class="chapter chapter--light">
-            <span class="chapter-no">05</span>
-            <span>Über mich</span>
-          </p>
-          <h2 id="ueber-title">Handwerk und Planung. Eine Person.</h2>
+          <p class="chapter chapter--light"><span class="chapter-no">05</span><span>Über mich</span></p>
+          <h2 id="ueber-title">Handwerk und Planung.<br />Eine Person.</h2>
           <p class="section-lead section-lead--light">
-            Marcel Zürn · GaLaBau seit 2018 · staatlich geprüfter Techniker 2024 · Gründung in Beilstein zum 1.&nbsp;Oktober&nbsp;2026.
+            Marcel Zürn · GaLaBau seit 2018 · Techniker 2024 · Gründung Beilstein 1.&nbsp;Oktober&nbsp;2026.
           </p>
           <ul class="stats">
             <li>
@@ -288,31 +276,19 @@
 
     <section class="band band--stone band--statement reveal" id="gebiet" aria-labelledby="gebiet-title">
       <div class="wrap statement">
-        <p class="chapter chapter--center">
-          <span class="chapter-no">05</span>
-          <span>Gebiet</span>
-        </p>
-        <h2 id="gebiet-title">50 Kilometer um Beilstein.</h2>
-        <p class="statement-lead">
-          Heilbronn, Ludwigsburg, Stuttgart und die Orte dazwischen.
-        </p>
-        <p class="values-line" aria-label="Haltung">
-          Natürlich · Nachhaltig · Zuverlässig · Handwerklich · Leidenschaftlich
-        </p>
+        <p class="chapter chapter--center"><span class="chapter-no">05</span><span>Gebiet</span></p>
+        <h2 id="gebiet-title">50 km um Beilstein.</h2>
+        <p class="statement-lead">Heilbronn · Ludwigsburg · Stuttgart und die Orte dazwischen.</p>
+        <p class="values-line" aria-label="Haltung">Natürlich · Nachhaltig · Zuverlässig · Handwerklich · Leidenschaftlich</p>
       </div>
     </section>
 
     <section class="band band--patina" id="kontakt" aria-labelledby="kontakt-title" data-section="kontakt">
       <div class="wrap kontakt reveal">
         <div class="kontakt-copy">
-          <p class="chapter chapter--light">
-            <span class="chapter-no">06</span>
-            <span>Kontakt</span>
-          </p>
-          <h2 id="kontakt-title">Reden wir über Ihren Garten.</h2>
-          <p class="section-lead section-lead--light">
-            Kurz Grundstück und Vorhaben schildern — ich melde mich persönlich.
-          </p>
+          <p class="chapter chapter--light"><span class="chapter-no">06</span><span>Kontakt</span></p>
+          <h2 id="kontakt-title">Reden wir über<br />Ihren Garten.</h2>
+          <p class="section-lead section-lead--light">Kurz Grundstück und Vorhaben — ich melde mich persönlich.</p>
           <ul class="kontakt-list">
             <li>
               <span class="label">Telefon</span>
@@ -374,15 +350,19 @@
   </main>
 
   <footer class="site-footer">
-    <div class="wrap">
-      <p class="footer-brand">Zürn Gartenanlagen</p>
-      <p class="footer-claim">GESTALTEN. PFLANZEN. LEBENSRÄUME.</p>
-      <p>Garten- und Landschaftsbau · Entengasse 13, 71717 Beilstein</p>
-      <nav class="footer-legal" aria-label="Rechtliches">
-        <a href="impressum.html">Impressum</a>
-        <a href="datenschutz.html">Datenschutz</a>
-      </nav>
-      <p class="footer-copy">© 2026 Marcel Zürn, Beilstein</p>
+    <div class="wrap footer-grid">
+      <div>
+        <p class="footer-brand">Zürn Gartenanlagen</p>
+        <p class="footer-claim">GESTALTEN. PFLANZEN. LEBENSRÄUME.</p>
+      </div>
+      <div class="footer-meta">
+        <p>Garten- und Landschaftsbau · Entengasse 13, 71717 Beilstein</p>
+        <nav class="footer-legal" aria-label="Rechtliches">
+          <a href="impressum.html">Impressum</a>
+          <a href="datenschutz.html">Datenschutz</a>
+        </nav>
+        <p class="footer-copy">© 2026 Marcel Zürn, Beilstein</p>
+      </div>
     </div>
   </footer>
 
