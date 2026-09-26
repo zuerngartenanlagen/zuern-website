@@ -166,6 +166,73 @@
     onScroll();
   }
 
+  /* USP tabs */
+  var usp = document.querySelector("[data-usp]");
+  if (usp) {
+    var tabs = Array.prototype.slice.call(usp.querySelectorAll("[data-usp-tab]"));
+    var panels = Array.prototype.slice.call(usp.querySelectorAll("[data-usp-panel]"));
+
+    function activateUsp(id) {
+      tabs.forEach(function (tab) {
+        var on = tab.getAttribute("data-usp-tab") === id;
+        tab.classList.toggle("is-active", on);
+        tab.setAttribute("aria-selected", on ? "true" : "false");
+        tab.tabIndex = on ? 0 : -1;
+      });
+      panels.forEach(function (panel) {
+        var on = panel.getAttribute("data-usp-panel") === id;
+        panel.classList.toggle("is-active", on);
+        if (on) panel.removeAttribute("hidden");
+        else panel.setAttribute("hidden", "");
+      });
+    }
+
+    tabs.forEach(function (tab) {
+      tab.addEventListener("click", function () {
+        activateUsp(tab.getAttribute("data-usp-tab"));
+      });
+      tab.addEventListener("keydown", function (event) {
+        var idx = tabs.indexOf(tab);
+        if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+          event.preventDefault();
+          tabs[(idx + 1) % tabs.length].focus();
+          activateUsp(tabs[(idx + 1) % tabs.length].getAttribute("data-usp-tab"));
+        }
+        if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+          event.preventDefault();
+          tabs[(idx - 1 + tabs.length) % tabs.length].focus();
+          activateUsp(tabs[(idx - 1 + tabs.length) % tabs.length].getAttribute("data-usp-tab"));
+        }
+      });
+    });
+  }
+
+  /* Leistungen accordion */
+  var serviceRoot = document.querySelector("[data-services]");
+  if (serviceRoot) {
+    var services = Array.prototype.slice.call(serviceRoot.querySelectorAll(".service"));
+    services.forEach(function (service) {
+      var trigger = service.querySelector(".service-trigger");
+      var detail = service.querySelector(".service-detail");
+      if (!trigger || !detail) return;
+      trigger.addEventListener("click", function () {
+        var open = !service.classList.contains("is-open");
+        services.forEach(function (other) {
+          var otherTrigger = other.querySelector(".service-trigger");
+          var otherDetail = other.querySelector(".service-detail");
+          other.classList.remove("is-open");
+          if (otherTrigger) otherTrigger.setAttribute("aria-expanded", "false");
+          if (otherDetail) otherDetail.setAttribute("hidden", "");
+        });
+        if (open) {
+          service.classList.add("is-open");
+          trigger.setAttribute("aria-expanded", "true");
+          detail.removeAttribute("hidden");
+        }
+      });
+    });
+  }
+
   var form = document.getElementById("anfrage");
   if (!form) return;
 

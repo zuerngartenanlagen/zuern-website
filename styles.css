@@ -745,6 +745,15 @@ main,
   margin-bottom: 0.5rem;
 }
 
+.section-head--center {
+  text-align: center;
+}
+
+.section-head--center h2 {
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .section-lead {
   margin: 0 0 1.75rem;
   max-width: 30rem;
@@ -755,6 +764,11 @@ main,
 
 .section-lead--light {
   color: color-mix(in srgb, var(--kalkstein) 82%, var(--salbei));
+}
+
+.section-lead--center {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .chapter {
@@ -815,7 +829,95 @@ main,
   line-height: 1.75;
 }
 
-/* Services — interactive full-bleed rows */
+/* USP tabs */
+
+.usp {
+  margin-top: 2.25rem;
+  border: 1px solid color-mix(in srgb, var(--messing) 40%, transparent);
+  background: color-mix(in srgb, var(--patina) 88%, var(--graphit));
+}
+
+.usp-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-bottom: 1px solid color-mix(in srgb, var(--messing) 35%, transparent);
+}
+
+.usp-tab {
+  margin: 0;
+  padding: 1rem 0.85rem;
+  border: 0;
+  border-right: 1px solid color-mix(in srgb, var(--messing) 28%, transparent);
+  background: transparent;
+  color: color-mix(in srgb, var(--kalkstein) 62%, transparent);
+  font-family: inherit;
+  font-size: clamp(0.72rem, 1.4vw, 0.85rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.2s var(--ease), background 0.2s var(--ease);
+}
+
+.usp-tab:last-child {
+  border-right: 0;
+}
+
+.usp-tab:hover {
+  color: var(--kalkstein);
+}
+
+.usp-tab.is-active {
+  color: var(--patina);
+  background: var(--messing);
+}
+
+.usp-panels {
+  padding: clamp(1.35rem, 3vw, 2rem);
+  min-height: 14rem;
+}
+
+.usp-panel h3 {
+  margin: 0 0 0.7rem;
+  color: var(--kalkstein);
+  font-size: clamp(1.35rem, 2.5vw, 1.85rem);
+  letter-spacing: -0.02em;
+}
+
+.usp-panel p {
+  margin: 0 0 1rem;
+  max-width: 40rem;
+  color: color-mix(in srgb, var(--kalkstein) 86%, var(--salbei));
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.usp-points {
+  list-style: none;
+  margin: 0 0 1.25rem;
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.usp-points li {
+  position: relative;
+  padding-left: 1.1rem;
+  color: var(--kalkstein);
+  font-size: 0.98rem;
+}
+
+.usp-points li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 0.45rem;
+  height: 1px;
+  background: var(--messing);
+}
+
+/* Services accordion */
 
 .service-rail {
   margin-top: 2rem;
@@ -823,17 +925,27 @@ main,
 }
 
 .service {
-  display: grid;
-  grid-template-columns: 4.5rem 1fr;
-  gap: 1rem 1.5rem;
-  align-items: center;
   margin: 0;
-  padding: 1.35rem var(--gutter);
   max-width: var(--measure);
   margin-inline: auto;
   border-bottom: 1px solid color-mix(in srgb, var(--messing) 40%, var(--salbei));
-  cursor: default;
-  transition: background 0.35s var(--ease), color 0.35s var(--ease), padding 0.35s var(--ease);
+  transition: background 0.3s var(--ease);
+}
+
+.service-trigger {
+  display: grid;
+  grid-template-columns: 4.5rem 1fr;
+  gap: 1rem 1.5rem;
+  align-items: start;
+  width: 100%;
+  margin: 0;
+  padding: 1.25rem var(--gutter);
+  border: 0;
+  background: transparent;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
 }
 
 .service-no {
@@ -842,42 +954,80 @@ main,
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1;
+  padding-top: 0.15rem;
+}
+
+.service-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 .service h3 {
-  margin: 0 0 0.25rem;
+  margin: 0;
   color: var(--patina);
   font-size: clamp(1.15rem, 2.2vw, 1.55rem);
   font-weight: 700;
   letter-spacing: -0.015em;
 }
 
-.service p {
-  margin: 0;
+.service-trigger > .service-body > p {
+  margin: 0.3rem 0 0;
   color: color-mix(in srgb, var(--graphit) 75%, var(--salbei));
   font-size: 0.98rem;
 }
 
-.service:hover,
-.service:focus-within {
+.service-toggle {
+  width: 0.85rem;
+  height: 0.85rem;
+  flex: none;
+  border-right: 1.5px solid var(--messing);
+  border-bottom: 1.5px solid var(--messing);
+  transform: rotate(45deg) translateY(-0.15rem);
+  transition: transform 0.25s var(--ease);
+}
+
+.service.is-open .service-toggle {
+  transform: rotate(225deg) translateY(-0.1rem);
+}
+
+.service-detail {
+  padding: 0 var(--gutter) 1.35rem calc(var(--gutter) + 4.5rem + 1.5rem);
+  max-width: 44rem;
+}
+
+.service-detail p {
+  margin: 0;
+  color: var(--graphit);
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.service.is-open,
+.service:hover {
+  background: color-mix(in srgb, var(--patina) 6%, var(--kalkstein));
+}
+
+.service.is-open {
   background: var(--patina);
-  color: var(--kalkstein);
-  padding-left: calc(var(--gutter) + 0.35rem);
 }
 
-.service:hover .service-no,
-.service:focus-within .service-no {
-  color: var(--messing);
-}
-
-.service:hover h3,
-.service:focus-within h3 {
+.service.is-open .service-trigger h3,
+.service.is-open .service-trigger > .service-body > p {
   color: var(--kalkstein);
 }
 
-.service:hover p,
-.service:focus-within p {
+.service.is-open .service-trigger > .service-body > p {
   color: color-mix(in srgb, var(--kalkstein) 75%, var(--salbei));
+}
+
+.service.is-open .service-detail p {
+  color: color-mix(in srgb, var(--kalkstein) 88%, var(--salbei));
+}
+
+.service.is-open .service-toggle {
+  border-color: var(--messing);
 }
 
 /* Planung */
@@ -1034,6 +1184,41 @@ main,
   grid-template-columns: 1.2fr 0.8fr;
   gap: 2.5rem 3.5rem;
   align-items: start;
+}
+
+.about-extra {
+  margin: -0.75rem 0 1.25rem;
+  max-width: 36rem;
+  color: color-mix(in srgb, var(--kalkstein) 82%, var(--salbei));
+  font-size: 1.02rem;
+  line-height: 1.5;
+}
+
+.cred-list {
+  list-style: none;
+  margin: 0 0 1.75rem;
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.cred-list li {
+  position: relative;
+  padding-left: 1.05rem;
+  color: var(--kalkstein);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.cred-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 0.45rem;
+  height: 1px;
+  background: var(--messing);
 }
 
 .stats {
@@ -1496,9 +1681,23 @@ main,
     animation-duration: 22s;
   }
 
-  .service {
+  .service-trigger {
     grid-template-columns: 3rem 1fr;
     padding: 1.15rem var(--gutter);
+  }
+
+  .service-detail {
+    padding: 0 var(--gutter) 1.2rem var(--gutter);
+  }
+
+  .usp-tabs {
+    grid-template-columns: 1fr;
+  }
+
+  .usp-tab {
+    border-right: 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--messing) 28%, transparent);
+    text-align: left;
   }
 
   .stats,
