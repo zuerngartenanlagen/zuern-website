@@ -109,9 +109,9 @@
     ].join("\n");
 
     status.textContent =
-      "Ihr E-Mail-Programm öffnet sich mit der Anfrage an marcel@zuern-gartenanlagen.de.";
+      "Ihr E-Mail-Programm öffnet sich mit der Anfrage an Info@zuern-gartenanlagen.de.";
     window.location.href =
-      "mailto:marcel@zuern-gartenanlagen.de?subject=" +
+      "mailto:info@zuern-gartenanlagen.de?subject=" +
       encodeURIComponent("Anfrage Garten — " + nameValue) +
       "&body=" +
       encodeURIComponent(body);

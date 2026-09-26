@@ -969,16 +969,20 @@ section[id] {
 /* Legal pages */
 
 .legal-page {
-  padding-top: 4.5rem;
-  padding-bottom: 5rem;
+  padding-top: 1.75rem;
+  padding-bottom: 4rem;
 }
 
 .legal {
   max-width: 46rem;
 }
 
+.legal .eyebrow {
+  margin-bottom: 0.55rem;
+}
+
 .legal h1 {
-  margin: 0 0 2rem;
+  margin: 0 0 1.5rem;
   color: var(--patina);
   font-weight: 700;
   font-size: clamp(2rem, 4vw, 3rem);
