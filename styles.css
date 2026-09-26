@@ -23,9 +23,18 @@
   --messing: #b99a63;
   --kalkstein: #e8e3d9;
   --graphit: #292b2a;
-  --measure: 70rem;
+  --measure: min(70rem, 100%);
   --header-offset: 5.5rem;
-  --gutter: clamp(1.25rem, 3vw, 2rem);
+  --gutter: clamp(1rem, 4vw, 2.5rem);
+  --gap-section: clamp(2.5rem, 5.5vw, 4.75rem);
+  --gap-block: clamp(1.5rem, 3vw, 3rem);
+  --text-body: clamp(1rem, 0.96rem + 0.2vw, 1.08rem);
+  --text-lead: clamp(1.05rem, 1rem + 0.35vw, 1.25rem);
+  --text-hero: clamp(2.15rem, 1.2rem + 6.5vw, 5.8rem);
+  --text-h2: clamp(1.7rem, 1.25rem + 2.2vw, 3rem);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -37,17 +46,21 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: clip;
 }
 
 body {
   margin: 0;
   font-family: "Montserrat", sans-serif;
   font-weight: 400;
-  font-size: 1.05rem;
+  font-size: var(--text-body);
   line-height: 1.65;
   color: var(--graphit);
   background: var(--kalkstein);
   color-scheme: light;
+  overflow-x: clip;
+  padding-left: var(--safe-left);
+  padding-right: var(--safe-right);
 }
 
 img {
@@ -100,6 +113,7 @@ a {
 }
 
 .wrap {
+  width: min(100%, var(--measure));
   max-width: var(--measure);
   margin: 0 auto;
   padding-left: var(--gutter);
@@ -107,7 +121,17 @@ a {
 }
 
 .narrow {
-  max-width: 42rem;
+  max-width: min(42rem, 100%);
+}
+
+.title-break {
+  display: inline;
+}
+
+@media (min-width: 560px) {
+  .title-break {
+    display: block;
+  }
 }
 
 section[id] {
@@ -164,8 +188,11 @@ section[id] {
 }
 
 .logo img {
-  height: 4.2rem;
+  height: clamp(3rem, 2.4rem + 2vw, 4.2rem);
   width: auto;
+  max-width: min(11rem, 42vw);
+  object-fit: contain;
+  object-position: left center;
 }
 
 .nav {
@@ -268,7 +295,7 @@ section[id] {
 
 .hero {
   position: relative;
-  min-height: calc(100svh - 5rem);
+  min-height: max(28rem, calc(100svh - 5rem));
   display: flex;
   align-items: flex-end;
   color: var(--kalkstein);
@@ -320,13 +347,13 @@ section[id] {
   z-index: 1;
   width: min(100%, var(--measure));
   margin: 0 auto;
-  padding: 4.5rem var(--gutter) 3.25rem;
+  padding: clamp(3rem, 6vw, 4.5rem) var(--gutter) clamp(2.25rem, 4vw, 3.25rem);
 }
 
 .hero h1 {
   margin: 0;
   max-width: 12ch;
-  font-size: clamp(2.4rem, 9vw, 5.8rem);
+  font-size: var(--text-hero);
   font-weight: 700;
   line-height: 0.95;
   letter-spacing: -0.025em;
@@ -344,8 +371,8 @@ section[id] {
 
 .hero-lead {
   margin: 1.35rem 0 0;
-  max-width: 32rem;
-  font-size: 1.12rem;
+  max-width: min(32rem, 100%);
+  font-size: var(--text-lead);
   line-height: 1.5;
   color: color-mix(in srgb, var(--kalkstein) 90%, var(--salbei));
 }
@@ -356,6 +383,10 @@ section[id] {
   align-items: center;
   gap: 0.9rem 1.4rem;
   margin-top: 1.75rem;
+}
+
+.hero-actions .btn {
+  flex: 0 1 auto;
 }
 
 /* Type & UI */
@@ -381,7 +412,7 @@ section[id] {
 
 .lede {
   margin: 0 0 1.5rem;
-  font-size: 1.2rem;
+  font-size: var(--text-lead);
   line-height: 1.55;
   color: var(--graphit);
 }
@@ -454,11 +485,12 @@ section[id] {
 
 .trust-list {
   list-style: none;
+  width: min(100%, var(--measure));
   max-width: var(--measure);
   margin: 0 auto;
   padding: 1rem var(--gutter);
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.75rem 1.5rem;
 }
 
@@ -478,11 +510,11 @@ section[id] {
 /* Bands */
 
 .band {
-  padding: clamp(3rem, 6vw, 4.75rem) 0;
+  padding: var(--gap-section) 0;
 }
 
 .band--compact {
-  padding: clamp(2.5rem, 5vw, 3.5rem) 0;
+  padding: clamp(2rem, 4.5vw, 3.5rem) 0;
 }
 
 .band--patina {
@@ -498,7 +530,7 @@ section[id] {
 .band h2 {
   margin: 0 0 0.9rem;
   max-width: 14em;
-  font-size: clamp(1.95rem, 4vw, 3rem);
+  font-size: var(--text-h2);
   font-weight: 700;
   line-height: 1.12;
   letter-spacing: -0.02em;
@@ -658,8 +690,8 @@ section[id] {
 
 .planung {
   display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap: 2.5rem 3rem;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: var(--gap-block);
   align-items: center;
 }
 
@@ -757,8 +789,8 @@ section[id] {
 
 .about {
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
-  gap: 2.5rem 3rem;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+  gap: var(--gap-block);
   align-items: start;
 }
 
@@ -797,8 +829,8 @@ section[id] {
 
 .kontakt {
   display: grid;
-  grid-template-columns: 0.9fr 1.1fr;
-  gap: 2.5rem 3rem;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: var(--gap-block);
   align-items: start;
 }
 
@@ -840,12 +872,12 @@ section[id] {
 .anfrage {
   background: color-mix(in srgb, var(--kalkstein) 70%, white);
   border: 1px solid color-mix(in srgb, var(--salbei) 70%, transparent);
-  padding: 1.5rem 1.35rem;
+  padding: clamp(1.15rem, 2.5vw, 1.5rem) clamp(1rem, 2.2vw, 1.35rem);
 }
 
 .form-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
 }
 
@@ -956,13 +988,13 @@ section[id] {
 .site-footer {
   background: var(--patina);
   color: var(--kalkstein);
-  padding: 2.5rem 0;
+  padding: 2.5rem 0 calc(2.5rem + var(--safe-bottom));
   border-top: 1px solid color-mix(in srgb, var(--messing) 30%, transparent);
 }
 
 .footer-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1.25rem 2rem;
   align-items: end;
 }
@@ -1074,9 +1106,9 @@ section[id] {
   opacity: 1;
 }
 
-/* Responsive */
+/* Responsive — Phone · Tablet · Laptop · Large */
 
-@media (max-width: 980px) {
+@media (max-width: 1100px) {
   .header-inner {
     grid-template-columns: 1fr auto auto;
     grid-template-areas:
@@ -1101,6 +1133,8 @@ section[id] {
     padding: 0.2rem var(--gutter) 0.85rem;
     background: var(--kalkstein);
     border-bottom: 1px solid var(--salbei);
+    max-height: min(70vh, 28rem);
+    overflow-y: auto;
   }
 
   .nav.is-open {
@@ -1110,17 +1144,33 @@ section[id] {
   .nav a {
     padding: 0.85rem 0;
     border-top: 1px solid color-mix(in srgb, var(--salbei) 70%, transparent);
+    font-size: 0.9rem;
   }
 
   .nav a.is-active {
     box-shadow: none;
+    color: var(--messing);
+  }
+}
+
+@media (max-width: 960px) {
+  :root {
+    --header-offset: 4.75rem;
   }
 
   .planung,
   .about,
   .kontakt,
   .footer-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .portrait {
+    max-width: 22rem;
+  }
+
+  .placeholder-frame--portrait {
+    max-width: 22rem;
   }
 
   .footer-meta,
@@ -1128,11 +1178,15 @@ section[id] {
     text-align: left;
     justify-content: flex-start;
   }
+
+  .usp-panels {
+    min-height: 0;
+  }
 }
 
 @media (max-width: 720px) {
-  .logo img {
-    height: 3.4rem;
+  :root {
+    --header-offset: 4.25rem;
   }
 
   .header-phone span {
@@ -1144,15 +1198,22 @@ section[id] {
   }
 
   .hero {
-    min-height: 0;
+    min-height: max(24rem, calc(100svh - 4.5rem));
   }
 
-  .hero-inner {
-    padding: 3.5rem var(--gutter) 2.5rem;
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero-actions .btn,
+  .hero-actions .text-link {
+    width: 100%;
+    justify-content: center;
   }
 
   .trust-list {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 0;
   }
 
@@ -1166,16 +1227,124 @@ section[id] {
   }
 
   .form-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .service-trigger {
+    grid-template-columns: 2rem 1fr;
+    gap: 0.75rem;
   }
 
   .service-detail {
     padding-left: 0;
   }
 
+  .usp-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .usp-tab {
-    flex: 1 1 auto;
-    padding-inline: 0.75rem;
+    padding: 0.85rem 0.4rem;
+    font-size: 0.78rem;
+    text-align: center;
+  }
+
+  .usp-panel h3 {
+    font-size: clamp(1.2rem, 5vw, 1.45rem);
+  }
+
+  .service h3 {
+    font-size: clamp(1.05rem, 4vw, 1.2rem);
+  }
+
+  .anfrage .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --gutter: clamp(0.9rem, 4.5vw, 1.15rem);
+  }
+
+  .hero {
+    min-height: 0;
+    align-items: flex-end;
+  }
+
+  .hero-inner {
+    padding-top: 2.75rem;
+    padding-bottom: 2rem;
+  }
+
+  .hero h1 {
+    max-width: none;
+    letter-spacing: -0.03em;
+  }
+
+  .eyebrow {
+    letter-spacing: 0.1em;
+    font-size: 0.68rem;
+  }
+
+  .band h2 {
+    max-width: none;
+  }
+
+  .timeline li {
+    grid-template-columns: 1.6rem 1fr;
+    gap: 0.75rem;
+  }
+
+  .footer-legal {
+    flex-wrap: wrap;
+    gap: 0.75rem 1.1rem;
+  }
+}
+
+/* Tablet landscape / compact laptop — keep two columns, tighten gaps */
+@media (min-width: 721px) and (max-width: 960px) {
+  .trust-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .trust-list li {
+    font-size: 0.72rem;
+  }
+}
+
+/* Large screens — slightly wider reading measure, balanced gutters */
+@media (min-width: 1280px) {
+  :root {
+    --measure: min(76rem, 100%);
+    --gutter: clamp(2rem, 4vw, 3rem);
+  }
+}
+
+@media (min-width: 1600px) {
+  :root {
+    --measure: min(82rem, 100%);
+  }
+
+  .hero {
+    min-height: calc(100svh - 5.5rem);
+  }
+}
+
+/* Short viewports (landscape phones / small height) */
+@media (max-height: 560px) and (orientation: landscape) {
+  .hero {
+    min-height: 0;
+  }
+
+  .hero-inner {
+    padding-top: 2rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(1.8rem, 8vh, 3rem);
   }
 }
 
