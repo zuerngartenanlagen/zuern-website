@@ -701,7 +701,7 @@ main,
 /* Bands */
 
 .band {
-  padding: clamp(3.5rem, 7vw, 5.5rem) 0;
+  padding: clamp(2.75rem, 5.5vw, 4.5rem) 0;
   position: relative;
 }
 
