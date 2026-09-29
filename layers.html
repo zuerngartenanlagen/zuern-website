@@ -6,13 +6,13 @@
   <meta name="description" content="Zürn Gartenanlagen in Beilstein: Garten- und Landschaftsbau mit 3D-Planung und persönlicher Umsetzung im Bottwartal, in Heilbronn, Ludwigsburg und Stuttgart." />
   <meta name="theme-color" content="#1F3A36" />
   <title>Zürn Gartenanlagen | Schritt in den Garten</title>
-  <link rel="icon" href="assets/zuern-leaf.svg" type="image/svg+xml" />
-  <link rel="preload" href="assets/fonts/montserrat-bold.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="preload" href="assets/fonts/montserrat-regular.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="preload" href="assets/poster.webp" as="image" media="(min-width: 761px)" />
-  <link rel="preload" href="assets/poster-s.webp" as="image" media="(max-width: 760px)" />
-  <link rel="stylesheet" href="scrollcraft.css" />
-  <link rel="stylesheet" href="garden.css" />
+  <link rel="icon" href="/src/assets/logo/zuern-leaf.svg" type="image/svg+xml" />
+  <link rel="preload" href="/fonts/montserrat-bold.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/montserrat-regular.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/walk/layers/poster.webp" as="image" media="(min-width: 761px)" />
+  <link rel="preload" href="/walk/layers/poster-s.webp" as="image" media="(max-width: 760px)" />
+  <link rel="stylesheet" href="/src/walk/scrollcraft.css" />
+  <link rel="stylesheet" href="/src/walk/garden.css" />
 </head>
 <body>
   <a class="skip" href="#kontakt">Zum Kontakt</a>
@@ -28,23 +28,23 @@
     <section class="garden" id="top" data-sc-act="pin" data-sc-span="3.4" data-garden aria-labelledby="hero-title">
       <div class="sc-stage garden__stage">
         <picture>
-          <source media="(max-width: 760px)" srcset="assets/poster-s.webp" />
-          <img class="garden__poster" src="assets/poster.webp" width="2400" height="1350"
+          <source media="(max-width: 760px)" srcset="/walk/layers/poster-s.webp" />
+          <img class="garden__poster" src="/walk/layers/poster.webp" width="2400" height="1350"
                alt="Ein stiller Gartenteich, Trittsteine führen durch Stauden und Gräser zu einem Pavillon mit Glasfront." />
         </picture>
         <canvas class="garden__gl" aria-hidden="true"
-                data-layers="assets/layers.json"
-                data-ground="assets/ground.webp"
-                data-depth="assets/depth.png"
-                data-water="assets/water.png"
-                data-castle="assets/castle.webp"
-                data-tree="assets/tree.webp"
-                data-boulder="assets/boulder.webp"
-                data-reeds="assets/reeds.webp"></canvas>
+                data-layers="walk/layers/layers.json"
+                data-ground="walk/layers/ground.webp"
+                data-depth="walk/layers/depth.png"
+                data-water="walk/layers/water.png"
+                data-castle="walk/layers/castle.webp"
+                data-tree="walk/layers/tree.webp"
+                data-boulder="walk/layers/boulder.webp"
+                data-reeds="walk/layers/reeds.webp"></canvas>
         <div class="garden__scrim garden__scrim--arrive" data-g-window="0.74 0.84" aria-hidden="true"></div>
 
         <div class="garden__open" data-g-window="0 0 0.04 0.16" data-g-move="panel">
-          <img class="garden__logo" src="assets/zuern-logo.svg" alt="Zürn Gartenanlagen" width="1683" height="796" />
+          <img class="garden__logo" src="/src/assets/logo/zuern-logo.svg" alt="Zürn Gartenanlagen" width="1683" height="796" />
           <h1 id="hero-title" class="claim">
             <span>Gestalten.</span>
             <span>Pflanzen.</span>
@@ -73,12 +73,10 @@
           <div><dt>Adresse</dt><dd>Entengasse 13, 71717 Beilstein</dd></div>
         </dl>
       </div>
-      <footer class="foot">Zürn Gartenanlagen · <a href="../impressum.html">Impressum</a> · <a href="../datenschutz.html">Datenschutz</a></footer>
+      <footer class="foot">Zürn Gartenanlagen · <a href="impressum.html">Impressum</a> · <a href="datenschutz.html">Datenschutz</a></footer>
     </section>
   </main>
 
-  <script src="scrollcraft.js"></script>
-  <script>ScrollCraft.mount(document.body);</script>
-  <script src="garden.js"></script>
+  <script type="module" src="/src/walk/layers.ts"></script>
 </body>
 </html>

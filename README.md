@@ -13,7 +13,9 @@ Erscheinungsbild: Corporate Design **Patina & Messing**.
 - Schrift: nur Montserrat Bold und Regular (SIL Open Font License, `public/fonts/OFL.txt`)
 - Logo: `src/assets/logo/zuern-logo.svg` (vektorisiert aus der JPG-Vorlage), Favicon: `src/assets/logo/zuern-leaf.svg`
 
-Gestaltung „Werkplan“: Die Seite liest sich wie ein Satz Planblätter. Heller Kalkstein-Grund, Haarlinien in Patina und Messing, nummerierte Blattköpfe (01 bis 05), alle Inhalte sichtbar. Im Einstieg eine gezeichnete Gartenskizze (Inline-SVG), in „Planung und Ablauf“ ein 3D-Beispielmodell, das erst beim Scrollen geladen wird. Texte in der Ich-Form, schlicht und ohne Gedankenstrich-Ketten.
+Startseite „Schritt in den Garten“: Beim Scrollen geht man den Weg vom Haus zurück zum Teich, die Leistungen erscheinen am Weg, danach folgen Planung, Über mich und Kontakt. Die Filmbilder und die Werkzeuge dafür liegen unter `scrollcraft/builds/zuern-garten`.
+
+Gestaltung „Werkplan“ (jetzt `werkplan.html`): Die Seite liest sich wie ein Satz Planblätter. Heller Kalkstein-Grund, Haarlinien in Patina und Messing, nummerierte Blattköpfe (01 bis 05), alle Inhalte sichtbar. Im Einstieg eine gezeichnete Gartenskizze (Inline-SVG), in „Planung und Ablauf“ ein 3D-Beispielmodell, das erst beim Scrollen geladen wird. Texte in der Ich-Form, schlicht und ohne Gedankenstrich-Ketten.
 
 ## Entwicklung
 
@@ -30,8 +32,14 @@ just preview    # Build lokal ansehen
 ## Struktur
 
 ```
-index.html, impressum.html, datenschutz.html   Seiten (Vite-Einstiegspunkte)
-src/main.ts                                     Einstieg, initialisiert die Module
+index.html                                      Startseite: der Weg in den Garten (Scroll-Film)
+layers.html                                     Szene in Ebenen (Schloss, Baum, Requisiten), zum Austauschen
+werkplan.html                                   Bisherige Startseite im Werkplan-Layout
+impressum.html, datenschutz.html                Rechtliches
+src/walk/                                       Startseite: Scroll-Engine, Film-Player, Wasser-Shader, Styles
+public/walk/                                    Filmbilder (AVIF), Wassermasken, Ebenen-Bilder (feste URLs)
+public/demo/index.html                          Weiterleitung der alten Demo-URL auf die Startseite
+src/main.ts                                     Einstieg der Werkplan-Seite, initialisiert die Module
 src/scripts/nav.ts                              Mobiles Menü, aktiver Menüpunkt
 src/scripts/contact-form.ts                     Validierung und mailto-Versand des Formulars
 src/scripts/model-preview.ts                    Lädt das 3D-Modell, sobald es in Sicht kommt

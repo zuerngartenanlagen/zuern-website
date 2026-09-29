@@ -11,7 +11,10 @@ export default defineConfig({
     chunkSizeWarningLimit: 700,
     rolldownOptions: {
       input: {
+        // The walk into the garden is the homepage; the Werkplan layout stays reachable.
         main: page('index.html'),
+        werkplan: page('werkplan.html'),
+        layers: page('layers.html'),
         impressum: page('impressum.html'),
         datenschutz: page('datenschutz.html'),
       },
