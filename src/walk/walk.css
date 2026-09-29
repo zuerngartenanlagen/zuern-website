@@ -15,26 +15,33 @@ html.lenis { scroll-behavior: auto; }
 .walk.is-live .walk__frames { opacity: 1; }
 
 /* ------------------------------------------------------------------ stops -- */
-/* One service per stretch of path. Alternate sides so the eye walks too. */
+/* One service per stretch of path, each in its own corner of the frame, so the
+   eye travels with the walk instead of waiting at one spot. */
 .stop {
-  position: absolute; z-index: 2; bottom: 12vh;
-  width: min(25rem, 36vw);
-  padding: 1.6rem 1.75rem 1.75rem;
+  position: absolute; z-index: 2;
+  width: min(34rem, 42vw);
+  padding: 2.25rem 2.5rem 2.4rem;
+  box-sizing: border-box;
   background: rgb(20 36 33 / 0.9);
-  border-top: 2px solid var(--messing);
+  border-top: 3px solid var(--messing);
+  box-shadow: 0 2px 6px rgb(8 14 12 / 0.2), 0 18px 48px rgb(8 14 12 / 0.28);
   will-change: opacity, transform;
 }
-.stop--lead { left: var(--gutter); }
-.stop--trail { right: calc(var(--gutter) + var(--rail)); }
+.stop--mid-left     { left: var(--gutter); top: 50%; translate: 0 -50%; }
+.stop--top-right    { right: calc(var(--gutter) + var(--rail)); top: 16vh; }
+.stop--bottom-left  { left: var(--gutter); bottom: 10vh; }
+.stop--top-left     { left: calc(var(--gutter) + 4vw); top: 20vh; }
+.stop--bottom-right { right: calc(var(--gutter) + var(--rail) + 3vw); bottom: 12vh; }
+.stop--mid-right    { right: calc(var(--gutter) + var(--rail)); top: 50%; translate: 0 -50%; }
 .stop h2, .stop h3 {
   margin: 0; color: var(--kalkstein);
-  font-weight: 700; line-height: 1.15;
+  font-weight: 700; line-height: 1.12;
 }
-.stop h2 { font-size: clamp(1.5rem, 1rem + 1.4vw, 2.2rem); }
-.stop h3 { font-size: clamp(1.15rem, 0.95rem + 0.6vw, 1.45rem); }
+.stop h2 { font-size: clamp(1.9rem, 1.2rem + 2vw, 3rem); }
+.stop h3 { font-size: clamp(1.6rem, 1.1rem + 1.4vw, 2.4rem); }
 .stop p {
-  margin: 0.85rem 0 0;
-  font-size: clamp(0.95rem, 0.9rem + 0.2vw, 1.05rem); line-height: 1.6;
+  margin: 1.1rem 0 0;
+  font-size: clamp(1.05rem, 0.98rem + 0.35vw, 1.3rem); line-height: 1.6;
   color: color-mix(in srgb, var(--kalkstein) 88%, var(--salbei));
 }
 
@@ -120,9 +127,13 @@ html.lenis { scroll-behavior: auto; }
 
 /* ----------------------------------------------------------------- mobile -- */
 @media (max-width: 760px) {
-  .stop, .stop--lead, .stop--trail {
-    left: var(--gutter); right: var(--gutter); width: auto; bottom: max(1.5rem, env(safe-area-inset-bottom));
-  }
+  /* Phones: full-width bands, alternating top (under the logo tile) and bottom. */
+  .stop { left: var(--gutter); right: var(--gutter); width: auto; translate: none; padding: 1.6rem 1.5rem 1.75rem; }
+  .stop--mid-left, .stop--bottom-left, .stop--bottom-right { top: auto; bottom: max(1.5rem, env(safe-area-inset-bottom)); }
+  .stop--top-right, .stop--top-left, .stop--mid-right { top: 6.5rem; bottom: auto; }
+  .stop h2 { font-size: clamp(1.6rem, 7vw, 2rem); }
+  .stop h3 { font-size: clamp(1.35rem, 6vw, 1.7rem); }
+  .stop p { font-size: 1rem; }
   .sheet { padding-right: var(--gutter); }
   .sheet--dark .foot { flex-direction: column; align-items: flex-start; }
   .split, .about, .kontakt { grid-template-columns: 1fr; }
@@ -136,7 +147,7 @@ html.lenis { scroll-behavior: auto; }
   .walk .garden__stage { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr)); align-content: end; gap: 1rem; }
   .walk .garden__open { grid-column: 1 / -1; }
   .stop {
-    position: relative; left: auto; right: auto; bottom: auto; width: auto;
+    position: relative; left: auto; right: auto; top: auto; bottom: auto; width: auto; translate: none;
     opacity: 1 !important; transform: none !important; visibility: visible;
   }
   .walk .garden__arrive { grid-column: 1 / -1; }

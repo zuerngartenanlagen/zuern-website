@@ -15,8 +15,9 @@ Two versions:
   viewport-heights), with the services as stops along the path, then Planung,
   Über mich, Kontakt. `tools/make_sequence.sh` starts the film at 3.35s (after its
   own title card and rail), upscales every frame 2x with Real-ESRGAN
-  (`tools/upscale.py`, local GPU) and writes 24 fps AVIF frames: `public/walk/seq/d`
-  (1600px) and `public/walk/seq/m` (phone portrait crop). `walk.js` draws them with
+  (`tools/upscale.py`, local GPU) and writes 24 fps AVIF frame sets in `public/walk/seq`: `d` 1600px (desktop),
+  `h` 2560px (large and tall screens), `m` 1120x1440 (phone portrait crop);
+  `walk.js` picks the set by the pixels the canvas needs. `walk.js` draws them with
   WebGL, loading outward from the playhead and blending neighbours by the
   playhead fraction. Frames instead of `<video>` because seeking a video per
   scroll tick stutters, worst on phones. It plays **backwards** by default

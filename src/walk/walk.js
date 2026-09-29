@@ -10,7 +10,9 @@
    atlas image) tell the shader where the water is, and only there it adds a slow
    shimmer and now and then a ring from a falling drop.
 
-     data-walk-d / data-walk-m   frame URL prefixes (desktop, phone): 001.avif …
+     data-walk-d / -h / -m       frame URL prefixes: desktop 1600px, large screens
+                                 2560px, phone portrait 1120px (001.avif …). The
+                                 set is picked by the pixels the canvas needs.
      data-water                  water atlas prefix: {prefix}-d.webp, -m.webp, .json
      data-frames                 frame count
      data-hold                   share of the walk that rests on the last frame
@@ -35,7 +37,11 @@
   var MAX_DROPS = 4;
 
   var phone = matchMedia('(max-width: 760px)').matches;
-  var base = phone ? cv.dataset.walkM : cv.dataset.walkD;
+  // Frame height the canvas needs at device resolution. Cover-fit fills the height
+  // on tall windows and the width on wide ones; the film is 16:9.
+  var needH = Math.max(cv.clientHeight, cv.clientWidth * 9 / 16) * (devicePixelRatio || 1);
+  var hd = !phone && !!cv.dataset.walkH && needH > 1000;
+  var base = phone ? cv.dataset.walkM : hd ? cv.dataset.walkH : cv.dataset.walkD;
   var N = parseInt(cv.dataset.frames, 10);
   var HOLD = parseFloat(cv.dataset.hold) || 0;
   var query = new URLSearchParams(location.search).get('walk');
@@ -288,8 +294,8 @@
   }
 
   // ------------------------------------------------------------------ frame --
-  // Frames are 1600px (phone 720px) wide: a canvas beyond that adds GPU work, not detail.
-  var MAX_W = phone ? 900 : 1920;
+  // Beyond the frames' own resolution a bigger canvas adds GPU work, not detail.
+  var MAX_W = phone ? 1400 : hd ? 2880 : 1920;
   function resize() {
     var dpr = Math.min(devicePixelRatio || 1, 2, MAX_W / Math.max(cv.clientWidth, 1));
     cv.width = Math.round(cv.clientWidth * dpr);
