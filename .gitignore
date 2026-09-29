@@ -4,3 +4,13 @@ dist/
 .env
 .env.*
 !.env.example
+
+# scroll-craft working files: generations, frames, screenshots, intermediates.
+# The deployable demo is copied to public/demo by `just demo`.
+scrollcraft/builds/*/gen/
+scrollcraft/builds/*/raw/
+scrollcraft/builds/*/lab/
+scrollcraft/builds/*/out/
+scrollcraft/builds/*/assets/
+scrollcraft/builds/*/node_modules/
+scrollcraft/lab/
