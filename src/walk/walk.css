@@ -106,6 +106,9 @@ html.lenis { scroll-behavior: auto; }
   border-top: 1px solid color-mix(in srgb, var(--kalkstein) 14%, transparent);
 }
 
+/* The logo only ever sits on a light ground: on the dark footer it gets its own tile. */
+.foot__logo { display: block; width: clamp(7rem, 10vw, 9rem); padding: 0.7rem 0.95rem 0.6rem; background: var(--kalkstein); box-sizing: content-box; }
+.foot__logo img { display: block; width: 100%; height: auto; }
 .foot__legal { display: flex; gap: 1.5rem; }
 .foot__legal a { color: var(--kalkstein); text-decoration: none; border-bottom: 1px solid var(--messing); padding-block: 0.3rem; }
 .foot__legal a:hover { color: var(--messing); }
