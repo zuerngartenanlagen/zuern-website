@@ -38,7 +38,6 @@ werkplan.html                                   Bisherige Startseite im Werkplan
 impressum.html, datenschutz.html                Rechtliches
 src/walk/                                       Startseite: Scroll-Engine, Film-Player, Wasser-Shader, Styles
 public/walk/                                    Filmbilder (AVIF), Wassermasken, Ebenen-Bilder (feste URLs)
-public/demo/index.html                          Weiterleitung der alten Demo-URL auf die Startseite
 src/main.ts                                     Einstieg der Werkplan-Seite, initialisiert die Module
 src/scripts/nav.ts                              Mobiles Menü, aktiver Menüpunkt
 src/scripts/contact-form.ts                     Validierung und mailto-Versand des Formulars
