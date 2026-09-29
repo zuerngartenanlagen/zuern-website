@@ -5,9 +5,12 @@
 // first section. Scrolling is held there (Lenis stopped) and every gesture
 // (a wheel or trackpad swipe, a touch swipe, an arrow key) glides exactly one
 // point on. Past the last point the sections scroll freely; scrolling back up
-// into the walk lands on the nearest point and stepping resumes. Clicks (the
-// menu, the dots) jump straight to their target; only gestures glide. The dots
-// show where you are: always on phones, on large screens while in the walk.
+// into the walk lands on the nearest point and stepping resumes. The menu
+// jumps straight to its target; gestures, the dots and the up/down arrows at
+// the right edge glide. On phones the dots
+// jump too. The dots
+// show where you are: on phones one per point, always; on large screens, where
+// the rail already covers the sections, one per service, while on a service.
 // Without Lenis (reduced motion) nothing is held.
 import type Lenis from 'lenis';
 
@@ -15,9 +18,15 @@ interface Point {
   label: string;
   y: () => number;
   inWalk: boolean;
+  isService?: boolean;
+  card?: HTMLElement;
 }
 
+const CARD_MARGIN = 16;       // px a phone card keeps from the screen's bottom edge
+
 const GLIDE_S = 1.1;          // seconds to glide to the next point
+const GLIDE_EACH_S = 0.35;    // and this much for every further point passed
+const phone = matchMedia('(max-width: 760px)');
 const WHEEL_MIN = 12;         // ignore tiny wheel jitter (px)
 const WHEEL_QUIET_MS = 220;   // a pause this long ends a wheel/trackpad gesture
 const SWIPE_MIN = 40;         // touch travel that counts as a swipe (px)
@@ -33,11 +42,11 @@ function collectPoints(act: HTMLElement): Point[] {
   const at = (p: number) => (): number => act.offsetTop + p * (act.offsetHeight - innerHeight);
   const points: Point[] = [{ label: 'Start', y: at(0), inWalk: true }];
 
-  act.querySelectorAll('.stop').forEach((stop) => {
+  act.querySelectorAll<HTMLElement>('.stop').forEach((stop) => {
     const w = windowOf(stop);
     const hold = ((w[1] ?? 0) + (w[2] ?? 0)) / 2;
     const title = stop.querySelector('h2, h3')?.textContent?.trim() ?? 'Leistung';
-    points.push({ label: title, y: at(hold), inWalk: true });
+    points.push({ label: title, y: at(hold), inWalk: true, isService: true, card: stop });
   });
 
   const arrive = act.querySelector('.garden__arrive');
@@ -61,14 +70,57 @@ function buildDots(points: Point[], go: (i: number) => void): HTMLButtonElement[
   const dots = points.map((pt, i) => {
     const b = document.createElement('button');
     b.type = 'button';
-    b.className = 'dots__dot';
+    b.className = pt.isService ? 'dots__dot dots__dot--service' : 'dots__dot';
     b.setAttribute('aria-label', pt.label);
+    const label = document.createElement('span');
+    label.className = 'dots__label';
+    label.setAttribute('aria-hidden', 'true');
+    label.textContent = pt.label;
+    b.append(label);
     b.addEventListener('click', () => go(i));
     nav.append(b);
     return b;
   });
   document.body.append(nav);
   return dots;
+}
+
+const ARROW_UP = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20V5M6 11l6-6 6 6"/></svg>';
+const ARROW_DOWN = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v15M6 13l6 6 6-6"/></svg>';
+
+function buildSteps(): { group: HTMLElement; up: HTMLButtonElement } {
+  const group = document.createElement('nav');
+  group.className = 'walk-steps';
+  group.setAttribute('aria-label', 'Leistungen blättern');
+  const button = (label: string, attr: string, icon: string): HTMLButtonElement => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-label', label);
+    b.toggleAttribute(attr, true);
+    b.innerHTML = icon;
+    group.append(b);
+    return b;
+  };
+  const up = button('Zurück', 'data-walk-prev', ARROW_UP);
+  button('Weiter', 'data-walk-next', ARROW_DOWN);
+  document.body.append(group);
+  return { group, up };
+}
+
+// Phones: each card's brass top edge sits level with its dot, so the card
+// hangs from the dot it belongs to. The stage is pinned to the viewport, so
+// viewport y is stage y. Cards that would run off the bottom move up.
+function alignCards(points: Point[], dots: HTMLButtonElement[]): void {
+  points.forEach((pt, i) => {
+    const card = pt.card;
+    const dot = dots[i];
+    if (!card || !dot) return;
+    if (!phone.matches) { card.style.removeProperty('--card-top'); return; }
+    const d = dot.getBoundingClientRect();
+    const border = parseFloat(getComputedStyle(card).borderTopWidth) || 0;
+    const top = Math.min(d.top + d.height / 2 - border / 2, innerHeight - card.offsetHeight - CARD_MARGIN);
+    card.style.setProperty('--card-top', `${Math.round(top)}px`);
+  });
 }
 
 export function initSteps(lenis: Lenis | null): void {
@@ -99,17 +151,30 @@ export function initSteps(lenis: Lenis | null): void {
     return best;
   };
 
-  const dots = buildDots(points, (i) => { const pt = points[i]; if (pt) jumpTo(pt.y()); });
+  const dots = buildDots(points, (i) => {
+    const pt = points[i];
+    if (!pt) return;
+    if (phone.matches) jumpTo(pt.y());
+    else glideTo(pt.y());
+  });
   const nav = dots[0]?.parentElement;
+  const align = (): void => alignCards(points, dots);
+  align();
+  addEventListener('resize', align);
+  void document.fonts?.ready.then(align);   // card heights settle once the fonts are in
+  // Without Lenis nothing is held and the cards simply scroll: no arrows.
+  const arrows = lenis ? buildSteps() : null;
 
   function markActive(): void {
     let best = 0;
     points.forEach((pt, i) => { if (scrollY >= pt.y() - innerHeight * 0.35) best = i; });
     dots.forEach((d, i) => d.toggleAttribute('aria-current', i === best));
-    nav?.classList.toggle('is-walk', scrollY < zoneEnd() - innerHeight * 0.5);
+    nav?.classList.toggle('is-service', Boolean(points[best]?.isService));
+    arrows?.group.classList.toggle('is-on', scrollY < zoneEnd() - innerHeight * 0.5);
+    if (arrows) arrows.up.disabled = nearestZone() === 0;
   }
 
-  // Clicks jump: no glide through the film, straight to the target.
+  // The menu jumps: no glide through the film, straight to the target.
   function jumpTo(y: number): void {
     if (lenis) lenis.scrollTo(y, { immediate: true, force: true });
     else scrollTo({ top: y, behavior: 'instant' });
@@ -118,13 +183,15 @@ export function initSteps(lenis: Lenis | null): void {
     markActive();
   }
 
+  // Longer glides take longer, so the film never races through its frames.
   function glideTo(y: number): void {
     if (!lenis) { scrollTo({ top: y, behavior: 'instant' }); markActive(); return; }
     const inZone = y <= zoneEnd() + 1;
+    const passed = points.filter((pt) => (pt.y() - scrollY) * (pt.y() - y) <= 0).length - 1;
     gliding = true;
     hold(true);
     lenis.scrollTo(y, {
-      duration: GLIDE_S, easing: ease, force: true,
+      duration: GLIDE_S + GLIDE_EACH_S * Math.max(0, passed - 1), easing: ease, force: true,
       onComplete: () => { gliding = false; pointBefore = nearestZone(); hold(inZone); markActive(); },
     });
   }
@@ -182,6 +249,15 @@ export function initSteps(lenis: Lenis | null): void {
     if (down && atZoneEnd()) { hold(false); return; }
     e.preventDefault();
     step(down ? 1 : -1);
+  });
+
+  // The arrows: one point on or back, gliding like a gesture.
+  document.addEventListener('click', (e) => {
+    const el = e.target as Element | null;
+    const dir = el?.closest?.('[data-walk-next]') ? 1 : el?.closest?.('[data-walk-prev]') ? -1 : 0;
+    if (!dir || gliding) return;
+    const to = zone[nearestZone() + dir];
+    if (to) glideTo(to.y());
   });
 
   // In-page links (rail, logo, skip link) jump, and work while held.

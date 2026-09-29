@@ -45,6 +45,35 @@ html.lenis { scroll-behavior: auto; }
   color: color-mix(in srgb, var(--kalkstein) 88%, var(--salbei));
 }
 
+/* ------------------------------------------------------------------ weiter -- */
+/* A fixed pair (up, down) at the right edge while the walk is on screen. The
+   pair is a tab: square on the outer side, sliding out from behind the rail
+   (phones: the screen edge). Both glide one point (steps.ts). */
+.walk-steps button {
+  display: grid; place-items: center; padding: 0; cursor: pointer;
+  color: var(--messing); background: none; border: 0;
+}
+.walk-steps svg {
+  width: 1.5rem; height: 1.5rem;
+  fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+}
+
+.walk-steps {
+  position: fixed; z-index: 39; right: var(--rail); bottom: 2rem;
+  display: flex; flex-direction: column;
+  background: rgb(20 36 33 / 0.92);
+  border: 1.5px solid var(--messing); border-right: 0;
+  border-radius: 0.9rem 0 0 0.9rem; overflow: hidden;
+  box-shadow: 0 2px 6px rgb(8 14 12 / 0.2), 0 12px 32px rgb(8 14 12 / 0.28);
+  visibility: hidden; transform: translateX(calc(100% + 1rem));
+  transition: transform 500ms var(--ease), visibility 0s 500ms;
+}
+.walk-steps.is-on { visibility: visible; transform: none; transition-delay: 0s; }
+.walk-steps button { width: 3.25rem; height: 3.25rem; transition: background-color 200ms var(--ease), color 200ms var(--ease); }
+.walk-steps button + button { border-top: 1px solid color-mix(in srgb, var(--messing) 40%, transparent); }
+.walk-steps button:hover:not(:disabled) { background: var(--patina); color: var(--kalkstein); }
+.walk-steps button:disabled { color: color-mix(in srgb, var(--messing) 35%, transparent); cursor: default; }
+
 /* ----------------------------------------------------------------- sheets -- */
 .sheet {
   position: relative; z-index: 3;
@@ -72,14 +101,21 @@ html.lenis { scroll-behavior: auto; }
 .steps li { padding: 1.5rem 1.5rem 0 0; }
 .steps h3 { margin: 0; color: var(--patina); font-size: 1.15rem; font-weight: 700; }
 .steps h3::before {
-  content: ""; display: block; width: 0.55rem; height: 0.55rem; margin-bottom: 1rem;
-  background: var(--messing); transform: rotate(45deg);
+  content: ""; display: block; width: 1.9rem; aspect-ratio: 1127 / 527; margin-bottom: 1rem;
+  background: url("../assets/logo/zuern-leaf-messing.svg") no-repeat center / contain;
 }
 .steps p { margin: 0.6rem 0 0; line-height: 1.6; color: color-mix(in srgb, var(--graphit) 85%, var(--kalkstein)); }
 
 .about { display: grid; grid-template-columns: minmax(0, 22rem) 1fr; gap: clamp(2rem, 5vw, 5rem); align-items: start; }
 .portrait img { display: block; width: 100%; height: auto; }
 .about .intro { margin-top: 1.5rem; }
+/* Marcel in his own words, set off by a brass line. */
+.quote { margin: 1.5rem 0 0; padding-left: 1.25rem; border-left: 2px solid var(--messing); }
+.quote p {
+  margin: 0; max-width: 40ch;
+  font-size: clamp(1.2rem, 1.05rem + 0.6vw, 1.5rem); font-weight: 400; line-height: 1.45;
+  color: var(--patina);
+}
 .facts { margin: 2rem 0 0; border-top: 1px solid color-mix(in srgb, var(--patina) 70%, transparent); }
 .facts div {
   display: grid; grid-template-columns: 11rem 1fr; gap: 1rem; padding: 1rem 0;
@@ -89,12 +125,23 @@ html.lenis { scroll-behavior: auto; }
 .facts dd { margin: 0; line-height: 1.55; }
 
 .kontakt { max-width: 44rem; }
-.kontakt .intro { margin-top: 1.25rem; color: color-mix(in srgb, var(--kalkstein) 88%, var(--salbei)); }
-.kontakt__list { margin: 2.25rem 0 2.5rem; border-top: 1px solid color-mix(in srgb, var(--messing) 60%, transparent); }
+/* The contact section's heading ("Kontakt") is for screen readers and the
+   dots only; what shows is the person you reach, set light. */
+.kontakt__name {
+  margin: 0 0 2.25rem;
+  font-size: clamp(1.6rem, 1.1rem + 1.7vw, 2.5rem); font-weight: 400; line-height: 1.15;
+  color: var(--kalkstein);
+}
+.sr-only {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+.kontakt__list { margin: 0 0 2.5rem; border-top: 1px solid color-mix(in srgb, var(--messing) 60%, transparent); }
 .kontakt__list div {
   display: grid; grid-template-columns: 8rem 1fr; gap: 1rem; padding: 1rem 0;
   border-bottom: 1px solid color-mix(in srgb, var(--kalkstein) 14%, transparent);
 }
+.kontakt__list div:last-child { border-bottom: 0; }
 .kontakt__list dt { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--messing); padding-top: 0.2rem; }
 .kontakt__list dd { margin: 0; }
 .kontakt__list a { color: var(--kalkstein); font-weight: 700; text-decoration-color: var(--messing); text-underline-offset: 0.3em; }
@@ -130,8 +177,8 @@ html.lenis { scroll-behavior: auto; }
 
 /* ------------------------------------------------------------------- dots -- */
 /* One dot per point of the walk and per section, built by steps.ts. Phones
-   always show them; large screens show them next to the rail while the walk
-   (the services) is on screen. */
+   always show them all; large screens show only the services' dots, next to
+   the rail (which covers the sections), while a service is on screen. */
 .dots {
   position: fixed; z-index: 44; right: calc(var(--rail) + 0.75rem); top: 50%; translate: 0 -50%;
   display: flex; flex-direction: column; gap: 0.1rem;
@@ -140,7 +187,8 @@ html.lenis { scroll-behavior: auto; }
   opacity: 0; visibility: hidden;
   transition: opacity 300ms var(--ease), visibility 0s 300ms;
 }
-.dots.is-walk { opacity: 1; visibility: visible; transition-delay: 0s; }
+.dots.is-service { opacity: 1; visibility: visible; transition-delay: 0s; }
+@media (min-width: 761px) { .dots__dot:not(.dots__dot--service) { display: none; } }
 .dots__dot {
   display: grid; place-items: center; width: 1.75rem; height: 1.75rem;
   padding: 0; border: 0; background: none; cursor: pointer;
@@ -152,23 +200,48 @@ html.lenis { scroll-behavior: auto; }
 }
 .dots__dot:hover::before { background: color-mix(in srgb, var(--kalkstein) 40%, transparent); }
 .dots__dot[aria-current]::before { background: var(--messing); border-color: var(--messing); transform: scale(1.5); }
+.dots__dot { position: relative; }
+/* The target's name slides out to the left of a hovered or focused dot. */
+.dots__label {
+  position: absolute; right: calc(100% + 0.6rem); top: 50%;
+  padding: 0.45rem 0.8rem; border-radius: 0.4rem;
+  white-space: nowrap; pointer-events: none;
+  font-size: 0.85rem; font-weight: 600; letter-spacing: 0.01em; color: var(--kalkstein);
+  background: rgb(20 36 33 / 0.92);
+  box-shadow: 0 2px 6px rgb(8 14 12 / 0.2), 0 10px 24px rgb(8 14 12 / 0.25);
+  translate: 0.75rem -50%; opacity: 0; clip-path: inset(0 0 0 100% round 0.4rem);
+  transition: translate 300ms var(--ease), opacity 200ms var(--ease), clip-path 300ms var(--ease);
+}
+.dots__dot[aria-current] .dots__label { color: var(--messing); }
+.dots__dot:focus-visible .dots__label { translate: 0 -50%; opacity: 1; clip-path: inset(0 round 0.4rem); }
+@media (hover: hover) {
+  .dots__dot:hover .dots__label { translate: 0 -50%; opacity: 1; clip-path: inset(0 round 0.4rem); }
+}
 
 /* ----------------------------------------------------------------- mobile -- */
 @media (max-width: 760px) {
-  /* Phones: full-width bands, alternating top (under the logo tile) and bottom. */
-  .stop { left: var(--gutter); right: var(--gutter); width: auto; translate: none; padding: 1.6rem 1.5rem 1.75rem; }
-  .stop--mid-left, .stop--bottom-left, .stop--bottom-right { top: auto; bottom: max(1.5rem, env(safe-area-inset-bottom)); }
-  .stop--top-right, .stop--top-left, .stop--mid-right { top: 6.5rem; bottom: auto; }
+  /* Phones: full-width bands whose brass edge sits level with their dot
+     (--card-top, set by steps.ts); centred until that is known. */
+  .stop { left: var(--gutter); right: var(--gutter); width: auto; top: 50%; bottom: auto; translate: 0 -50%; padding: 1.6rem 1.5rem 1.75rem; }
+  .stop[style*="--card-top"] { top: var(--card-top); translate: none; }
   .stop h2 { font-size: clamp(1.6rem, 7vw, 2rem); }
   .stop h3 { font-size: clamp(1.35rem, 6vw, 1.7rem); }
   .stop p { font-size: 1rem; }
-  .sheet { padding-right: var(--gutter); }
-  .sheet--dark .foot { flex-direction: column; align-items: flex-start; }
+  /* Room under the fixed logo tile: sections are landed on at their top. */
+  .sheet { padding-top: 8.5rem; padding-right: var(--gutter); }
+  .sheet--dark .foot { flex-direction: column; align-items: center; }
+  .foot__legal { justify-content: center; }
   .dots { right: 0.4rem; opacity: 1; visibility: visible; }
+  /* In the strip right of the cards, under the dots, against the screen edge. */
+  .walk-steps { right: 0; bottom: max(1.5rem, env(safe-area-inset-bottom)); }
+  .walk-steps button { width: 2.75rem; height: 2.75rem; }
+  .walk-steps svg { width: 1.25rem; height: 1.25rem; }
   /* Keep cards clear of the dots. */
   .stop { right: calc(var(--gutter) + 1.9rem); }
   .split, .about, .kontakt { grid-template-columns: 1fr; }
-  .steps { grid-template-columns: 1fr; row-gap: 0.5rem; }
+  .steps { grid-template-columns: 1fr; row-gap: 0.5rem; text-align: center; }
+  .steps li { padding-inline: 1.25rem; }  /* even sides, clear of the dots */
+  .steps h3::before { margin-inline: auto; }
   .facts div, .kontakt__list div { grid-template-columns: 1fr; gap: 0.3rem; }
 }
 
@@ -182,4 +255,5 @@ html.lenis { scroll-behavior: auto; }
     opacity: 1 !important; transform: none !important; visibility: visible;
   }
   .walk .garden__arrive { grid-column: 1 / -1; }
+  .walk-steps { display: none; }
 }

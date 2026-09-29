@@ -35,7 +35,9 @@
   var AHEAD = 24;          // frames ahead of the playhead that load first
   var CONCURRENCY = 6;
   var MAX_DROPS = 4;
-  var JUMP_FRAMES = 12;    // playhead gaps larger than this are jumps: no easing
+  var JUMP_FRAMES = 12;    // scroll moving the film this far in one tick is a jump: no easing
+  var REST_MS = 120;       // scroll still this long: settle on a whole frame
+  var WET_FADE = 0.06;     // water fades in at rest and out on the move, per frame
 
   var phone = matchMedia('(max-width: 760px)').matches;
   // Frame height the canvas needs at device resolution. Cover-fit fills the height
@@ -231,7 +233,6 @@
           px: x.getImageData(0, 0, c.width, c.height).data, cover: [] };
         for (var i = 0; i < N; i++) water.cover[i] = coverOf(i);
         gl.uniform2f(U.uCell, water.cw / water.w, water.ch / water.h);
-        gl.uniform1f(U.uHasMask, 1);
         state.dirty = true;
       }).catch(function (err) { console.error('[walk] no water mask, still frames only', err); });
     }
@@ -268,7 +269,8 @@
       animated: function (pos) {
         return !!water && water.cover[clamp(Math.round(film(pos)), 0, N - 1)] > 0.005;
       },
-      draw: function (pos, now) {
+      // wet: 0..1, how much the water moves; only at rest (see tick).
+      draw: function (pos, now, wet) {
         var f = clamp(film(pos), 0, N - 1);
         var a0 = Math.floor(f), frac = f - a0;
         var a = nearest(a0), b = frac > 0.001 ? nearest(Math.min(a0 + 1, N - 1)) : a;
@@ -284,7 +286,8 @@
         var shown = frac < 0.5 ? a : b;
         if (water) {
           gl.uniform2f(U.uCellA, (shown % water.cols) * water.cw / water.w, Math.floor(shown / water.cols) * water.ch / water.h);
-          if (water.cover[shown] > 0.005) dropOn(shown, now);
+          gl.uniform1f(U.uHasMask, wet);
+          if (wet > 0.5 && water.cover[shown] > 0.005) dropOn(shown, now);
         }
         var buf = new Float32Array(MAX_DROPS * 4);
         drops.forEach(function (d, k) { buf.set([d.u, d.v, (now - d.t0) / 1000, d.amp], k * 4); });
@@ -317,20 +320,33 @@
     return travel > 0 ? clamp(-r.top / travel, 0, 1) : 0;
   }
 
-  var last = 0;
+  // At rest the playhead settles on a whole frame: between two frames the
+  // shader blends them, which reads soft. While moving, the blend keeps it smooth.
+  // The water only moves while locked in on a point: it fades in once the film
+  // has come to rest and out as soon as it moves again.
+  var last = 0, raw = -1, still = 0, wet = 0;
   function tick(now) {
     requestAnimationFrame(tick);
     if (!state.visible || !state.live || document.hidden) return;
-    state.target = clamp(progress() / (1 - HOLD), 0, 1) * (N - 1);
+    var r = clamp(progress() / (1 - HOLD), 0, 1) * (N - 1);
+    var jumped = raw >= 0 && Math.abs(r - raw) > JUMP_FRAMES;
+    if (r !== raw) { raw = r; still = now; }
+    state.target = now - still > REST_MS ? Math.round(raw) : raw;
     var d = state.target - state.cur;
-    var moving = Math.abs(d) > 0.002;
-    // A jump (menu, dots) cuts straight to its frame instead of fast-forwarding.
-    state.cur = !moving || Math.abs(d) > JUMP_FRAMES ? state.target : state.cur + d * LERP;
-    // Still scroll and still water: nothing to draw. Still scroll, moving water: 30 fps.
+    var moving = d !== 0;
+    // A jump (the menu) cuts straight to its frame instead of fast-forwarding; a
+    // glide, however long, eases. The last hundredth of a frame lands exactly,
+    // so a rest is one clean frame.
+    state.cur = Math.abs(d) < 0.01 || jumped ? state.target : state.cur + d * LERP;
+    var rest = !moving && now - still > REST_MS;
     var water = R.animated && R.animated(state.cur);
-    if (!moving && !state.dirty && !(water && now - last > 32)) return;
+    var wetTo = rest && water ? 1 : 0;
+    var fading = wet !== wetTo;
+    wet = Math.abs(wetTo - wet) < 0.01 ? wetTo : wet + (wetTo - wet) * WET_FADE;
+    // Still film and still water: nothing to draw. Still film, moving water: 30 fps.
+    if (!moving && !state.dirty && !fading && !(wet > 0 && now - last > 32)) return;
     last = now;
-    R.draw(state.cur, now);
+    R.draw(state.cur, now, wet);
     state.dirty = false;
   }
 

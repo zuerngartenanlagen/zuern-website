@@ -55,9 +55,9 @@
       var out = w.length > 2 ? ease(clamp((p - w[2]) / (w[3] - w[2]), 0, 1)) : 0;
       var vis = o * (1 - out);
       if (c.el.getAttribute('data-g-move') === 'panel') {
-        // A panel does not fade: it slides off, left on desktop, down on phones.
+        // A panel does not fade: it slides off, left on desktop, up on phones.
         var gone = out * 105;
-        c.el.style.transform = phone.matches ? 'translate3d(0,' + gone + '%,0)' : 'translate3d(' + -gone + '%,0,0)';
+        c.el.style.transform = phone.matches ? 'translate3d(0,' + -gone + '%,0)' : 'translate3d(' + -gone + '%,0,0)';
         c.el.classList.toggle('is-hidden', out > 0.99);
         return;
       }
