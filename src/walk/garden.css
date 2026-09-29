@@ -97,8 +97,9 @@ body {
   background: linear-gradient(90deg, rgb(16 24 21 / 0.72) 0%, rgb(16 24 21 / 0.45) 55%, transparent 100%);
 }
 .garden__scrim--arrive {
-  inset: 0 auto 0 0; width: min(64vw, 50rem);
-  background: linear-gradient(90deg, rgb(20 36 33 / 0.86) 0%, rgb(20 36 33 / 0.6) 58%, transparent 100%);
+  inset: 0;
+  background: radial-gradient(ellipse 60% 55% at calc(50% - var(--rail) / 2) 50%,
+    rgb(20 36 33 / 0.84) 0%, rgb(20 36 33 / 0.55) 60%, rgb(20 36 33 / 0.25) 100%);
 }
 
 .garden__open,
@@ -147,9 +148,12 @@ body {
   text-shadow: 0 2px 18px rgb(10 18 16 / 0.7), 0 1px 3px rgb(10 18 16 / 0.6);
 }
 
+/* The arrival: heading, leaf, line, number and the call button, all in the
+   middle of the screen (left of the rail). */
 .garden__arrive {
-  left: var(--gutter); top: 50%; translate: 0 -50%;
-  width: min(29rem, 44vw);
+  left: calc(50% - var(--rail) / 2); top: 50%; translate: -50% -50%;
+  width: min(32rem, calc(100% - 2 * var(--gutter) - var(--rail)));
+  text-align: center;
 }
 .garden__title {
   margin: 0;
@@ -162,11 +166,21 @@ body {
   background: url("../assets/logo/zuern-leaf-messing.svg") no-repeat center / contain;
 }
 .garden__arrive p {
-  margin: 1.4rem 0 0; max-width: 38ch;
+  margin: 1.4rem auto 0; max-width: 38ch;
   font-size: clamp(1rem, 0.95rem + 0.3vw, 1.15rem); line-height: 1.6;
   color: color-mix(in srgb, var(--kalkstein) 90%, var(--salbei));
 }
-.garden__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.75rem; margin-top: 2rem; }
+.garden__actions { display: flex; flex-direction: column; align-items: center; gap: 1rem; margin-top: 2rem; }
+.call {
+  display: grid; place-items: center; width: 4rem; height: 4rem; border-radius: 50%;
+  background: var(--messing); color: var(--patina);
+  box-shadow: 0 2px 4px rgb(0 0 0 / 0.18), 0 8px 20px rgb(0 0 0 / 0.2);
+  transition: background-color 200ms var(--ease), transform 200ms var(--ease);
+}
+.garden__buttons { display: flex; justify-content: center; gap: 1rem; }
+.call svg { width: 1.9rem; height: 1.9rem; fill: currentColor; }
+.call svg.call__line { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.call:hover { background: color-mix(in srgb, var(--messing) 86%, var(--kalkstein)); transform: scale(1.06); }
 .btn {
   display: inline-flex; align-items: center; min-height: 3rem; padding: 0 1.5rem;
   background: var(--messing); color: #1b1a16;
@@ -218,15 +232,16 @@ body {
 @media (max-width: 760px) {
   .rail { display: none; }
   .contact { padding-right: var(--gutter); }
-  .garden__scrim--open,
-  .garden__scrim--arrive {
+  .garden__scrim--open {
     inset: auto 0 0 0; width: auto; height: 72%;
     background: linear-gradient(0deg, rgb(16 26 23 / 0.9) 0%, rgb(16 26 23 / 0.65) 55%, transparent 100%);
   }
-  .garden__arrive {
-    left: var(--gutter); right: var(--gutter); width: auto;
-    top: auto; bottom: max(2.5rem, env(safe-area-inset-bottom)); translate: none;
+  .garden__scrim--arrive {
+    background: radial-gradient(ellipse 90% 50% at 50% 50%,
+      rgb(20 36 33 / 0.86) 0%, rgb(20 36 33 / 0.6) 60%, rgb(20 36 33 / 0.3) 100%);
   }
+  /* Even margins, wide enough on both sides to stay clear of the dots. */
+  .garden__arrive { left: 50%; width: calc(100% - 2 * (var(--gutter) + 1.9rem)); }
   /* Phones: the sheet sits on top, the garden shows below it. */
   .garden__open {
     inset: 0 0 auto 0; width: auto;

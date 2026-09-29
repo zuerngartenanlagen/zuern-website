@@ -83,12 +83,18 @@
     });
   });
 
-  // The small top-left logo: on once the opening panel has gone.
+  // The small top-left logo: on once the opening panel has gone. Over the film
+  // it sits on its Kalkstein tile; once the sections are under it, the tile
+  // goes and the logo stands plain, all white over the dark contact section.
   var brand = document.querySelector('[data-g-brand]');
+  var dark = document.querySelector('.sheet--dark');
   function brandAt() {
     if (!brand) return;
     var p = progress();
+    var edge = brand.getBoundingClientRect().bottom;
     brand.classList.toggle('is-on', reduce ? scrollY > innerHeight * 0.6 : (p > 0.12 || act.getBoundingClientRect().bottom < innerHeight));
+    brand.classList.toggle('is-plain', act.getBoundingClientRect().bottom < edge);
+    brand.classList.toggle('is-dark', !!dark && dark.getBoundingClientRect().top < edge);
   }
   addEventListener('scroll', brandAt, { passive: true });
   addEventListener('resize', brandAt);

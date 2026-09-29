@@ -82,10 +82,12 @@
 
         <div class="garden__scrim garden__scrim--arrive" data-g-window="0.83 0.89" aria-hidden="true"></div>
         <div class="garden__arrive" data-g-window="0.85 0.91">
-          <h2 class="garden__title">Wo fangen wir an?</h2>
-          <p>Für Hausgärten zwischen Heilbronn und Stuttgart.</p>
+          <h2 class="garden__title">Packen wir es an!</h2>
           <div class="garden__actions">
-            <a class="phone" href="tel:+491758270998">0175 8270998</a>
+            <div class="garden__buttons">
+              <a class="call" href="tel:+491758270998" aria-label="0175 8270998 anrufen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 3.5h2.6l1.4 4.1-2 1.5a12 12 0 0 0 6.3 6.3l1.5-2 4.1 1.4v2.6a2 2 0 0 1-2.1 2A16.5 16.5 0 0 1 4.6 5.6a2 2 0 0 1 2-2.1z"/></svg></a>
+              <a class="call" href="mailto:info@zuern-gartenanlagen.de" aria-label="E-Mail an info@zuern-gartenanlagen.de"><svg viewBox="0 0 24 24" aria-hidden="true" class="call__line"><rect x="3.5" y="5.5" width="17" height="13" rx="1.5"/><path d="m4 7 8 6 8-6"/></svg></a>
+            </div>
           </div>
         </div>
       </div>
@@ -95,7 +97,7 @@
       <div class="sheet__inner" data-sc-in>
         <div class="split">
           <h2 id="planung-title">Erst sehen, dann bauen</h2>
-          <p class="intro">Nach dem Aufmaß vor Ort entstehen Plan und 3D-Modell Ihres Gartens. Wege, Höhen, Beläge und Pflanzen sehen Sie im Zusammenhang, solange Änderungen noch einfach sind.</p>
+          <p class="intro">Nach dem Aufmaß vor Ort zeichne ich den Plan und ein 3D-Modell Ihres Gartens. Darin sehen Sie Wege, Höhen, Beläge und Pflanzen so, wie sie später zusammen wirken. Passt etwas nicht, ändern wir es, solange es noch einfach geht.</p>
         </div>
         <ol class="steps" data-sc-stagger="90">
           <li data-sc-in><h3>Termin vor Ort</h3><p>Wir besprechen Wünsche, Bestand und Rahmen. Ich nehme das Grundstück digital auf.</p></li>
@@ -103,6 +105,30 @@
           <li data-sc-in><h3>Bau</h3><p>Ich setze den abgestimmten Plan um und begleite die Arbeiten bis zur Abnahme.</p></li>
           <li data-sc-in><h3>Pflege</h3><p>Auf Wunsch betreue ich den Garten danach weiter.</p></li>
         </ol>
+        <!-- Eine Bilderstrecke je Phase, gleiche Reihenfolge wie die Liste oben.
+             Platzhalter: Standbilder aus dem Film, bis echte Fotos da sind. -->
+        <div class="phase-show" aria-hidden="true">
+          <div class="phase-show__set is-active" data-phase="0">
+            <img class="is-on" src="/walk/seq/d/150.avif" width="1600" height="900" alt="" decoding="async" />
+            <img src="/walk/seq/d/140.avif" width="1600" height="900" alt="" loading="lazy" decoding="async" />
+            <img src="/walk/seq/d/130.avif" width="1600" height="900" alt="" loading="lazy" decoding="async" />
+          </div>
+          <div class="phase-show__set" data-phase="1">
+            <img class="is-on" src="/walk/seq/d/110.avif" width="1600" height="900" alt="" loading="lazy" decoding="async" />
+            <img src="/walk/seq/d/100.avif" width="1600" height="900" alt="" loading="lazy" decoding="async" />
+            <img src="/walk/seq/d/090.avif" width="1600" height="900" alt="" loading="lazy" decoding="async" />
+          </div>
+          <div class="phase-show__set" data-phase="2">
+            <img class="is-on" src="/walk/seq/d/070.avif" width="1600" height="900" alt="" loading="lazy" decoding="async" />
+            <img src="/walk/seq/d/060.avif" width="1600" height="900" alt="" loading="lazy" decoding="async" />
+            <img src="/walk/seq/d/050.avif" width="1600" height="900" alt="" loading="lazy" decoding="async" />
+          </div>
+          <div class="phase-show__set" data-phase="3">
+            <img class="is-on" src="/walk/seq/d/030.avif" width="1600" height="900" alt="" loading="lazy" decoding="async" />
+            <img src="/walk/seq/d/020.avif" width="1600" height="900" alt="" loading="lazy" decoding="async" />
+            <img src="/walk/seq/d/010.avif" width="1600" height="900" alt="" loading="lazy" decoding="async" />
+          </div>
+        </div>
       </div>
     </section>
 
@@ -120,14 +146,13 @@
             <p>„Ich plane jeden Garten so, als würde ich selbst darin leben. Und weil ich ihn auch baue, hält der Plan, was er verspricht.“</p>
           </blockquote>
           <div class="intro">
-            <p>Ich bin staatlich geprüfter Techniker für Garten- und Landschaftsbau und habe mehrere Jahre als Bauleiter in den Regionen Heilbronn-Franken und Stuttgart gearbeitet.</p>
             <p>Am 1.&nbsp;Oktober&nbsp;2026 gründe ich Zürn Gartenanlagen in Beilstein. Planung und Ausführung bleiben dabei in meiner Hand.</p>
           </div>
           <dl class="facts">
             <div><dt>Abschluss</dt><dd>Staatlich geprüfter Techniker, Bachelor Professional</dd></div>
             <div><dt>Erfahrung</dt><dd>Über acht Jahre im Garten- und Landschaftsbau, davon mehrere als Bauleiter</dd></div>
             <div><dt>Ausbildereignung</dt><dd>AdA-Schein</dd></div>
-            <div><dt>Einsatzgebiet</dt><dd>Beilstein, Bottwartal, Ludwigsburg, Heilbronn und der nördliche Großraum Stuttgart, etwa 50&nbsp;km um Beilstein</dd></div>
+            <div><dt>Einsatzgebiet</dt><dd>Beilstein und das Bottwartal und 50&nbsp;km darum</dd></div>
           </dl>
         </div>
       </div>
@@ -149,6 +174,7 @@
         <a class="foot__logo" href="#top">
           <img src="/src/assets/logo/zuern-logo-white.svg" alt="Zürn Gartenanlagen, zum Anfang" width="1683" height="796" loading="lazy" />
         </a>
+        <a class="foot__mail" href="mailto:info@zuern-gartenanlagen.de">info@zuern-gartenanlagen.de</a>
         <nav class="foot__legal" aria-label="Rechtliches">
           <a href="impressum.html">Impressum</a>
           <a href="datenschutz.html">Datenschutz</a>

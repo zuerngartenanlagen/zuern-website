@@ -7,7 +7,8 @@
 // point on. Past the last point the sections scroll freely; scrolling back up
 // into the walk lands on the nearest point and stepping resumes. The menu
 // jumps straight to its target; gestures, the dots and the up/down arrows at
-// the right edge glide. On phones the dots
+// the right edge glide. The arrows stay out on the whole page and step on
+// through the sections too. On phones the dots
 // jump too. The dots
 // show where you are: on phones one per point, always; on large screens, where
 // the rail already covers the sections, one per service, while on a service.
@@ -22,6 +23,7 @@ interface Point {
   card?: HTMLElement;
 }
 
+const ARROWS_SLIDE_MS = 500;  // the tab's slide, as in walk.css
 const CARD_MARGIN = 16;       // px a phone card keeps from the screen's bottom edge
 
 const GLIDE_S = 1.1;          // seconds to glide to the next point
@@ -88,7 +90,13 @@ function buildDots(points: Point[], go: (i: number) => void): HTMLButtonElement[
 const ARROW_UP = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20V5M6 11l6-6 6 6"/></svg>';
 const ARROW_DOWN = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v15M6 13l6 6 6-6"/></svg>';
 
-function buildSteps(): { group: HTMLElement; up: HTMLButtonElement } {
+interface Arrows {
+  show: (on: boolean, canUp: boolean, canDown: boolean) => void;
+}
+
+// The up/down tab. When the set of arrows changes (one <-> two), the whole tab
+// slides out, swaps its buttons out of sight and slides back in.
+function buildArrows(): Arrows {
   const group = document.createElement('nav');
   group.className = 'walk-steps';
   group.setAttribute('aria-label', 'Leistungen blättern');
@@ -102,9 +110,28 @@ function buildSteps(): { group: HTMLElement; up: HTMLButtonElement } {
     return b;
   };
   const up = button('Zurück', 'data-walk-prev', ARROW_UP);
-  button('Weiter', 'data-walk-next', ARROW_DOWN);
+  const down = button('Weiter', 'data-walk-next', ARROW_DOWN);
   document.body.append(group);
-  return { group, up };
+
+  let want = { on: false, up: false, down: true };
+  let swapping = false;
+  const setButtons = (): void => { up.disabled = !want.up; down.disabled = !want.down; };
+  const sync = (): void => {
+    if (swapping) return;
+    const same = up.disabled === !want.up && down.disabled === !want.down;
+    if (same || !group.classList.contains('is-on')) {
+      setButtons();
+      group.classList.toggle('is-on', want.on);
+      return;
+    }
+    swapping = true;
+    group.classList.remove('is-on');
+    setTimeout(() => { swapping = false; setButtons(); sync(); }, ARROWS_SLIDE_MS);
+  };
+  setButtons();
+  return {
+    show: (on, canUp, canDown) => { want = { on, up: canUp, down: canDown }; sync(); },
+  };
 }
 
 // Phones: each card's brass top edge sits level with its dot, so the card
@@ -163,15 +190,20 @@ export function initSteps(lenis: Lenis | null): void {
   addEventListener('resize', align);
   void document.fonts?.ready.then(align);   // card heights settle once the fonts are in
   // Without Lenis nothing is held and the cards simply scroll: no arrows.
-  const arrows = lenis ? buildSteps() : null;
+  const arrows = lenis ? buildArrows() : null;
+
+  // Where a point can actually be scrolled to: the last sections may sit
+  // closer to the page's end than a screen height.
+  const reach = (pt: Point): number => Math.min(pt.y(), document.documentElement.scrollHeight - innerHeight);
+  const nextPoint = (): Point | undefined => points.find((pt) => reach(pt) > scrollY + 2);
+  const prevPoint = (): Point | undefined => [...points].reverse().find((pt) => reach(pt) < scrollY - 2);
 
   function markActive(): void {
     let best = 0;
     points.forEach((pt, i) => { if (scrollY >= pt.y() - innerHeight * 0.35) best = i; });
     dots.forEach((d, i) => d.toggleAttribute('aria-current', i === best));
     nav?.classList.toggle('is-service', Boolean(points[best]?.isService));
-    arrows?.group.classList.toggle('is-on', scrollY < zoneEnd() - innerHeight * 0.5);
-    if (arrows) arrows.up.disabled = nearestZone() === 0;
+    arrows?.show(true, Boolean(prevPoint()), Boolean(nextPoint()));
   }
 
   // The menu jumps: no glide through the film, straight to the target.
@@ -251,13 +283,14 @@ export function initSteps(lenis: Lenis | null): void {
     step(down ? 1 : -1);
   });
 
-  // The arrows: one point on or back, gliding like a gesture.
+  // The arrows: one point on or back, gliding like a gesture, through the walk
+  // and on through the sections.
   document.addEventListener('click', (e) => {
     const el = e.target as Element | null;
     const dir = el?.closest?.('[data-walk-next]') ? 1 : el?.closest?.('[data-walk-prev]') ? -1 : 0;
     if (!dir || gliding) return;
-    const to = zone[nearestZone() + dir];
-    if (to) glideTo(to.y());
+    const to = dir > 0 ? nextPoint() : prevPoint();
+    if (to) glideTo(reach(to));
   });
 
   // In-page links (rail, logo, skip link) jump, and work while held.

@@ -4,5 +4,7 @@ import { lenis } from './boot.ts';
 import './garden.js';
 import './walk.js';
 import { initSteps } from './steps.ts';
+import { initPhases } from './phases.ts';
 
 initSteps(lenis);
+initPhases();

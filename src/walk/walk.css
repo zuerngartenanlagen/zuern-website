@@ -46,18 +46,10 @@ html.lenis { scroll-behavior: auto; }
 }
 
 /* ------------------------------------------------------------------ weiter -- */
-/* A fixed pair (up, down) at the right edge while the walk is on screen. The
-   pair is a tab: square on the outer side, sliding out from behind the rail
-   (phones: the screen edge). Both glide one point (steps.ts). */
-.walk-steps button {
-  display: grid; place-items: center; padding: 0; cursor: pointer;
-  color: var(--messing); background: none; border: 0;
-}
-.walk-steps svg {
-  width: 1.5rem; height: 1.5rem;
-  fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
-}
-
+/* Up and down at the right edge, on the whole page: one tab, square
+   on the outer side, sliding out from behind the rail (phones: the screen
+   edge). An arrow with nowhere to go is left out; when that changes the tab
+   slides out and comes back with one or two (steps.ts). Both glide one point. */
 .walk-steps {
   position: fixed; z-index: 39; right: var(--rail); bottom: 2rem;
   display: flex; flex-direction: column;
@@ -67,18 +59,29 @@ html.lenis { scroll-behavior: auto; }
   box-shadow: 0 2px 6px rgb(8 14 12 / 0.2), 0 12px 32px rgb(8 14 12 / 0.28);
   visibility: hidden; transform: translateX(calc(100% + 1rem));
   transition: transform 500ms var(--ease), visibility 0s 500ms;
+  --step-h: 3.25rem;
 }
 .walk-steps.is-on { visibility: visible; transform: none; transition-delay: 0s; }
-.walk-steps button { width: 3.25rem; height: 3.25rem; transition: background-color 200ms var(--ease), color 200ms var(--ease); }
-.walk-steps button + button { border-top: 1px solid color-mix(in srgb, var(--messing) 40%, transparent); }
-.walk-steps button:hover:not(:disabled) { background: var(--patina); color: var(--kalkstein); }
-.walk-steps button:disabled { color: color-mix(in srgb, var(--messing) 35%, transparent); cursor: default; }
+.walk-steps button {
+  display: grid; place-items: center; padding: 0; cursor: pointer;
+  width: var(--step-h); height: var(--step-h);
+  color: var(--messing); background: none; border: 0;
+  transition: background-color 200ms var(--ease), color 200ms var(--ease);
+}
+.walk-steps button:disabled { display: none; }
+.walk-steps button:not(:disabled) + button:not(:disabled) { border-top: 1px solid color-mix(in srgb, var(--messing) 40%, transparent); }
+.walk-steps button:hover { background: var(--patina); color: var(--kalkstein); }
+.walk-steps svg {
+  width: 1.5rem; height: 1.5rem;
+  fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+}
 
 /* ----------------------------------------------------------------- sheets -- */
 .sheet {
   position: relative; z-index: 3;
   background: var(--kalkstein); color: var(--graphit);
-  padding: clamp(5rem, 11vw, 9rem) calc(var(--gutter) + var(--rail)) clamp(5rem, 11vw, 9rem) var(--gutter);
+  /* Top: sections are landed on at their top, so leave room under the fixed logo. */
+  padding: clamp(8.5rem, 5rem + 8vw, 12rem) calc(var(--gutter) + var(--rail)) clamp(5rem, 11vw, 9rem) var(--gutter);
   border-top: 1px solid color-mix(in srgb, var(--patina) 18%, transparent);
 }
 .sheet--about { background: color-mix(in srgb, var(--kalkstein) 70%, #fff); }
@@ -96,15 +99,73 @@ html.lenis { scroll-behavior: auto; }
 .steps {
   list-style: none; margin: clamp(3rem, 6vw, 4.5rem) 0 0; padding: 0;
   display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
-  border-top: 1px solid color-mix(in srgb, var(--patina) 70%, transparent);
 }
-.steps li { padding: 1.5rem 1.5rem 0 0; }
-.steps h3 { margin: 0; color: var(--patina); font-size: 1.15rem; font-weight: 700; }
+/* Each step: its leaf in a brass circle, the circles joined by a brass line
+   from the centre of one to the centre of the next. */
+.steps li { position: relative; padding: 1.5rem 0.75rem 0; --ring: 3.5rem; }
+.steps li:not(:last-child)::before {
+  content: ""; position: absolute; left: 50%; width: 100%;
+  top: calc(1.5rem + var(--ring) / 2); height: 1.5px; translate: 0 -50%;
+  background: var(--messing);
+}
+.steps h3 { margin: 0; color: var(--patina); font-size: 1.15rem; font-weight: 700; text-align: center; }
 .steps h3::before {
-  content: ""; display: block; width: 1.9rem; aspect-ratio: 1127 / 527; margin-bottom: 1rem;
-  background: url("../assets/logo/zuern-leaf-messing.svg") no-repeat center / contain;
+  content: ""; position: relative; display: block; box-sizing: border-box;
+  width: var(--ring); height: var(--ring); margin: 0 auto 1rem;
+  border: 1.5px solid var(--messing); border-radius: 50%;
+  background: var(--kalkstein) url("../assets/logo/zuern-leaf-messing.svg") no-repeat center / 1.9rem auto;
 }
 .steps p { margin: 0.6rem 0 0; line-height: 1.6; color: color-mix(in srgb, var(--graphit) 85%, var(--kalkstein)); }
+/* Cycling (phases.ts): one step at a time is lit, the others' texts recede. */
+.steps.is-cycling :is(h3, p) { transition: color 800ms var(--ease); }
+.steps.is-cycling h3::before { transition: background-color 800ms var(--ease), transform 800ms var(--ease); }
+.steps.is-cycling li:not(.is-active) h3 { color: color-mix(in srgb, var(--patina) 40%, var(--kalkstein)); }
+.steps.is-cycling li:not(.is-active) p { color: color-mix(in srgb, var(--graphit) 35%, var(--kalkstein)); }
+.steps.is-cycling li.is-active h3::before {
+  background-color: color-mix(in srgb, var(--messing) 22%, var(--kalkstein)); transform: scale(1.1);
+}
+
+/* The pictures under the steps: one set per step, stacked; the lit step's
+   set shows, and within it one image at a time, crossfading (phases.ts). */
+.phase-show {
+  position: relative; margin-top: clamp(2.5rem, 5vw, 4rem);
+  aspect-ratio: 16 / 9; max-height: 75vh; width: 100%;
+  overflow: hidden; background: var(--patina);
+  border-top: 3px solid var(--messing);
+}
+.phase-show__set, .phase-show img { position: absolute; inset: 0; }
+.phase-show img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  opacity: 0; transition: opacity 1200ms var(--ease);
+}
+.phase-show__set.is-active img.is-on { opacity: 1; }
+.steps__now { display: none; }
+/* Bottom right of the pictures: fills until the next image (phases.ts). */
+.phase-show__next {
+  position: absolute; right: 0.9rem; bottom: 0.9rem; z-index: 1;
+  width: 1.6rem; height: 1.6rem; rotate: -90deg;
+  fill: rgb(20 36 33 / 0.55); stroke-width: 2.5;
+}
+.phase-show__next circle { stroke: color-mix(in srgb, var(--kalkstein) 35%, transparent); }
+.phase-show__next .phase-show__fill {
+  fill: none; stroke: var(--messing); stroke-linecap: round;
+  stroke-dasharray: 100; stroke-dashoffset: 100;
+}
+.phase-show__next.is-running .phase-show__fill { animation: phase-next var(--next, 3s) linear forwards; }
+@keyframes phase-next { to { stroke-dashoffset: 0; } }
+/* A step locked by click or tap: its circle filled brass. */
+.steps.is-cycling li { cursor: pointer; }
+.steps.is-cycling li.is-locked h3::before {
+  background-color: var(--messing);
+  background-image: none;
+}
+.steps.is-cycling li.is-locked h3::after {
+  content: ""; position: absolute; left: 50%; top: calc(1.5rem + var(--ring) / 2);
+  width: 1.9rem; aspect-ratio: 1127 / 527; translate: -50% -50%; scale: 1.1;
+  background: var(--patina);
+  -webkit-mask: url("../assets/logo/zuern-leaf-messing.svg") no-repeat center / contain;
+  mask: url("../assets/logo/zuern-leaf-messing.svg") no-repeat center / contain;
+}
 
 .about { display: grid; grid-template-columns: minmax(0, 22rem) 1fr; gap: clamp(2rem, 5vw, 5rem); align-items: start; }
 .portrait img { display: block; width: 100%; height: auto; }
@@ -159,6 +220,8 @@ html.lenis { scroll-behavior: auto; }
 .foot__legal { display: flex; gap: 1.5rem; }
 .foot__legal a { color: var(--kalkstein); text-decoration: none; border-bottom: 1px solid var(--messing); padding-block: 0.3rem; }
 .foot__legal a:hover { color: var(--messing); }
+.foot__mail { color: var(--kalkstein); text-decoration: none; border-bottom: 1px solid var(--messing); padding-block: 0.3rem; }
+.foot__mail:hover { color: var(--messing); }
 
 /* ------------------------------------------------------------------ brand -- */
 /* One small logo, top left, on its own Kalkstein tile, once the opening sheet
@@ -170,10 +233,27 @@ html.lenis { scroll-behavior: auto; }
   background: var(--kalkstein);
   box-shadow: 0 1px 2px rgb(10 18 16 / 0.18), 0 6px 18px rgb(10 18 16 / 0.14);
   opacity: 0; visibility: hidden; transform: translateY(-6px);
-  transition: opacity 400ms var(--ease), transform 400ms var(--ease), visibility 0s 400ms;
+  transition: opacity 400ms var(--ease), transform 400ms var(--ease), visibility 0s 400ms,
+    background-color 300ms var(--ease), box-shadow 300ms var(--ease);
 }
 .brand img { display: block; width: 100%; height: auto; }
 .brand.is-on { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+.brand.is-plain { background-color: transparent; box-shadow: none; }
+/* Plain, but text scrolling underneath must not fight the letters: a patch of
+   frosted glass right behind the logo, feathered to nothing at its edges, so
+   there is no box, only a soft haze where the logo sits. */
+.brand::before {
+  content: ""; position: absolute; inset: -1.6rem -2.4rem; z-index: -1;
+  background: color-mix(in srgb, var(--kalkstein) 82%, transparent);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  -webkit-mask: radial-gradient(closest-side, #000 62%, transparent 100%);
+  mask: radial-gradient(closest-side, #000 62%, transparent 100%);
+  opacity: 0; transition: opacity 300ms var(--ease);
+}
+.brand.is-plain::before { opacity: 1; }
+.brand.is-dark::before { background: color-mix(in srgb, var(--patina) 82%, transparent); }
+.brand img { transition: filter 300ms var(--ease); }
+.brand.is-dark img { filter: brightness(0) invert(1); }
 
 /* ------------------------------------------------------------------- dots -- */
 /* One dot per point of the walk and per section, built by steps.ts. Phones
@@ -234,14 +314,23 @@ html.lenis { scroll-behavior: auto; }
   .dots { right: 0.4rem; opacity: 1; visibility: visible; }
   /* In the strip right of the cards, under the dots, against the screen edge. */
   .walk-steps { right: 0; bottom: max(1.5rem, env(safe-area-inset-bottom)); }
-  .walk-steps button { width: 2.75rem; height: 2.75rem; }
+  .walk-steps { --step-h: 2.75rem; }
   .walk-steps svg { width: 1.25rem; height: 1.25rem; }
   /* Keep cards clear of the dots. */
   .stop { right: calc(var(--gutter) + 1.9rem); }
   .split, .about, .kontakt { grid-template-columns: 1fr; }
-  .steps { grid-template-columns: 1fr; row-gap: 0.5rem; text-align: center; }
-  .steps li { padding-inline: 1.25rem; }  /* even sides, clear of the dots */
-  .steps h3::before { margin-inline: auto; }
+  /* Phones: the circles in one joined row, only the lit step's title below
+     it (.steps__now, from phases.ts), then the pictures. */
+  .steps li { padding-inline: 0; --ring: 3rem; }
+  .steps h3 { font-size: 0; }
+  .steps h3::before { margin-bottom: 0; }
+  .steps p { display: none; }
+  .steps__now {
+    display: block; margin: 1.1rem 0 1.25rem; text-align: center;
+    font-size: 1.15rem; font-weight: 700; color: var(--patina);
+  }
+  .phase-show { margin-top: 0; }
+  .phase-show__next { right: calc(0.9rem + 1.9rem); }  /* clear of the dots */
   .facts div, .kontakt__list div { grid-template-columns: 1fr; gap: 0.3rem; }
 }
 
