@@ -52,8 +52,7 @@ body {
 :focus-visible { outline: 2px solid var(--messing); outline-offset: 3px; }
 
 /* ------------------------------------------------------------------ rail -- */
-/* The patina band from the reference film, carrying the only navigation. It
-   steps aside while you walk and comes back when you arrive. */
+/* The patina band from the reference film, carrying the only navigation. */
 .rail {
   position: fixed; top: 0; right: 0; bottom: 0; z-index: 40;
   width: var(--rail);
@@ -61,12 +60,8 @@ body {
   padding-block: 1.5rem;
   background: var(--patina);
   border-left: 1px solid color-mix(in srgb, var(--messing) 45%, transparent);
-  transition: transform 700ms var(--ease);
 }
-.rail.is-away { transform: translateX(100%); }
-.rail:focus-within { transform: none; }
-.rail__mark { display: grid; place-items: center; width: 3rem; height: 3rem; }
-.rail__mark img { width: 2.5rem; height: 2.5rem; }
+
 .rail__nav {
   display: flex; flex-direction: column; align-items: center; gap: 2.25rem;
 }
@@ -82,20 +77,9 @@ body {
 /* ---------------------------------------------------------------- garden -- */
 .garden { background: var(--patina); }
 .garden__stage { background: #202a26; }
-.garden__poster,
-.garden__gl {
-  position: absolute; inset: 0; width: 100%; height: 100%;
-  display: block;
-}
-.garden__poster { object-fit: cover; object-position: 50% 50%; }
-.garden__gl { opacity: 0; transition: opacity 500ms var(--ease); }
-.garden.is-live .garden__gl { opacity: 1; }
 
 .garden__scrim { position: absolute; pointer-events: none; }
-.garden__scrim--open {
-  inset: 0 auto 0 0; width: min(62vw, 56rem);
-  background: linear-gradient(90deg, rgb(16 24 21 / 0.72) 0%, rgb(16 24 21 / 0.45) 55%, transparent 100%);
-}
+
 .garden__scrim--arrive {
   inset: 0;
   background: radial-gradient(ellipse 60% 55% at calc(50% - var(--rail) / 2) 50%,
@@ -103,8 +87,7 @@ body {
 }
 
 .garden__open,
-.garden__arrive,
-.garden__line {
+.garden__arrive {
   position: absolute; z-index: 2;
   will-change: opacity, transform;
 }
@@ -129,27 +112,9 @@ body {
 }
 .claim span { display: block; }
 .claim__accent { color: var(--messing); }
-.garden__where {
-  margin: 1.4rem 0 0;
-  font-size: 0.85rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
-  color: color-mix(in srgb, var(--graphit) 80%, var(--kalkstein));
-}
-.garden__where::before {
-  content: ""; display: inline-block; vertical-align: middle;
-  width: 2.25rem; height: 1px; margin-right: 0.9rem; background: var(--messing);
-}
 
-/* The mid-walk line sits low, over the dark water, trailing right. */
-.garden__line {
-  right: calc(var(--gutter) + 2rem); bottom: 14vh;
-  max-width: 22ch; margin: 0; text-align: right;
-  font-size: clamp(1.3rem, 0.9rem + 1.3vw, 2rem); font-weight: 700; line-height: 1.2;
-  color: var(--kalkstein);
-  text-shadow: 0 2px 18px rgb(10 18 16 / 0.7), 0 1px 3px rgb(10 18 16 / 0.6);
-}
-
-/* The arrival: heading, leaf, line, number and the call button, all in the
-   middle of the screen (left of the rail). */
+/* The arrival: heading, leaf and the call and mail buttons, all in the middle
+   of the screen (left of the rail). */
 .garden__arrive {
   left: calc(50% - var(--rail) / 2); top: 50%; translate: -50% -50%;
   width: min(32rem, calc(100% - 2 * var(--gutter) - var(--rail)));
@@ -165,11 +130,6 @@ body {
   content: ""; display: block; width: 2.75rem; aspect-ratio: 1127 / 527; margin: 1.25rem auto 0;
   background: url("../assets/logo/zuern-leaf-messing.svg") no-repeat center / contain;
 }
-.garden__arrive p {
-  margin: 1.4rem auto 0; max-width: 38ch;
-  font-size: clamp(1rem, 0.95rem + 0.3vw, 1.15rem); line-height: 1.6;
-  color: color-mix(in srgb, var(--kalkstein) 90%, var(--salbei));
-}
 .garden__actions { display: flex; flex-direction: column; align-items: center; gap: 1rem; margin-top: 2rem; }
 .call {
   display: grid; place-items: center; width: 4rem; height: 4rem; border-radius: 50%;
@@ -181,47 +141,9 @@ body {
 .call svg { width: 1.9rem; height: 1.9rem; fill: currentColor; }
 .call svg.call__line { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .call:hover { background: color-mix(in srgb, var(--messing) 86%, var(--kalkstein)); transform: scale(1.06); }
-.btn {
-  display: inline-flex; align-items: center; min-height: 3rem; padding: 0 1.5rem;
-  background: var(--messing); color: #1b1a16;
-  font-weight: 700; font-size: 0.95rem; letter-spacing: 0.02em; text-decoration: none;
-  box-shadow: 0 2px 4px rgb(0 0 0 / 0.18), 0 8px 20px rgb(0 0 0 / 0.16);
-  transition: background-color 200ms var(--ease), transform 200ms var(--ease);
-}
-.btn:hover { background: color-mix(in srgb, var(--messing) 86%, var(--kalkstein)); transform: translateY(-1px); }
-.phone {
-  color: var(--kalkstein); font-weight: 700; text-decoration: none;
-  border-bottom: 1px solid var(--messing); padding-block: 0.4rem;
-}
-.phone:hover { color: var(--messing); }
 
-/* --------------------------------------------------------------- contact -- */
-.contact {
-  position: relative; z-index: 3;
-  background: var(--kalkstein); color: var(--graphit);
-  padding: clamp(5rem, 12vw, 9rem) calc(var(--gutter) + var(--rail)) 0 var(--gutter);
-}
-.contact__inner { max-width: 72rem; margin-inline: auto; }
-.contact__leaf { width: 3.5rem; height: 3.5rem; display: block; }
-.contact h2 {
-  margin: 1.5rem 0 0; color: var(--patina);
-  font-size: clamp(1.9rem, 1.2rem + 2.2vw, 3rem); font-weight: 700; line-height: 1.08;
-}
-.contact__list {
-  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0;
-  margin: clamp(2.5rem, 6vw, 4rem) 0 0;
-  border-top: 1px solid color-mix(in srgb, var(--patina) 70%, transparent);
-}
-.contact__list div {
-  padding: 1.5rem 1.5rem 1.75rem 0;
-  border-bottom: 1px solid color-mix(in srgb, var(--patina) 20%, transparent);
-}
-.contact__list dt {
-  font-size: 0.78rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
-  color: var(--messing-ink);
-}
-.contact__list dd { margin: 0.6rem 0 0; font-size: 1.1rem; }
-.contact__list a { color: var(--patina); font-weight: 700; text-decoration-color: var(--messing); text-underline-offset: 0.3em; }
+/* ---------------------------------------------------------------- footer -- */
+
 .foot {
   max-width: 72rem; margin: clamp(4rem, 10vw, 7rem) auto 0; padding-block: 1.75rem 2rem;
   font-size: 0.8rem; letter-spacing: 0.08em; color: color-mix(in srgb, var(--graphit) 70%, var(--kalkstein));
@@ -231,11 +153,7 @@ body {
 /* ---------------------------------------------------------------- mobile -- */
 @media (max-width: 760px) {
   .rail { display: none; }
-  .contact { padding-right: var(--gutter); }
-  .garden__scrim--open {
-    inset: auto 0 0 0; width: auto; height: 72%;
-    background: linear-gradient(0deg, rgb(16 26 23 / 0.9) 0%, rgb(16 26 23 / 0.65) 55%, transparent 100%);
-  }
+  
   .garden__scrim--arrive {
     background: radial-gradient(ellipse 90% 50% at 50% 50%,
       rgb(20 36 33 / 0.86) 0%, rgb(20 36 33 / 0.6) 60%, rgb(20 36 33 / 0.3) 100%);
@@ -250,13 +168,11 @@ body {
   }
   .garden__logo { width: min(13rem, 62%); }
   .claim { margin-top: 1.5rem; font-size: clamp(2rem, 9vw, 2.6rem); }
-  .garden__line { right: var(--gutter); left: var(--gutter); bottom: 10vh; max-width: none; text-align: left; }
-  .garden__arrive p { font-size: 1rem; }
-  .contact__list { grid-template-columns: 1fr; }
+  
 }
 
 /* ------------------------------------------------------- reduced motion -- */
-/* No pinned walk: one composed frame, then the offer, then contact. */
+/* No pinned walk: one composed frame, then the offer, then the sections. */
 @media (prefers-reduced-motion: reduce) {
   .garden { height: auto !important; }
   .garden__stage {
@@ -264,16 +180,13 @@ body {
     display: flex; flex-direction: column; justify-content: center; gap: 3rem;
     padding: 5rem calc(var(--gutter) + var(--rail)) 4rem var(--gutter);
   }
-  .garden__gl, .garden__line, .garden__scrim--arrive { display: none; }
+  .garden__scrim--arrive { display: none; }
   .garden__open, .garden__arrive {
     position: relative; left: auto; right: auto; top: auto; bottom: auto; translate: none;
     opacity: 1 !important; transform: none !important; visibility: visible;
   }
   .garden__arrive { width: auto; max-width: 34rem; padding: 2rem; background: rgb(20 36 33 / 0.88); }
-  .rail { transition: none; }
-  .rail.is-away { transform: none; }
 }
 @media (prefers-reduced-motion: reduce) and (max-width: 760px) {
   .garden__stage { padding-right: var(--gutter); justify-content: flex-end; }
-  .garden__scrim--open { height: 100%; }
 }

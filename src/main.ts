@@ -1,7 +1,4 @@
-import { initContactForm } from './scripts/contact-form.ts';
-import { initModelPreview } from './scripts/model-preview.ts';
+// Impressum and Datenschutz: the header's menu toggle on small screens.
 import { initNav } from './scripts/nav.ts';
 
 initNav();
-initContactForm();
-initModelPreview();

@@ -13,9 +13,7 @@ Erscheinungsbild: Corporate Design **Patina & Messing**.
 - Schrift: nur Montserrat Bold und Regular (SIL Open Font License, `public/fonts/OFL.txt`)
 - Logo: `src/assets/logo/zuern-logo.svg` (vektorisiert aus der JPG-Vorlage); auf dunklem Grund: `src/assets/logo/zuern-logo-white.svg` (ganz weiß, aus dem Logo abgeleitet); Favicon: `src/assets/logo/zuern-leaf.svg`; das Blatt als Schmuck (Messing, eng beschnitten): `src/assets/logo/zuern-leaf-messing.svg`
 
-Startseite „Schritt in den Garten“: Beim Scrollen geht man den Weg vom Haus zurück zum Teich, die Leistungen erscheinen am Weg, danach folgen Planung, Über mich und Kontakt. Die Filmbilder und die Werkzeuge dafür liegen unter `scrollcraft/builds/zuern-garten`.
-
-Gestaltung „Werkplan“ (jetzt `werkplan.html`): Die Seite liest sich wie ein Satz Planblätter. Heller Kalkstein-Grund, Haarlinien in Patina und Messing, nummerierte Blattköpfe (01 bis 05), alle Inhalte sichtbar. Im Einstieg eine gezeichnete Gartenskizze (Inline-SVG), in „Planung und Ablauf“ ein 3D-Beispielmodell, das erst beim Scrollen geladen wird. Texte in der Ich-Form, schlicht und ohne Gedankenstrich-Ketten.
+Startseite „Schritt in den Garten“: Beim Scrollen geht man den Weg vom Haus zurück zum Teich, die Leistungen erscheinen am Weg, danach folgen Planung (die vier Phasen mit Bilderstrecke), Über mich und Kontakt. Die Filmbilder und die Werkzeuge dafür liegen unter `scrollcraft/builds/zuern-garten`.
 
 ## Entwicklung
 
@@ -33,30 +31,22 @@ just preview    # Build lokal ansehen
 
 ```
 index.html                                      Startseite: der Weg in den Garten (Scroll-Film)
-layers.html                                     Szene in Ebenen (Schloss, Baum, Requisiten), zum Austauschen
-werkplan.html                                   Bisherige Startseite im Werkplan-Layout
 impressum.html, datenschutz.html                Rechtliches
-src/walk/                                       Startseite: Scroll-Engine, Film-Player, Wasser-Shader, Styles
-public/walk/                                    Filmbilder (AVIF), Wassermasken, Ebenen-Bilder (feste URLs)
-src/main.ts                                     Einstieg der Werkplan-Seite, initialisiert die Module
-src/scripts/nav.ts                              Mobiles Menü, aktiver Menüpunkt
-src/scripts/contact-form.ts                     Validierung und mailto-Versand des Formulars
-src/scripts/model-preview.ts                    Lädt das 3D-Modell, sobald es in Sicht kommt
-src/scripts/garden-scene.ts                     three.js-Szene
-src/styles/main.css                             Styles
-src/assets/                                     Logo, Favicon, Icons (werden gehasht)
+src/walk/                                       Startseite: Scroll-Engine, Film-Player, Wasser-Shader, Punkte und Pfeile, Phasen, Styles
+public/walk/seq/                                Filmbilder (AVIF), Poster, Wassermasken (feste URLs)
+src/main.ts                                     Einstieg von Impressum und Datenschutz
+src/scripts/nav.ts                              Mobiles Menü von Impressum und Datenschutz
+src/styles/main.css                             Styles von Impressum und Datenschutz
+src/assets/                                     Logo, Favicon, Porträt (werden gehasht)
 public/fonts/                                   Montserrat (feste URLs für preload)
-public/models/garden-example.glb                3D-Beispielmodell
 public/CNAME                                    Domain für GitHub Pages
 ```
 
-## 3D-Modell austauschen
-
-`public/models/garden-model.glb` ist ein selbst erzeugtes Architekturmodell des Gartens aus der Skizze im Einstieg (eigene Arbeit, keine Fremdlizenz). Für ein echtes Projektmodell aus Vectorworks als FBX/OBJ oder glTF/GLB exportieren, nach GLB konvertieren und `MODEL_URL` in `src/scripts/garden-scene.ts` anpassen. Das Modell wird automatisch zentriert und skaliert.
-
 ## Bilder
 
-Fotos liegen in `src/assets/images/` in drei Breiten (480, 800, 1200 px) als AVIF, WebP und JPEG, Metadaten entfernt. Vite hängt beim Build einen Hash an die Dateinamen.
+Das Porträt liegt in `src/assets/images/` in drei Breiten (480, 800, 1200 px) als WebP, Metadaten entfernt. Vite hängt beim Build einen Hash an die Dateinamen.
+
+Die Bilderstrecke unter den Phasen steht in `index.html` im Block `phase-show`, ein Satz Bilder je Phase in derselben Reihenfolge wie die Liste darüber. Noch Platzhalter: Standbilder aus dem Film, bis echte Fotos da sind.
 
 ## Deployment
 
