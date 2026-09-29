@@ -13,9 +13,16 @@ Two versions:
   Über mich, Kontakt. `tools/make_sequence.sh` starts the film at 3.35s (after its
   own title card and rail), upscales every frame 2x with Real-ESRGAN
   (`tools/upscale.py`, local GPU) and writes 24 fps AVIF frames: `assets/seq/d`
-  (1600px) and `assets/seq/m` (phone portrait crop). `walk.js` draws them crisp on
-  a canvas, loading outward from the playhead. Frames instead of `<video>`
-  because seeking a video per scroll tick stutters, worst on phones.
+  (1600px) and `assets/seq/m` (phone portrait crop). `walk.js` draws them with
+  WebGL, loading outward from the playhead and blending neighbours by the
+  playhead fraction. Frames instead of `<video>` because seeking a video per
+  scroll tick stutters, worst on phones. It plays **backwards** by default
+  (`data-direction="reverse"`: house first, out to the pond); `?walk=forward`
+  shows the old direction.
+  Moving water: `tools/water_masks.py` finds the pond in every frame (SegFormer,
+  ADE20K water classes) and packs the masks into `assets/seq/water-{d,m}.webp`;
+  the shader shimmers and drops rings only inside them, also while scroll rests.
+  Wheel smoothing: Lenis (`lenis.min.js`, MIT), off under reduced motion.
   Copy timing: `data-g-window="in0 in1 out0 out1"` in scroll progress (0..1 of the walk).
 - `layers.html`: the rebuilt scene in separate layers (below), for the castle swap.
 

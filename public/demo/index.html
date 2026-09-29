@@ -9,6 +9,7 @@
   <link rel="icon" href="assets/zuern-leaf.svg" type="image/svg+xml" />
   <link rel="preload" href="assets/fonts/montserrat-bold.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="assets/fonts/montserrat-regular.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="lenis.css" />
   <link rel="stylesheet" href="scrollcraft.css" />
   <link rel="stylesheet" href="garden.css" />
   <link rel="stylesheet" href="walk.css" />
@@ -43,7 +44,7 @@
                alt="Ein stiller Gartenteich, Trittsteine führen durch Stauden und Gräser zu einem Haus mit Glasfront." />
         </picture>
         <canvas class="walk__frames" aria-hidden="true"
-                data-walk-d="assets/seq/d/" data-walk-m="assets/seq/m/" data-frames="161" data-hold="0.12" data-direction="reverse"></canvas>
+                data-walk-d="assets/seq/d/" data-walk-m="assets/seq/m/" data-water="assets/seq/water" data-frames="161" data-hold="0.12" data-direction="reverse"></canvas>
 
         <div class="garden__open" data-g-window="0 0 0.04 0.14" data-g-move="panel">
           <img class="garden__logo" src="assets/zuern-logo.svg" alt="Zürn Gartenanlagen" width="1683" height="796" />
@@ -151,6 +152,13 @@
     </section>
   </main>
 
+  <script src="lenis.min.js"></script>
+  <script>
+    // Smooth wheel scrolling (touch stays native). Off under reduced motion.
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      new Lenis({ autoRaf: true, lerp: 0.09, anchors: true });
+    }
+  </script>
   <script src="scrollcraft.js"></script>
   <script>ScrollCraft.mount(document.body);</script>
   <script src="garden.js"></script>

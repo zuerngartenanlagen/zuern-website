@@ -2,6 +2,8 @@
    Builds on garden.css (tokens, rail, opening, arrival, contact basics). */
 
 .rail--nav { justify-content: center; }
+/* Lenis does the smoothing; a CSS smooth scroll on top would double it. */
+html.lenis { scroll-behavior: auto; }
 .rail--nav .rail__nav { gap: 1.9rem; }
 
 .walk { position: relative; }

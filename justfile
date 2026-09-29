@@ -38,7 +38,7 @@ demo:
     set -euo pipefail
     src=scrollcraft/builds/zuern-garten; dst=public/demo
     rm -rf "$dst"; mkdir -p "$dst/assets"
-    cp "$src"/{index.html,layers.html,scrollcraft.js,scrollcraft.css,garden.js,garden.css,walk.css,walk.js} "$dst/"
+    cp "$src"/{index.html,layers.html,scrollcraft.js,scrollcraft.css,garden.js,garden.css,walk.css,walk.js,lenis.min.js,lenis.css} "$dst/"
     cp -r "$src/assets/fonts" "$src/assets/seq" "$dst/assets/"
     cp "$src"/assets/{marcel-zuern-480.webp,marcel-zuern-800.webp} "$dst/assets/"
     cp "$src"/assets/{layers.json,ground.webp,depth.png,water.png,castle.webp,tree.webp,boulder.webp,reeds.webp,poster.webp,poster-s.webp} "$dst/assets/"
