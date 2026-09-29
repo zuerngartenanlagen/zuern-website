@@ -99,6 +99,10 @@ html.lenis { scroll-behavior: auto; }
   border-top: 1px solid color-mix(in srgb, var(--kalkstein) 14%, transparent);
 }
 
+.foot__legal { display: flex; gap: 1.5rem; }
+.foot__legal a { color: var(--kalkstein); text-decoration: none; border-bottom: 1px solid var(--messing); padding-block: 0.3rem; }
+.foot__legal a:hover { color: var(--messing); }
+
 /* ------------------------------------------------------------------ brand -- */
 /* One small logo, top left, on its own Kalkstein tile, once the opening sheet
    has slid away. The same logo as everywhere else, so the tile is the ground. */
