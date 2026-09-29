@@ -47,6 +47,7 @@
     return { el: el, w: el.getAttribute('data-g-window').split(/\s+/).map(Number) };
   });
   var rail = document.querySelector('[data-g-rail]');
+  var phone = matchMedia('(max-width: 760px)');
 
   function copyAt(p) {
     copies.forEach(function (c) {
@@ -54,6 +55,13 @@
       var o = w[0] === w[1] ? (p >= w[0] ? 1 : 0) : ease(clamp((p - w[0]) / (w[1] - w[0]), 0, 1));
       var out = w.length > 2 ? ease(clamp((p - w[2]) / (w[3] - w[2]), 0, 1)) : 0;
       var vis = o * (1 - out);
+      if (c.el.getAttribute('data-g-move') === 'panel') {
+        // A panel does not fade: it slides off, left on desktop, down on phones.
+        var gone = out * 105;
+        c.el.style.transform = phone.matches ? 'translate3d(0,' + gone + '%,0)' : 'translate3d(' + -gone + '%,0,0)';
+        c.el.classList.toggle('is-hidden', out > 0.99);
+        return;
+      }
       c.el.style.opacity = vis.toFixed(3);
       c.el.style.transform = 'translate3d(0,' + ((1 - o) * 18 - out * 26).toFixed(1) + 'px,0)';
       c.el.classList.toggle('is-hidden', vis < 0.02);
@@ -77,20 +85,12 @@
     });
   });
 
-  // The small top-left logo: on once the opening logo has gone, light or dark
-  // variant from whichever [data-theme] section sits under it.
+  // The small top-left logo: on once the opening panel has gone.
   var brand = document.querySelector('[data-g-brand]');
-  var themed = [].slice.call(document.querySelectorAll('[data-theme]'));
   function brandAt() {
     if (!brand) return;
     var p = progress();
-    var past = reduce ? scrollY > innerHeight * 0.6 : (p > 0.14 || act.getBoundingClientRect().bottom < innerHeight);
-    brand.classList.toggle('is-on', past);
-    var y = brand.getBoundingClientRect().top + brand.offsetHeight / 2;
-    var under = themed.filter(function (s) { var r = s.getBoundingClientRect(); return r.top <= y && r.bottom > y; })[0];
-    brand.classList.toggle('on-light', !!under && under.getAttribute('data-theme') === 'light');
-    // Solid patina over the dark sheet; over the film the tile stays translucent.
-    brand.classList.toggle('on-dark', !!under && under !== act && under.getAttribute('data-theme') === 'dark');
+    brand.classList.toggle('is-on', reduce ? scrollY > innerHeight * 0.6 : (p > 0.12 || act.getBoundingClientRect().bottom < innerHeight));
   }
   addEventListener('scroll', brandAt, { passive: true });
   addEventListener('resize', brandAt);

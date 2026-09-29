@@ -109,23 +109,29 @@ body {
 }
 .is-hidden { visibility: hidden; }
 
+/* The opening is a Kalkstein sheet laid over the garden, so the logo sits on
+   the ground it was drawn for. It slides away as the walk begins. */
 .garden__open {
-  left: var(--gutter); top: 50%; translate: 0 -50%;
-  width: min(34rem, 44vw);
+  inset: 0 auto 0 0; width: min(36rem, 42vw);
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 3rem clamp(2rem, 4vw, 4rem) 3rem var(--gutter);
+  box-sizing: border-box;
+  background: var(--kalkstein); color: var(--graphit);
+  box-shadow: 1px 0 0 color-mix(in srgb, var(--messing) 60%, transparent), 12px 0 40px rgb(10 18 16 / 0.25);
 }
-.garden__logo { display: block; width: min(21rem, 100%); height: auto; }
+.garden__logo { display: block; width: min(20rem, 100%); height: auto; }
 .claim {
   margin: clamp(2rem, 5vh, 3.25rem) 0 0;
   font-weight: 700; line-height: 1.02; letter-spacing: -0.01em;
   font-size: clamp(2.1rem, 0.9rem + 3vw, 3.6rem);
-  color: var(--kalkstein);
+  color: var(--patina);
 }
 .claim span { display: block; }
-.claim__accent { color: var(--messing); }
+.claim__accent { color: var(--messing-ink); }
 .garden__where {
   margin: 1.4rem 0 0;
   font-size: 0.85rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
-  color: var(--sc-ink-soft);
+  color: color-mix(in srgb, var(--graphit) 80%, var(--kalkstein));
 }
 .garden__where::before {
   content: ""; display: inline-block; vertical-align: middle;
@@ -215,11 +221,16 @@ body {
     inset: auto 0 0 0; width: auto; height: 72%;
     background: linear-gradient(0deg, rgb(16 26 23 / 0.9) 0%, rgb(16 26 23 / 0.65) 55%, transparent 100%);
   }
-  .garden__open, .garden__arrive {
+  .garden__arrive {
     left: var(--gutter); right: var(--gutter); width: auto;
     top: auto; bottom: max(2.5rem, env(safe-area-inset-bottom)); translate: none;
   }
-  .garden__logo { width: min(15rem, 70%); }
+  .garden__open {
+    inset: auto 0 0 0; width: auto;
+    padding: 2rem var(--gutter) max(2.25rem, env(safe-area-inset-bottom));
+    box-shadow: 0 -1px 0 color-mix(in srgb, var(--messing) 60%, transparent), 0 -12px 40px rgb(10 18 16 / 0.25);
+  }
+  .garden__logo { width: min(13rem, 62%); }
   .claim { margin-top: 1.5rem; font-size: clamp(2rem, 9vw, 2.6rem); }
   .garden__line { right: var(--gutter); left: var(--gutter); bottom: 10vh; max-width: none; text-align: left; }
   .garden__arrive p { font-size: 1rem; }

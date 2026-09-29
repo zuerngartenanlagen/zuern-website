@@ -42,6 +42,6 @@ demo:
     cp -r "$src/assets/fonts" "$src/assets/seq" "$dst/assets/"
     cp "$src"/assets/{marcel-zuern-480.webp,marcel-zuern-800.webp} "$dst/assets/"
     cp "$src"/assets/{layers.json,ground.webp,depth.png,water.png,castle.webp,tree.webp,boulder.webp,reeds.webp,poster.webp,poster-s.webp} "$dst/assets/"
-    cp src/assets/logo/{zuern-logo.svg,zuern-logo-light.svg,zuern-leaf.svg} "$src/assets/"
-    cp src/assets/logo/{zuern-logo.svg,zuern-logo-light.svg,zuern-leaf.svg} "$dst/assets/"
+    cp src/assets/logo/{zuern-logo.svg,zuern-leaf.svg} "$src/assets/"
+    cp src/assets/logo/{zuern-logo.svg,zuern-leaf.svg} "$dst/assets/"
     du -sh "$dst"

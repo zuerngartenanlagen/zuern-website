@@ -98,27 +98,19 @@
 }
 
 /* ------------------------------------------------------------------ brand -- */
-/* One small logo, top left, once the opening logo has gone. It takes the light
-   or dark variant from the section underneath it. */
+/* One small logo, top left, on its own Kalkstein tile, once the opening sheet
+   has slid away. The same logo as everywhere else, so the tile is the ground. */
 .brand {
   position: fixed; z-index: 45; top: clamp(1rem, 2.2vw, 1.75rem); left: var(--gutter);
   display: block; width: clamp(6.5rem, 8vw, 8.5rem);
+  padding: 0.6rem 0.85rem 0.55rem; box-sizing: content-box;
+  background: var(--kalkstein);
+  box-shadow: 0 1px 2px rgb(10 18 16 / 0.18), 0 6px 18px rgb(10 18 16 / 0.14);
   opacity: 0; visibility: hidden; transform: translateY(-6px);
   transition: opacity 400ms var(--ease), transform 400ms var(--ease), visibility 0s 400ms;
 }
-.brand {
-  padding: 0.55rem 0.8rem 0.5rem;
-  background: rgb(20 36 33 / 0.82);
-  box-sizing: content-box;
-}
 .brand img { display: block; width: 100%; height: auto; }
-.brand.on-light { background: var(--kalkstein); box-shadow: 0 1px 0 color-mix(in srgb, var(--patina) 16%, transparent); }
-.brand.on-dark { background: var(--patina); }
-.brand__dark { position: absolute; inset: 0.55rem 0.8rem 0.5rem; opacity: 0; transition: opacity 300ms var(--ease); }
-.brand__light { transition: opacity 300ms var(--ease); }
 .brand.is-on { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
-.brand.on-light .brand__dark { opacity: 1; }
-.brand.on-light .brand__light { opacity: 0; }
 
 /* ----------------------------------------------------------------- mobile -- */
 @media (max-width: 760px) {

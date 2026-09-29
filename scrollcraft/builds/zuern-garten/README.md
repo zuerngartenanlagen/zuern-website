@@ -10,15 +10,16 @@ Two versions:
 
 - `index.html`: **the original film** as a frame sequence scrubbed by scroll (10
   viewport-heights), with the services as stops along the path, then Planung,
-  Über mich, Kontakt. `tools/make_sequence.sh` starts the film at 3.35s, after its
-  own title card and rail are gone, and writes 16 fps WebP frames (`assets/seq/d`
-  desktop, `assets/seq/m` phone portrait crop). `walk.js` draws them on a canvas,
-  crossfading between neighbours, loading coarse to fine. Frames instead of
-  `<video>` because seeking a video per scroll tick stutters, worst on phones.
+  Über mich, Kontakt. `tools/make_sequence.sh` starts the film at 3.35s (after its
+  own title card and rail), upscales every frame 2x with Real-ESRGAN
+  (`tools/upscale.py`, local GPU) and writes 24 fps AVIF frames: `assets/seq/d`
+  (1600px) and `assets/seq/m` (phone portrait crop). `walk.js` draws them crisp on
+  a canvas, loading outward from the playhead. Frames instead of `<video>`
+  because seeking a video per scroll tick stutters, worst on phones.
   Copy timing: `data-g-window="in0 in1 out0 out1"` in scroll progress (0..1 of the walk).
 - `layers.html`: the rebuilt scene in separate layers (below), for the castle swap.
 
-Logos: `zuern-logo-light.svg` on dark, `zuern-logo.svg` on light. The leaf is the favicon only.
+Logo: one file everywhere, `src/assets/logo/zuern-logo.svg` (monochrome Patina, like the original), always on a light ground. The leaf is the favicon only.
 
 ## Layers
 
