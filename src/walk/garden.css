@@ -42,6 +42,7 @@
   --kalkstein: #e8e3d9;
   --graphit: #292b2a;
   --messing-ink: color-mix(in srgb, var(--messing) 68%, var(--graphit));
+  --salbei-ink: color-mix(in srgb, var(--patina) 55%, var(--salbei));
 
   --sc-canvas: var(--patina);
   --sc-surface: #18302c;
@@ -145,8 +146,30 @@ body {
   font-size: clamp(2.1rem, 0.9rem + 3vw, 3.6rem);
   color: var(--patina);
 }
-.claim span { display: block; }
-.claim__accent { color: var(--messing); }
+/* The claim's three lines take turns in colour: one word at a time runs from
+   its own colour through brass into sage, then rests while the next one goes. */
+.claim span {
+  display: block;
+  color: var(--rest);
+  animation: claim-turn 12s var(--ease) infinite;
+}
+.claim span:nth-child(2) { animation-delay: 4s; }
+.claim span:nth-child(3) { animation-delay: 8s; }
+.claim__accent { --rest: var(--messing); animation-name: claim-turn-brass; }
+@keyframes claim-turn {
+  0%, 33%, 100% { color: var(--rest); }
+  8% { color: var(--messing); }
+  20% { color: var(--salbei-ink); }
+}
+@keyframes claim-turn-brass {
+  0%, 33%, 100% { color: var(--rest); }
+  8% { color: var(--patina); }
+  20% { color: var(--salbei-ink); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .claim span { animation: none; color: var(--rest); }
+  .claim__accent { color: var(--messing); }
+}
 
 /* A quick hello over the garden, to the right of the opening panel: a speech
    bubble with Marcel's face under it, both in the patina of the film, popping
