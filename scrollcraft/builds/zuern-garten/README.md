@@ -8,7 +8,7 @@ Run: `node <scroll-craft>/scripts/serve.mjs --root . --port 4500`, open http://l
 
 Two versions:
 
-- `index.html`: **the original film** as a frame sequence scrubbed by scroll (10
+- `index.html`: **the original film** as a frame sequence scrubbed by scroll (6
   viewport-heights), with the services as stops along the path, then Planung,
   Über mich, Kontakt. `tools/make_sequence.sh` starts the film at 3.35s (after its
   own title card and rail), upscales every frame 2x with Real-ESRGAN
