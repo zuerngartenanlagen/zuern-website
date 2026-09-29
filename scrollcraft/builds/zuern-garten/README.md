@@ -8,11 +8,13 @@ Run: `node <scroll-craft>/scripts/serve.mjs --root . --port 4500`, open http://l
 
 Two versions:
 
-- `index.html`: **the original film**, scrubbed by scroll (10 viewport-heights), with
-  the services as stops along the path, then Planung, Über mich, Kontakt.
-  `tools/clean_video.sh` blurs the film's own title card, crops its SCROLL rail
-  with an eased push-in, and holds the last frame 1.5s for the arrival. Encoded
-  at native 720p with dense keyframes (`assets/walk.mp4`, phone crop `walk-m.mp4`).
+- `index.html`: **the original film** as a frame sequence scrubbed by scroll (10
+  viewport-heights), with the services as stops along the path, then Planung,
+  Über mich, Kontakt. `tools/make_sequence.sh` starts the film at 3.35s, after its
+  own title card and rail are gone, and writes 16 fps WebP frames (`assets/seq/d`
+  desktop, `assets/seq/m` phone portrait crop). `walk.js` draws them on a canvas,
+  crossfading between neighbours, loading coarse to fine. Frames instead of
+  `<video>` because seeking a video per scroll tick stutters, worst on phones.
   Copy timing: `data-g-window="in0 in1 out0 out1"` in scroll progress (0..1 of the walk).
 - `layers.html`: the rebuilt scene in separate layers (below), for the castle swap.
 

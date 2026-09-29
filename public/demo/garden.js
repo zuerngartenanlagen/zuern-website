@@ -84,7 +84,7 @@
   function brandAt() {
     if (!brand) return;
     var p = progress();
-    var past = reduce ? scrollY > innerHeight * 0.6 : (p > 0.24 || act.getBoundingClientRect().bottom < innerHeight);
+    var past = reduce ? scrollY > innerHeight * 0.6 : (p > 0.14 || act.getBoundingClientRect().bottom < innerHeight);
     brand.classList.toggle('is-on', past);
     var y = brand.getBoundingClientRect().top + brand.offsetHeight / 2;
     var under = themed.filter(function (s) { var r = s.getBoundingClientRect(); return r.top <= y && r.bottom > y; })[0];
