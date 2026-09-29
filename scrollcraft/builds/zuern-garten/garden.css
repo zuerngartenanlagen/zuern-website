@@ -127,7 +127,7 @@ body {
   color: var(--patina);
 }
 .claim span { display: block; }
-.claim__accent { color: var(--messing-ink); }
+.claim__accent { color: var(--messing); }
 .garden__where {
   margin: 1.4rem 0 0;
   font-size: 0.85rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
