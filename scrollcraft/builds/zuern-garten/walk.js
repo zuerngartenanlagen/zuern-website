@@ -9,6 +9,9 @@
      data-walk-d / data-walk-m   frame URL prefixes (desktop, phone): 001.avif …
      data-frames                 frame count
      data-hold                   share of the walk that rests on the last frame
+     data-direction              "reverse" plays the film backwards (house first,
+                                 then back out over the pond); ?walk=forward
+                                 overrides it, to compare
 
    Frames load outward from the playhead, ahead first, so what you are about to
    see is always what arrives next. Until a frame is here its nearest loaded
@@ -29,6 +32,8 @@
   var base = phone ? cv.dataset.walkM : cv.dataset.walkD;
   var N = parseInt(cv.dataset.frames, 10);
   var HOLD = parseFloat(cv.dataset.hold) || 0;
+  var query = new URLSearchParams(location.search).get('walk');
+  var REVERSE = (query || cv.dataset.direction) === 'reverse';
   var ctx = cv.getContext('2d', { alpha: false });
   var frames = new Array(N);
   var ready = new Uint8Array(N);
@@ -38,9 +43,10 @@
   // ---------------------------------------------------------------- loading --
   var asked = new Uint8Array(N);
   function pick() {
-    var at = Math.round(state.target);
-    for (var d = 0; d <= AHEAD; d++) if (at + d < N && !asked[at + d]) return at + d;
-    for (d = 1; d <= AHEAD / 2; d++) if (at - d >= 0 && !asked[at - d]) return at - d;
+    // "Ahead" follows the walk, which runs down the film when reversed.
+    var at = Math.round(film(state.target)), dir = REVERSE ? -1 : 1, j;
+    for (var d = 0; d <= AHEAD; d++) { j = at + d * dir; if (j >= 0 && j < N && !asked[j]) return j; }
+    for (d = 1; d <= AHEAD / 2; d++) { j = at - d * dir; if (j >= 0 && j < N && !asked[j]) return j; }
     for (var i = 0; i < N; i++) if (!asked[i]) return i;
     return -1;
   }
@@ -54,7 +60,7 @@
     img.src = src(i);
     img.decode().then(function () {
       frames[i] = img; ready[i] = 1;
-      if (i === 0) first();
+      if (i === Math.round(film(0))) first();
       state.dirty = true;
       drawn = -1;
     }, function () { /* a missing frame falls back to its neighbours */ })
@@ -88,8 +94,11 @@
   }
 
   var drawn = -1;
+  // Scroll position -> film frame. Loading and nearest() work in film frames.
+  function film(pos) { return REVERSE ? N - 1 - pos : pos; }
+
   function draw(pos) {
-    var i = nearest(Math.round(pos));
+    var i = nearest(Math.round(film(pos)));
     if (i < 0 || i === drawn) return;
     cover(frames[i]);
     drawn = i;
