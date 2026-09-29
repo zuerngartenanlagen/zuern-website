@@ -11,7 +11,7 @@ Erscheinungsbild: Corporate Design **Patina & Messing**.
 - Graphit `#292B2A`
 - Claim: GESTALTEN. PFLANZEN. LEBENSRÄUME.
 - Schrift: nur Montserrat Bold und Regular (SIL Open Font License, `public/fonts/OFL.txt`)
-- Logo: `src/assets/logo/zuern-logo.svg` (vektorisiert aus der JPG-Vorlage), Favicon: `src/assets/logo/zuern-leaf.svg`
+- Logo: `src/assets/logo/zuern-logo.svg` (vektorisiert aus der JPG-Vorlage); auf dunklem Grund: `src/assets/logo/zuern-logo-white.svg` (ganz weiß, aus dem Logo abgeleitet); Favicon: `src/assets/logo/zuern-leaf.svg`
 
 Startseite „Schritt in den Garten“: Beim Scrollen geht man den Weg vom Haus zurück zum Teich, die Leistungen erscheinen am Weg, danach folgen Planung, Über mich und Kontakt. Die Filmbilder und die Werkzeuge dafür liegen unter `scrollcraft/builds/zuern-garten`.
 
