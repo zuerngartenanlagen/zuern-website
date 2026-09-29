@@ -23,6 +23,21 @@
 
   function copyAt(p) {
     var listed = !phone.matches;
+    // Large screens: within the services' stretch exactly one stop is current,
+    // the one whose hold is nearest, so it changes once, halfway between two
+    // points, and the column never passes through a moment with none open.
+    var current = null;
+    if (listed) {
+      var stops = copies.filter(function (c) { return c.el.classList.contains('stop'); });
+      var first = stops[0], last = stops[stops.length - 1];
+      if (first && last && p >= first.w[0] && p <= last.w[3]) {
+        var near = Infinity;
+        stops.forEach(function (c) {
+          var d = Math.abs(p - (c.w[1] + c.w[2]) / 2);
+          if (d < near) { near = d; current = c.el; }
+        });
+      }
+    }
     copies.forEach(function (c) {
       var w = c.w;
       var o = w[0] === w[1] ? (p >= w[0] ? 1 : 0) : ease(clamp((p - w[0]) / (w[1] - w[0]), 0, 1));
@@ -40,7 +55,7 @@
         // of the walk this is gets lit, the rest stay dimmed (walk.css).
         c.el.style.opacity = ''; c.el.style.transform = '';
         c.el.classList.remove('is-hidden');
-        c.el.classList.toggle('is-current', vis > 0.5);
+        c.el.classList.toggle('is-current', c.el === current);
         return;
       }
       c.el.classList.remove('is-current');

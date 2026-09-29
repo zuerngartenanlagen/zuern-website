@@ -1,4 +1,4 @@
-// The planning steps take turns: one is highlighted, the others' texts are
+// The planning steps take turns: one is highlighted, the others' titles are
 // muted, and every few seconds the next one comes up. Below them a picture
 // shows the lit step's first image. Resting the mouse on a step (or on the
 // picture) holds that step and plays its images, fading from one to the next.

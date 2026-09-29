@@ -8,8 +8,9 @@
 // the walk lands on the nearest point and stepping resumes.
 //
 // The arrow keys and the up/down tab at the right edge step one point on or
-// back anywhere on the page, sections included, gliding. The menu jumps
-// straight to its target; the dots glide on large screens and jump on phones.
+// back anywhere on the page, sections included. One point on or back glides;
+// anything further jumps: the menu, a dot further away, several arrow presses
+// in a row, a long press. On phones the dots always jump.
 // The dots show where you are: on phones one per point, always; on large
 // screens, where the rail already covers the sections, one per service, while
 // on a service. Without Lenis (reduced motion) nothing is held.
@@ -27,10 +28,13 @@ const ARROWS_SLIDE_MS = 500;  // the tab's slide, as in walk.css
 const CARD_MARGIN = 16;       // px a phone card keeps from the screen's bottom edge
 
 const GLIDE_S = 1.1;          // seconds to glide to the next point
-const GLIDE_EACH_S = 0.35;    // and this much for every further point passed
+const MAX_CHAIN = 3;          // arrow presses that add up while one glide runs
+const PRESS_SHOW_MS = 250;    // a long press on an arrow starts to fill after this
+const PRESS_FULL_MS = 1000;   // and, once full, goes all the way up or down
 const phone = matchMedia('(max-width: 760px)');
 const WHEEL_MIN = 12;         // ignore tiny wheel jitter (px)
 const WHEEL_QUIET_MS = 220;   // a pause this long ends a wheel/trackpad gesture
+const WHEEL_MORE_PX = 300;    // scrolling on this much further in one gesture adds a point
 const SWIPE_MIN = 40;         // touch travel that counts as a swipe (px)
 
 const ease = (t: number): number => 1 - Math.pow(1 - t, 3);
@@ -199,6 +203,23 @@ export function initSteps(lenis: Lenis | null): void {
     else glideTo(pt.y());
   });
   const nav = dots[0]?.parentElement;
+  // A service card in the walk is a link to its own point, like its dot:
+  // clicking it, or pressing Enter or Space while it has focus, goes there.
+  points.forEach((pt) => {
+    const card = pt.card;
+    if (!card) return;
+    card.tabIndex = 0;
+    card.setAttribute('role', 'button');
+    const go = (): void => { if (phone.matches) jumpTo(pt.y()); else glideTo(pt.y()); };
+    card.addEventListener('click', go);
+    // Enter and Space are taken before the page keys get them (below).
+    card.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      e.preventDefault();
+      e.stopPropagation();
+      go();
+    });
+  });
   const align = (): void => alignCards(points, dots);
   align();
   addEventListener('resize', align);
@@ -221,8 +242,10 @@ export function initSteps(lenis: Lenis | null): void {
     arrows?.show(true, Boolean(prevPoint()), Boolean(nextPoint()));
   }
 
-  // The menu jumps: no glide through the film, straight to the target.
+  // A jump: no glide through the film, straight to the target. It also cuts
+  // short a glide that is still running.
   function jumpTo(y: number): void {
+    gliding = false; aim = -1;
     if (lenis) lenis.scrollTo(y, { immediate: true, force: true });
     else scrollTo({ top: y, behavior: 'instant' });
     pointBefore = nearestZone();
@@ -230,16 +253,42 @@ export function initSteps(lenis: Lenis | null): void {
     markActive();
   }
 
-  // Longer glides take longer, so the film never races through its frames.
+  // The arrows (tab and keys): each press is one point on or back. Presses in
+  // the same direction while a glide runs add up, up to MAX_CHAIN points; the
+  // second one turns the glide into a jump to the new target.
+  let aim = -1;      // index in points of the arrows' current target
+  let chain = 0;
+  let chainDir = 0;
+  function arrowStep(dir: 1 | -1): void {
+    if (gliding && aim >= 0 && dir === chainDir) {
+      const further = points[aim + dir];
+      if (chain >= MAX_CHAIN || !further) return;
+      aim += dir; chain += 1;
+      glideTo(reach(further));
+      return;
+    }
+    if (gliding) return;
+    const to = dir > 0 ? nextPoint() : prevPoint();
+    if (!to) return;
+    aim = points.indexOf(to); chain = 1; chainDir = dir;
+    glideTo(reach(to));
+  }
+
+  // Points between here and y, the target included (not the one we rest on).
+  const stepsTo = (y: number): number => points.filter((pt) => {
+    const py = reach(pt);
+    return Math.abs(py - scrollY) > 2 && (py - scrollY) * (py - y) <= 0;
+  }).length;
+
+  // One point on or back glides; anything further jumps.
   function glideTo(y: number): void {
-    if (!lenis) { scrollTo({ top: y, behavior: 'instant' }); markActive(); return; }
+    if (!lenis || stepsTo(y) > 1) { jumpTo(y); return; }
     const stays = holdsAt(y);
-    const passed = points.filter((pt) => (pt.y() - scrollY) * (pt.y() - y) <= 0).length - 1;
     gliding = true;
     hold(true);
     lenis.scrollTo(y, {
-      duration: GLIDE_S + GLIDE_EACH_S * Math.max(0, passed - 1), easing: ease, force: true,
-      onComplete: () => { gliding = false; pointBefore = nearestZone(); hold(stays); markActive(); },
+      duration: GLIDE_S, easing: ease, force: true,
+      onComplete: () => { gliding = false; aim = -1; pointBefore = nearestZone(); hold(stays); markActive(); },
     });
   }
 
@@ -256,19 +305,25 @@ export function initSteps(lenis: Lenis | null): void {
     return;
   }
 
-  // Wheel and trackpad: one gesture, one point. A gesture ends after a pause,
-  // so a trackpad's long momentum tail does not count as new swipes.
+  // Wheel and trackpad: a gesture moves one point, and scrolling on within the
+  // same gesture adds a point for every WHEEL_MORE_PX, up to MAX_CHAIN (more
+  // than one point jumps, see glideTo). A gesture ends after a pause, so a
+  // trackpad's momentum tail belongs to the swipe that started it.
   let lastWheel = 0;
-  let stepped = false;
+  let travel = 0;        // distance scrolled in this gesture
+  let taken = 0;         // points already moved for it
+  let wheelDir = 0;
   addEventListener('wheel', (e: WheelEvent) => {
     if (!inZoneNow() || (e.deltaY > 0 && atZoneEnd() && !gliding)) { hold(false); return; }
     e.preventDefault();
+    const dir = e.deltaY > 0 ? 1 : -1;
     const now = performance.now();
-    if (now - lastWheel > WHEEL_QUIET_MS) stepped = false;
+    if (now - lastWheel > WHEEL_QUIET_MS || dir !== wheelDir) { travel = 0; taken = 0; wheelDir = dir; }
     lastWheel = now;
-    if (stepped || Math.abs(e.deltaY) < WHEEL_MIN) return;
-    stepped = true;
-    step(e.deltaY > 0 ? 1 : -1);
+    travel += Math.abs(e.deltaY) * (e.deltaMode === 1 ? 16 : 1);   // lines to pixels
+    if (travel < WHEEL_MIN) return;
+    const due = Math.min(MAX_CHAIN, 1 + Math.floor((travel - WHEEL_MIN) / WHEEL_MORE_PX));
+    while (taken < due) { taken += 1; arrowStep(dir); }
   }, { passive: false });
 
   // Touch: a swipe steps; the page does not move under the finger.
@@ -296,9 +351,7 @@ export function initSteps(lenis: Lenis | null): void {
     if (e.altKey || e.ctrlKey || e.metaKey) return;
     if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
       e.preventDefault();
-      if (gliding) return;
-      const to = e.key === 'ArrowDown' ? nextPoint() : prevPoint();
-      if (to) glideTo(reach(to));
+      arrowStep(e.key === 'ArrowDown' ? 1 : -1);
       return;
     }
     if (!inZoneNow()) return;
@@ -310,14 +363,48 @@ export function initSteps(lenis: Lenis | null): void {
     step(down ? 1 : -1);
   });
 
-  // The arrows: one point on or back, gliding like a gesture, through the walk
-  // and on through the sections.
+  // The arrows: one point on or back (up to MAX_CHAIN when pressed in a row),
+  // through the walk and on through the sections.
   document.addEventListener('click', (e) => {
     const el = e.target as Element | null;
     const dir = el?.closest?.('[data-walk-next]') ? 1 : el?.closest?.('[data-walk-prev]') ? -1 : 0;
-    if (!dir || gliding) return;
-    const to = dir > 0 ? nextPoint() : prevPoint();
-    if (to) glideTo(reach(to));
+    if (!dir) return;
+    if (pressFired) { pressFired = false; return; }   // a long press already went
+    arrowStep(dir);
+  });
+
+  // A long press on an arrow goes all the way: after PRESS_SHOW_MS the button
+  // starts to fill (walk.css), and when it is full the page jumps to the first
+  // or the last point. Letting go early is an ordinary click.
+  let pressShow = 0;
+  let pressFull = 0;
+  let pressFired = false;
+  let pressed: Element | null = null;
+  const endPress = (): void => {
+    clearTimeout(pressShow); clearTimeout(pressFull);
+    pressed?.classList.remove('is-charging');
+    pressed = null;
+  };
+  document.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0) return;
+    const btn = (e.target as Element | null)?.closest?.('[data-walk-next], [data-walk-prev]');
+    if (!btn) return;
+    endPress();
+    pressFired = false;
+    pressed = btn;
+    const dir = btn.hasAttribute('data-walk-next') ? 1 : -1;
+    pressShow = window.setTimeout(() => btn.classList.add('is-charging'), PRESS_SHOW_MS);
+    pressFull = window.setTimeout(() => {
+      endPress();
+      pressFired = true;
+      const end = dir > 0 ? points[points.length - 1] : points[0];
+      if (end) { aim = -1; glideTo(reach(end)); }
+    }, PRESS_FULL_MS);
+  });
+  ['pointerup', 'pointercancel', 'pointerleave'].forEach((type) => {
+    document.addEventListener(type, (e) => {
+      if (pressed && (type !== 'pointerleave' || e.target === pressed)) endPress();
+    }, true);
   });
 
   // In-page links (rail, logo, skip link) jump, and work while held.
@@ -337,11 +424,16 @@ export function initSteps(lenis: Lenis | null): void {
   });
 
   // Free scrolling back up into the walk: land on the nearest point and hold.
+  // The landing counts as a first step up, so a fast scroll that keeps going
+  // carries on through the points instead of stopping there.
   lenis.on('scroll', () => {
     markActive();
     if (!held && !gliding && scrollY < zoneEnd() - 2) {
       const pt = zone[Math.min(nearestZone(), zone.length - 2)];
-      if (pt) glideTo(pt.y());
+      if (!pt) return;
+      glideTo(pt.y());
+      aim = points.indexOf(pt); chain = 1; chainDir = -1;
+      travel = 0; taken = 1; wheelDir = -1; lastWheel = performance.now();
     }
   });
 
