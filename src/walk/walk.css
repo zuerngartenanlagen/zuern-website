@@ -28,11 +28,11 @@ html.lenis { scroll-behavior: auto; }
   will-change: opacity, transform;
 }
 .stop--mid-left     { left: var(--gutter); top: 50%; translate: 0 -50%; }
-.stop--top-right    { right: calc(var(--gutter) + var(--rail)); top: 16vh; }
+.stop--top-right    { right: calc(var(--gutter) + var(--rail) + 2.5rem); top: 16vh; }
 .stop--bottom-left  { left: var(--gutter); bottom: 10vh; }
 .stop--top-left     { left: calc(var(--gutter) + 4vw); top: 20vh; }
-.stop--bottom-right { right: calc(var(--gutter) + var(--rail) + 3vw); bottom: 12vh; }
-.stop--mid-right    { right: calc(var(--gutter) + var(--rail)); top: 50%; translate: 0 -50%; }
+.stop--bottom-right { right: calc(var(--gutter) + var(--rail) + 2.5rem + 3vw); bottom: 12vh; }
+.stop--mid-right    { right: calc(var(--gutter) + var(--rail) + 2.5rem); top: 50%; translate: 0 -50%; }
 .stop h2, .stop h3 {
   margin: 0; color: var(--kalkstein);
   font-weight: 700; line-height: 1.12;
@@ -129,9 +129,29 @@ html.lenis { scroll-behavior: auto; }
 .brand.is-on { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
 
 /* ------------------------------------------------------------------- dots -- */
-/* Phones only (desktop has the rail): one dot per point of the walk and per
-   section. Built by steps.ts. */
-.dots { display: none; }
+/* One dot per point of the walk and per section, built by steps.ts. Phones
+   always show them; large screens show them next to the rail while the walk
+   (the services) is on screen. */
+.dots {
+  position: fixed; z-index: 44; right: calc(var(--rail) + 0.75rem); top: 50%; translate: 0 -50%;
+  display: flex; flex-direction: column; gap: 0.1rem;
+  padding: 0.35rem 0.1rem; border-radius: 999px;
+  background: rgb(20 36 33 / 0.55);
+  opacity: 0; visibility: hidden;
+  transition: opacity 300ms var(--ease), visibility 0s 300ms;
+}
+.dots.is-walk { opacity: 1; visibility: visible; transition-delay: 0s; }
+.dots__dot {
+  display: grid; place-items: center; width: 1.75rem; height: 1.75rem;
+  padding: 0; border: 0; background: none; cursor: pointer;
+}
+.dots__dot::before {
+  content: ""; width: 0.45rem; height: 0.45rem; border-radius: 50%;
+  border: 1.5px solid var(--kalkstein); box-sizing: border-box;
+  transition: transform 200ms var(--ease), background-color 200ms var(--ease);
+}
+.dots__dot:hover::before { background: color-mix(in srgb, var(--kalkstein) 40%, transparent); }
+.dots__dot[aria-current]::before { background: var(--messing); border-color: var(--messing); transform: scale(1.5); }
 
 /* ----------------------------------------------------------------- mobile -- */
 @media (max-width: 760px) {
@@ -144,22 +164,7 @@ html.lenis { scroll-behavior: auto; }
   .stop p { font-size: 1rem; }
   .sheet { padding-right: var(--gutter); }
   .sheet--dark .foot { flex-direction: column; align-items: flex-start; }
-  .dots {
-    position: fixed; z-index: 44; right: 0.4rem; top: 50%; translate: 0 -50%;
-    display: flex; flex-direction: column; gap: 0.1rem;
-    padding: 0.35rem 0.1rem; border-radius: 999px;
-    background: rgb(20 36 33 / 0.55);
-  }
-  .dots__dot {
-    display: grid; place-items: center; width: 1.75rem; height: 1.75rem;
-    padding: 0; border: 0; background: none; cursor: pointer;
-  }
-  .dots__dot::before {
-    content: ""; width: 0.45rem; height: 0.45rem; border-radius: 50%;
-    border: 1.5px solid var(--kalkstein); box-sizing: border-box;
-    transition: transform 200ms var(--ease), background-color 200ms var(--ease);
-  }
-  .dots__dot[aria-current]::before { background: var(--messing); border-color: var(--messing); transform: scale(1.5); }
+  .dots { right: 0.4rem; opacity: 1; visibility: visible; }
   /* Keep cards clear of the dots. */
   .stop { right: calc(var(--gutter) + 1.9rem); }
   .split, .about, .kontakt { grid-template-columns: 1fr; }

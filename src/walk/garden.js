@@ -46,7 +46,6 @@
   var copies = [].slice.call(act.querySelectorAll('[data-g-window]')).map(function (el) {
     return { el: el, w: el.getAttribute('data-g-window').split(/\s+/).map(Number) };
   });
-  var rail = document.querySelector('[data-g-rail]');
   var phone = matchMedia('(max-width: 760px)');
 
   function copyAt(p) {
@@ -66,7 +65,6 @@
       c.el.style.transform = 'translate3d(0,' + ((1 - o) * 18 - out * 26).toFixed(1) + 'px,0)';
       c.el.classList.toggle('is-hidden', vis < 0.02);
     });
-    if (rail) rail.classList.toggle('is-away', p > 0.07 && p < 0.84);
   }
 
   function progress() {

@@ -1,13 +1,14 @@
-// Point-to-point walking, and the dot navigation on phones.
+// Point-to-point walking, and the dot navigation.
 //
 // Inside the walk the page never rests between points: the opening, each
 // service card at the middle of its hold, the arrival, and the top of the
 // first section. Scrolling is held there (Lenis stopped) and every gesture
 // (a wheel or trackpad swipe, a touch swipe, an arrow key) glides exactly one
 // point on. Past the last point the sections scroll freely; scrolling back up
-// into the walk lands on the nearest point and stepping resumes. The dots
-// (phones only, see walk.css) show where you are and jump. Without Lenis
-// (reduced motion) nothing is held and the dots jump instantly.
+// into the walk lands on the nearest point and stepping resumes. Clicks (the
+// menu, the dots) jump straight to their target; only gestures glide. The dots
+// show where you are: always on phones, on large screens while in the walk.
+// Without Lenis (reduced motion) nothing is held.
 import type Lenis from 'lenis';
 
 interface Point {
@@ -98,12 +99,23 @@ export function initSteps(lenis: Lenis | null): void {
     return best;
   };
 
-  const dots = buildDots(points, (i) => { const pt = points[i]; if (pt) glideTo(pt.y()); });
+  const dots = buildDots(points, (i) => { const pt = points[i]; if (pt) jumpTo(pt.y()); });
+  const nav = dots[0]?.parentElement;
 
   function markActive(): void {
     let best = 0;
     points.forEach((pt, i) => { if (scrollY >= pt.y() - innerHeight * 0.35) best = i; });
     dots.forEach((d, i) => d.toggleAttribute('aria-current', i === best));
+    nav?.classList.toggle('is-walk', scrollY < zoneEnd() - innerHeight * 0.5);
+  }
+
+  // Clicks jump: no glide through the film, straight to the target.
+  function jumpTo(y: number): void {
+    if (lenis) lenis.scrollTo(y, { immediate: true, force: true });
+    else scrollTo({ top: y, behavior: 'instant' });
+    pointBefore = nearestZone();
+    hold(y <= zoneEnd() + 1);
+    markActive();
   }
 
   function glideTo(y: number): void {
@@ -172,7 +184,7 @@ export function initSteps(lenis: Lenis | null): void {
     step(down ? 1 : -1);
   });
 
-  // In-page links (rail, logo, skip link) glide too, and work while held.
+  // In-page links (rail, logo, skip link) jump, and work while held.
   document.addEventListener('click', (e) => {
     const a = (e.target as Element | null)?.closest?.('a[href^="#"]');
     if (!(a instanceof HTMLAnchorElement)) return;
@@ -185,7 +197,7 @@ export function initSteps(lenis: Lenis | null): void {
     const target = y <= zoneEnd() + 2
       ? zone.reduce((b, pt) => (Math.abs(pt.y() - y) < Math.abs(b - y) ? pt.y() : b), zone[0]?.y() ?? 0)
       : y;
-    glideTo(target);
+    jumpTo(target);
   });
 
   // Free scrolling back up into the walk: land on the nearest point and hold.

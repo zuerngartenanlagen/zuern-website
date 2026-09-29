@@ -35,6 +35,7 @@
   var AHEAD = 24;          // frames ahead of the playhead that load first
   var CONCURRENCY = 6;
   var MAX_DROPS = 4;
+  var JUMP_FRAMES = 12;    // playhead gaps larger than this are jumps: no easing
 
   var phone = matchMedia('(max-width: 760px)').matches;
   // Frame height the canvas needs at device resolution. Cover-fit fills the height
@@ -323,7 +324,8 @@
     state.target = clamp(progress() / (1 - HOLD), 0, 1) * (N - 1);
     var d = state.target - state.cur;
     var moving = Math.abs(d) > 0.002;
-    state.cur = moving ? state.cur + d * LERP : state.target;
+    // A jump (menu, dots) cuts straight to its frame instead of fast-forwarding.
+    state.cur = !moving || Math.abs(d) > JUMP_FRAMES ? state.target : state.cur + d * LERP;
     // Still scroll and still water: nothing to draw. Still scroll, moving water: 30 fps.
     var water = R.animated && R.animated(state.cur);
     if (!moving && !state.dirty && !(water && now - last > 32)) return;
