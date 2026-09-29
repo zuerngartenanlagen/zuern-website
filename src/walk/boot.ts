@@ -12,7 +12,8 @@ declare global {
 }
 
 // Smooth wheel scrolling (touch stays native). Off under reduced motion.
-if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-  new Lenis({ autoRaf: true, lerp: 0.09, anchors: true });
-}
+export const lenis: Lenis | null = matchMedia('(prefers-reduced-motion: reduce)').matches
+  ? null
+  : new Lenis({ autoRaf: true, lerp: 0.09, anchors: true });
+
 globalThis.ScrollCraft.mount(document.body);

@@ -120,6 +120,9 @@ body {
   box-shadow: 1px 0 0 color-mix(in srgb, var(--messing) 60%, transparent), 12px 0 40px rgb(10 18 16 / 0.25);
 }
 .garden__logo { display: block; width: min(20rem, 100%); height: auto; }
+.garden__hint { display: none; }
+@keyframes hint-bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 0.35rem; } }
+@media (prefers-reduced-motion: reduce) { .garden__hint::after { animation: none; } }
 .claim {
   margin: clamp(2rem, 5vh, 3.25rem) 0 0;
   font-weight: 700; line-height: 1.02; letter-spacing: -0.01em;
@@ -227,8 +230,20 @@ body {
   }
   .garden__open {
     inset: auto 0 0 0; width: auto;
-    padding: 2rem var(--gutter) max(2.25rem, env(safe-area-inset-bottom));
+    padding: 2rem var(--gutter) max(1.5rem, env(safe-area-inset-bottom));
     box-shadow: 0 -1px 0 color-mix(in srgb, var(--messing) 60%, transparent), 0 -12px 40px rgb(10 18 16 / 0.25);
+  }
+  /* Phones get a quiet hint that the page moves; desktop has the wheel. */
+  .garden__hint {
+    display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+    margin: 1.6rem 0 0;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+    color: color-mix(in srgb, var(--graphit) 75%, var(--kalkstein));
+  }
+  .garden__hint::after {
+    content: ""; width: 0.55rem; height: 0.55rem; margin-top: -0.3rem;
+    border-right: 2px solid var(--messing); border-bottom: 2px solid var(--messing);
+    rotate: 45deg; animation: hint-bob 1.6s var(--ease) infinite;
   }
   .garden__logo { width: min(13rem, 62%); }
   .claim { margin-top: 1.5rem; font-size: clamp(2rem, 9vw, 2.6rem); }
