@@ -22,6 +22,7 @@
   var phone = matchMedia('(max-width: 760px)');
 
   function copyAt(p) {
+    var listed = !phone.matches;
     copies.forEach(function (c) {
       var w = c.w;
       var o = w[0] === w[1] ? (p >= w[0] ? 1 : 0) : ease(clamp((p - w[0]) / (w[1] - w[0]), 0, 1));
@@ -34,6 +35,15 @@
         c.el.classList.toggle('is-hidden', out > 0.99);
         return;
       }
+      if (listed && c.el.classList.contains('stop')) {
+        // Large screens: all stops stand in one column; the one whose stretch
+        // of the walk this is gets lit, the rest stay dimmed (walk.css).
+        c.el.style.opacity = ''; c.el.style.transform = '';
+        c.el.classList.remove('is-hidden');
+        c.el.classList.toggle('is-current', vis > 0.5);
+        return;
+      }
+      c.el.classList.remove('is-current');
       c.el.style.opacity = vis.toFixed(3);
       c.el.style.transform = 'translate3d(0,' + ((1 - o) * 18 - out * 26).toFixed(1) + 'px,0)';
       c.el.classList.toggle('is-hidden', vis < 0.02);
@@ -56,18 +66,12 @@
     });
   });
 
-  // The small top-left logo: on once the opening panel has gone. Over the film
-  // it sits on its Kalkstein tile; once the sections are under it, the tile
-  // goes and the logo stands plain, all white over the dark contact section.
+  // The small top-left logo: on once the opening panel has gone.
   var brand = document.querySelector('[data-g-brand]');
-  var dark = document.querySelector('.sheet--dark');
   function brandAt() {
     if (!brand) return;
     var p = progress();
-    var edge = brand.getBoundingClientRect().bottom;
     brand.classList.toggle('is-on', reduce ? scrollY > innerHeight * 0.6 : (p > 0.12 || act.getBoundingClientRect().bottom < innerHeight));
-    brand.classList.toggle('is-plain', act.getBoundingClientRect().bottom < edge);
-    brand.classList.toggle('is-dark', !!dark && dark.getBoundingClientRect().top < edge);
   }
   addEventListener('scroll', brandAt, { passive: true });
   addEventListener('resize', brandAt);
@@ -82,6 +86,8 @@
     if (p !== last) { last = p; copyAt(p); }
     requestAnimationFrame(loop);
   }
+  // Crossing the phone breakpoint switches between one card and the column.
+  phone.addEventListener('change', function () { copyAt(progress()); });
   copyAt(progress());
   requestAnimationFrame(loop);
 })();

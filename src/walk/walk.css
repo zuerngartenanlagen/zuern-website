@@ -4,6 +4,10 @@
 .rail--nav { justify-content: center; }
 /* Lenis does the smoothing; a CSS smooth scroll on top would double it. */
 html.lenis { scroll-behavior: auto; }
+/* No scrollbars: the page moves point by point, and the dots and the up/down
+   tab show where you are. Scrolling itself is untouched. */
+html { scrollbar-width: none; }
+html::-webkit-scrollbar { display: none; }
 .rail--nav .rail__nav { gap: 1.9rem; }
 
 .walk { position: relative; }
@@ -27,6 +31,9 @@ html.lenis { scroll-behavior: auto; }
   box-shadow: 0 2px 6px rgb(8 14 12 / 0.2), 0 18px 48px rgb(8 14 12 / 0.28);
   will-change: opacity, transform;
 }
+/* The stops' frame: the whole stage, so each card is placed as before. */
+.stops { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.stops .stop { pointer-events: auto; }
 .stop--mid-left     { left: var(--gutter); top: 50%; translate: 0 -50%; }
 .stop--top-right    { right: calc(var(--gutter) + var(--rail) + 2.5rem); top: 16vh; }
 .stop--bottom-left  { left: var(--gutter); bottom: 10vh; }
@@ -43,6 +50,42 @@ html.lenis { scroll-behavior: auto; }
   margin: 1.1rem 0 0;
   font-size: clamp(1.05rem, 0.98rem + 0.35vw, 1.3rem); line-height: 1.6;
   color: color-mix(in srgb, var(--kalkstein) 88%, var(--salbei));
+}
+
+/* Large screens: all six services in one column on the left, over the film.
+   The current one (garden.js: is-current) is lit and open with its text and
+   brass edge; the others show only their title, muted. Under reduced motion
+   nothing is lit, so there all stay as they are. */
+@media (min-width: 761px) and (prefers-reduced-motion: no-preference) {
+  .stops {
+    inset: auto; left: var(--gutter); top: 50%; translate: 0 -50%;
+    width: min(30rem, 38vw);
+    display: flex; flex-direction: column; gap: 0.4rem;
+  }
+  .stops .stop {
+    position: relative; inset: auto; translate: none; width: auto;
+    padding: 0.85rem 1.5rem;
+    border-top-color: transparent;
+    background: rgb(20 36 33 / 0.62);
+    box-shadow: none;
+    transition: background-color 500ms var(--ease), padding 500ms var(--ease), border-color 500ms var(--ease);
+  }
+  .stops .stop :is(h2, h3) {
+    font-size: clamp(1.05rem, 0.9rem + 0.45vw, 1.35rem);
+    color: color-mix(in srgb, var(--kalkstein) 58%, transparent);
+    transition: font-size 500ms var(--ease), color 500ms var(--ease);
+  }
+  .stops .stop p {
+    max-height: 0; margin-top: 0; overflow: hidden; opacity: 0;
+    transition: max-height 500ms var(--ease), margin-top 500ms var(--ease), opacity 400ms var(--ease);
+  }
+  .stops .stop.is-current {
+    padding: 1.4rem 1.75rem 1.5rem; border-top-color: var(--messing);
+    background: rgb(20 36 33 / 0.92);
+    box-shadow: 0 2px 6px rgb(8 14 12 / 0.2), 0 18px 48px rgb(8 14 12 / 0.28);
+  }
+  .stops .stop.is-current :is(h2, h3) { font-size: clamp(1.4rem, 1rem + 1.2vw, 2.1rem); color: var(--kalkstein); }
+  .stops .stop.is-current p { max-height: 12rem; margin-top: 0.8rem; opacity: 1; }
 }
 
 /* ------------------------------------------------------------------ weiter -- */
@@ -224,36 +267,21 @@ html.lenis { scroll-behavior: auto; }
 .foot__mail:hover { color: var(--messing); }
 
 /* ------------------------------------------------------------------ brand -- */
-/* One small logo, top left, on its own Kalkstein tile, once the opening sheet
-   has slid away. The same logo as everywhere else, so the tile is the ground. */
+/* The small logo, a tab on the left edge: the mirror of the up/down tab,
+   Kalkstein in a brass frame, square against the screen edge. It slides in
+   once the opening panel has gone and stays through the sections. */
 .brand {
-  position: fixed; z-index: 45; top: clamp(1rem, 2.2vw, 1.75rem); left: var(--gutter);
+  position: fixed; z-index: 45; top: clamp(1rem, 2.2vw, 1.75rem); left: 0;
   display: block; width: clamp(6.5rem, 8vw, 8.5rem);
-  padding: 0.6rem 0.85rem 0.55rem; box-sizing: content-box;
+  padding: 0.6rem 0.85rem 0.55rem var(--gutter); box-sizing: content-box;
   background: var(--kalkstein);
-  box-shadow: 0 1px 2px rgb(10 18 16 / 0.18), 0 6px 18px rgb(10 18 16 / 0.14);
-  opacity: 0; visibility: hidden; transform: translateY(-6px);
-  transition: opacity 400ms var(--ease), transform 400ms var(--ease), visibility 0s 400ms,
-    background-color 300ms var(--ease), box-shadow 300ms var(--ease);
+  border: 1.5px solid var(--messing); border-left: 0; border-radius: 0 0.9rem 0.9rem 0;
+  box-shadow: 0 2px 6px rgb(8 14 12 / 0.2), 0 12px 32px rgb(8 14 12 / 0.28);
+  opacity: 0; visibility: hidden; transform: translateX(calc(-100% - 1rem));
+  transition: opacity 400ms var(--ease), transform 500ms var(--ease), visibility 0s 500ms;
 }
 .brand img { display: block; width: 100%; height: auto; }
 .brand.is-on { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
-.brand.is-plain { background-color: transparent; box-shadow: none; }
-/* Plain, but text scrolling underneath must not fight the letters: a patch of
-   frosted glass right behind the logo, feathered to nothing at its edges, so
-   there is no box, only a soft haze where the logo sits. */
-.brand::before {
-  content: ""; position: absolute; inset: -1.6rem -2.4rem; z-index: -1;
-  background: color-mix(in srgb, var(--kalkstein) 82%, transparent);
-  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
-  -webkit-mask: radial-gradient(closest-side, #000 62%, transparent 100%);
-  mask: radial-gradient(closest-side, #000 62%, transparent 100%);
-  opacity: 0; transition: opacity 300ms var(--ease);
-}
-.brand.is-plain::before { opacity: 1; }
-.brand.is-dark::before { background: color-mix(in srgb, var(--patina) 82%, transparent); }
-.brand img { transition: filter 300ms var(--ease); }
-.brand.is-dark img { filter: brightness(0) invert(1); }
 
 /* ------------------------------------------------------------------- dots -- */
 /* One dot per point of the walk and per section, built by steps.ts. Phones
@@ -262,8 +290,7 @@ html.lenis { scroll-behavior: auto; }
 .dots {
   position: fixed; z-index: 44; right: calc(var(--rail) + 0.75rem); top: 50%; translate: 0 -50%;
   display: flex; flex-direction: column; gap: 0.1rem;
-  padding: 0.35rem 0.1rem; border-radius: 999px;
-  background: rgb(20 36 33 / 0.55);
+  padding: 0.35rem 0.1rem;
   opacity: 0; visibility: hidden;
   transition: opacity 300ms var(--ease), visibility 0s 300ms;
 }
@@ -276,9 +303,15 @@ html.lenis { scroll-behavior: auto; }
 .dots__dot::before {
   content: ""; width: 0.45rem; height: 0.45rem; border-radius: 50%;
   border: 1.5px solid var(--kalkstein); box-sizing: border-box;
-  transition: transform 200ms var(--ease), background-color 200ms var(--ease);
+  box-shadow: 0 0 0 0.5px rgb(8 14 12 / 0.25), 0 1px 3px rgb(8 14 12 / 0.45);
+  transition: transform 200ms var(--ease), background-color 200ms var(--ease),
+    border-color 300ms var(--ease), box-shadow 300ms var(--ease);
 }
 .dots__dot:hover::before { background: color-mix(in srgb, var(--kalkstein) 40%, transparent); }
+/* No backdrop: over a light section (steps.ts sets is-light) the rings turn
+   dark green instead of Kalkstein, so they stay visible on either ground. */
+.dots.is-light .dots__dot::before { border-color: var(--patina); box-shadow: none; }
+.dots.is-light .dots__dot:hover::before { background: color-mix(in srgb, var(--patina) 30%, transparent); }
 .dots__dot[aria-current]::before { background: var(--messing); border-color: var(--messing); transform: scale(1.5); }
 .dots__dot { position: relative; }
 /* The target's name slides out to the left of a hovered or focused dot. */
@@ -339,6 +372,7 @@ html.lenis { scroll-behavior: auto; }
 @media (prefers-reduced-motion: reduce) {
   .walk .garden__stage { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr)); align-content: end; gap: 1rem; }
   .walk .garden__open { grid-column: 1 / -1; }
+  .stops { display: contents; }
   .stop {
     position: relative; left: auto; right: auto; top: auto; bottom: auto; width: auto; translate: none;
     opacity: 1 !important; transform: none !important; visibility: visible;

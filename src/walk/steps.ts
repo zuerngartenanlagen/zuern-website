@@ -2,17 +2,17 @@
 //
 // Inside the walk the page never rests between points: the opening, each
 // service card at the middle of its hold, the arrival, and the top of the
-// first section. Scrolling is held there (Lenis stopped) and every gesture
-// (a wheel or trackpad swipe, a touch swipe, an arrow key) glides exactly one
-// point on. Past the last point the sections scroll freely; scrolling back up
-// into the walk lands on the nearest point and stepping resumes. The menu
-// jumps straight to its target; gestures, the dots and the up/down arrows at
-// the right edge glide. The arrows stay out on the whole page and step on
-// through the sections too. On phones the dots
-// jump too. The dots
-// show where you are: on phones one per point, always; on large screens, where
-// the rail already covers the sections, one per service, while on a service.
-// Without Lenis (reduced motion) nothing is held.
+// first section. Scrolling is held there (Lenis stopped) and every gesture (a
+// wheel or trackpad swipe, a touch swipe, a page key) glides exactly one point
+// on. Past the last point the sections scroll freely; scrolling back up into
+// the walk lands on the nearest point and stepping resumes.
+//
+// The arrow keys and the up/down tab at the right edge step one point on or
+// back anywhere on the page, sections included, gliding. The menu jumps
+// straight to its target; the dots glide on large screens and jump on phones.
+// The dots show where you are: on phones one per point, always; on large
+// screens, where the rail already covers the sections, one per service, while
+// on a service. Without Lenis (reduced motion) nothing is held.
 import type Lenis from 'lenis';
 
 interface Point {
@@ -42,7 +42,7 @@ function windowOf(el: Element): number[] {
 function collectPoints(act: HTMLElement): Point[] {
   // Scroll position of a progress value p inside the pinned walk.
   const at = (p: number) => (): number => act.offsetTop + p * (act.offsetHeight - innerHeight);
-  const points: Point[] = [{ label: 'Start', y: at(0), inWalk: true }];
+  const points: Point[] = [{ label: 'Zuhause', y: at(0), inWalk: true }];
 
   act.querySelectorAll<HTMLElement>('.stop').forEach((stop) => {
     const w = windowOf(stop);
@@ -150,6 +150,17 @@ function alignCards(points: Point[], dots: HTMLButtonElement[]): void {
   });
 }
 
+// Is a light section behind the dots? They sit in the middle of the right edge.
+function lightBehind(nav: Element): boolean {
+  const r = nav.getBoundingClientRect();
+  const y = r.top + r.height / 2;
+  const sheet = Array.from(document.querySelectorAll('.sheet')).find((s) => {
+    const b = s.getBoundingClientRect();
+    return b.top <= y && b.bottom >= y;
+  });
+  return Boolean(sheet) && !sheet?.classList.contains('sheet--dark');
+}
+
 export function initSteps(lenis: Lenis | null): void {
   const act = document.querySelector<HTMLElement>('[data-walk]');
   if (!act) return;
@@ -160,6 +171,9 @@ export function initSteps(lenis: Lenis | null): void {
   const zoneEnd = (): number => zone[zone.length - 1]?.y() ?? 0;
   const inZoneNow = (): boolean => scrollY <= zoneEnd() + 2;
   const atZoneEnd = (): boolean => scrollY >= zoneEnd() - 2;
+  // Held only inside the walk. The top of the first section is the last
+  // point, but it is not held: the next tick down scrolls on straight away.
+  const holdsAt = (y: number): boolean => y < zoneEnd() - 1;
 
   let gliding = false;
   let held = false;
@@ -203,6 +217,7 @@ export function initSteps(lenis: Lenis | null): void {
     points.forEach((pt, i) => { if (scrollY >= pt.y() - innerHeight * 0.35) best = i; });
     dots.forEach((d, i) => d.toggleAttribute('aria-current', i === best));
     nav?.classList.toggle('is-service', Boolean(points[best]?.isService));
+    nav?.classList.toggle('is-light', lightBehind(nav));
     arrows?.show(true, Boolean(prevPoint()), Boolean(nextPoint()));
   }
 
@@ -211,20 +226,20 @@ export function initSteps(lenis: Lenis | null): void {
     if (lenis) lenis.scrollTo(y, { immediate: true, force: true });
     else scrollTo({ top: y, behavior: 'instant' });
     pointBefore = nearestZone();
-    hold(y <= zoneEnd() + 1);
+    hold(holdsAt(y));
     markActive();
   }
 
   // Longer glides take longer, so the film never races through its frames.
   function glideTo(y: number): void {
     if (!lenis) { scrollTo({ top: y, behavior: 'instant' }); markActive(); return; }
-    const inZone = y <= zoneEnd() + 1;
+    const stays = holdsAt(y);
     const passed = points.filter((pt) => (pt.y() - scrollY) * (pt.y() - y) <= 0).length - 1;
     gliding = true;
     hold(true);
     lenis.scrollTo(y, {
       duration: GLIDE_S + GLIDE_EACH_S * Math.max(0, passed - 1), easing: ease, force: true,
-      onComplete: () => { gliding = false; pointBefore = nearestZone(); hold(inZone); markActive(); },
+      onComplete: () => { gliding = false; pointBefore = nearestZone(); hold(stays); markActive(); },
     });
   }
 
@@ -273,10 +288,22 @@ export function initSteps(lenis: Lenis | null): void {
     step(dy > 0 ? 1 : -1);
   }, { passive: true });
 
+  // Keys. The arrow keys go one point up or down anywhere on the page, like the
+  // up/down tab. Page keys and space step through the walk; in the sections
+  // they scroll by the screen as usual, so long text can still be read.
   addEventListener('keydown', (e: KeyboardEvent) => {
-    if (!inZoneNow() || e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
-    const down = ['ArrowDown', 'PageDown'].includes(e.key) || (e.key === ' ' && !e.shiftKey);
-    const up = ['ArrowUp', 'PageUp'].includes(e.key) || (e.key === ' ' && e.shiftKey);
+    if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (gliding) return;
+      const to = e.key === 'ArrowDown' ? nextPoint() : prevPoint();
+      if (to) glideTo(reach(to));
+      return;
+    }
+    if (!inZoneNow()) return;
+    const down = e.key === 'PageDown' || (e.key === ' ' && !e.shiftKey);
+    const up = e.key === 'PageUp' || (e.key === ' ' && e.shiftKey);
     if (!down && !up) return;
     if (down && atZoneEnd()) { hold(false); return; }
     e.preventDefault();
@@ -333,6 +360,6 @@ export function initSteps(lenis: Lenis | null): void {
     }, 150);
   });
 
-  hold(inZoneNow());
+  hold(holdsAt(scrollY));
   markActive();
 }
