@@ -18,7 +18,12 @@ typecheck: _deps
 
 # Type-check and build the production site into dist/
 build: _deps
-    npm run build
+	npm run build
+
+# Generate the picture variants in src/assets/images/ from the two originals in raw/
+images:
+	tools/images.sh
+
 
 # Serve the production build locally
 preview: build

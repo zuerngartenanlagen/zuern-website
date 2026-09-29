@@ -38,13 +38,19 @@ src/main.ts                                     Einstieg von Impressum und Daten
 src/scripts/nav.ts                              Mobiles Menü von Impressum und Datenschutz
 src/styles/main.css                             Styles von Impressum und Datenschutz
 src/assets/                                     Logo, Favicon, Porträt (werden gehasht)
+tools/images.sh                                 erzeugt die Bildvarianten aus raw/
 public/fonts/                                   Montserrat (feste URLs für preload)
 public/CNAME                                    Domain für GitHub Pages
 ```
 
 ## Bilder
 
-Das Porträt liegt in `src/assets/images/` in drei Breiten (480, 800, 1200 px) als WebP, Metadaten entfernt. Vite hängt beim Build einen Hash an die Dateinamen.
+Zwei Originalbilder liegen in `raw/` (steht nicht im Repo): das große Porträt und das kleine Gesicht. `just images` erzeugt daraus die Varianten in `src/assets/images/` — das Porträt in 4:5 mit 480, 800 und 1200 px Breite, das Gesicht quadratisch mit 240 px, alles WebP ohne Metadaten. Vite hängt beim Build einen Hash an die Dateinamen. Ohne ImageMagick geht es nicht; alles andere ist schon da.
+
+```sh
+just images                                  # aus raw/marcel-portrait.jpg und raw/marcel-face.jpg
+tools/images.sh mein/portrait.jpg mein/gesicht.jpg   # oder zwei andere Dateien
+```
 
 Die Bilderstrecke unter den Phasen steht in `index.html` im Block `phase-show`, ein Satz Bilder je Phase in derselben Reihenfolge wie die Liste darüber. Noch Platzhalter: Standbilder aus dem Film, bis echte Fotos da sind.
 

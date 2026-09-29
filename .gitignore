@@ -5,6 +5,10 @@ dist/
 .env.*
 !.env.example
 
+# The two original pictures of Marcel; tools/images.sh writes the variants the
+# site loads into src/assets/images/.
+raw/
+
 # scroll-craft working files: generations, frames, screenshots, intermediates.
 # The walk frames live in public/walk (made by the tools in scrollcraft/builds/zuern-garten).
 scrollcraft/builds/*/gen/
