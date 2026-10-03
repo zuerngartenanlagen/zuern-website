@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="description" content="Datenschutzerklärung von Zürn Gartenanlagen — Informationen zur Verarbeitung personenbezogener Daten." />
-  <meta name="theme-color" content="#1F3A36" />
+  <meta name="description" content="Datenschutzerklärung von Zürn Gartenanlagen: Informationen zur Verarbeitung personenbezogener Daten." />
+  <meta name="theme-color" content="#E8E3D9" />
   <meta name="robots" content="noindex" />
   <title>Datenschutz | Zürn Gartenanlagen</title>
-  <link rel="icon" href="assets/logo/primary-color.svg" type="image/svg+xml" />
-  <link rel="preload" href="fonts/montserrat-bold.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="preload" href="fonts/montserrat-regular.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="/src/assets/logo/zuern-leaf.svg" type="image/svg+xml" />
+  <link rel="preload" href="/fonts/montserrat-bold.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/montserrat-regular.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/src/styles/main.css" />
 </head>
 <body>
   <a class="skip" href="#inhalt">Zum Inhalt</a>
@@ -18,8 +18,15 @@
   <header class="site-header" id="top">
     <div class="header-inner">
       <a class="logo" href="index.html">
-        <img src="assets/logo/primary-color.svg" alt="Zürn Gartenanlagen" width="2941" height="1644" />
+        <img src="/src/assets/logo/zuern-logo.svg" alt="Zürn Gartenanlagen" width="1683" height="796" />
       </a>
+
+      <nav class="nav" id="site-nav" aria-label="Hauptnavigation">
+        <a href="index.html#leistungen">Leistungen</a>
+        <a href="index.html#planung">Planung</a>
+        <a href="index.html#ueber-mich">Über mich</a>
+        <a href="index.html#kontakt">Kontakt</a>
+      </nav>
 
       <a class="header-phone" href="tel:+491758270998">
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -32,21 +39,13 @@
         <span class="sr-only">Menü</span>
         <span class="nav-toggle-bars" aria-hidden="true"></span>
       </button>
-
-      <nav class="nav" id="site-nav" aria-label="Hauptnavigation">
-        <a href="index.html#leistungen">Leistungen</a>
-        <a href="index.html#planung">3D-Planung</a>
-        <a href="index.html#ablauf">Ablauf</a>
-        <a href="index.html#ueber-mich">Über mich</a>
-        <a href="index.html#kontakt">Kontakt</a>
-      </nav>
     </div>
   </header>
 
   <main id="inhalt">
-    <section class="band band--stone legal-page" aria-labelledby="datenschutz-title">
+    <section class="sheet legal-page" aria-labelledby="datenschutz-title">
       <div class="wrap legal">
-        <p class="eyebrow">Rechtliches</p>
+        <p class="sheet-head">Rechtliches</p>
         <h1 id="datenschutz-title">Datenschutz</h1>
 
         <div class="legal-block">
@@ -112,7 +111,7 @@
         </div>
 
         <p class="legal-back">
-          <a class="btn btn-primary" href="index.html">Zur Startseite</a>
+          <a class="btn" href="index.html">Zur Startseite</a>
         </p>
       </div>
     </section>
@@ -125,7 +124,7 @@
         <p class="footer-claim">GESTALTEN. PFLANZEN. LEBENSRÄUME.</p>
       </div>
       <div class="footer-meta">
-        <p>Garten- und Landschaftsbau · Entengasse 13, 71717 Beilstein</p>
+        <p>Entengasse 13, 71717 Beilstein</p>
         <nav class="footer-legal" aria-label="Rechtliches">
           <a href="impressum.html">Impressum</a>
           <a href="datenschutz.html" aria-current="page">Datenschutz</a>
@@ -135,6 +134,6 @@
     </div>
   </footer>
 
-  <script src="site.js"></script>
+  <script type="module" src="/src/main.js"></script>
 </body>
 </html>

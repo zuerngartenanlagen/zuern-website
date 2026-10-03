@@ -1,0 +1,403 @@
+/* The video walk page: stops along the path, then the site's sheets.
+   Builds on garden.css (tokens, rail, opening, arrival, contact basics). */
+
+.rail--nav { justify-content: center; }
+/* Lenis does the smoothing; a CSS smooth scroll on top would double it. */
+html.lenis { scroll-behavior: auto; }
+/* No scrollbars: the page moves point by point, and the dots and the up/down
+   tab show where you are. Scrolling itself is untouched. */
+html { scrollbar-width: none; }
+html::-webkit-scrollbar { display: none; }
+.rail--nav .rail__nav { gap: 1.9rem; }
+/* Lower screens (laptops): closer together, so all six still fit. */
+@media (max-height: 860px) { .rail--nav .rail__nav { gap: 1rem; } }
+@media (max-height: 800px) { .rail--nav .rail__nav { gap: 0.5rem; } }
+
+.walk { position: relative; }
+/* Rail link target for the services: part way into the walk, where they begin. */
+.walk__anchor { position: absolute; left: 0; top: calc((100% - 100vh) * 0.19); }
+.walk__poster, .walk__frames { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.walk__poster { object-fit: cover; }
+.walk__frames { opacity: 0; transition: opacity 300ms var(--ease); }
+.walk.is-live .walk__frames { opacity: 1; }
+
+/* ------------------------------------------------------------------ stops -- */
+/* One service per stretch of path, each in its own corner of the frame, so the
+   eye travels with the walk instead of waiting at one spot. */
+.stop {
+  position: absolute; z-index: 2;
+  width: min(34rem, 42vw);
+  padding: 2.25rem 2.5rem 2.4rem;
+  box-sizing: border-box;
+  background: rgb(20 36 33 / 0.9);
+  border-top: 3px solid var(--messing);
+  box-shadow: 0 2px 6px rgb(8 14 12 / 0.2), 0 18px 48px rgb(8 14 12 / 0.28);
+  will-change: opacity, transform;
+}
+/* The stops' frame: the whole stage, so each card is placed as before. */
+.stops { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.stops .stop { pointer-events: auto; }
+/* A card is a link to its own point in the walk (steps.ts). */
+.stops .stop { cursor: pointer; }
+.stops .stop :is(h2, h3) { transition: color 200ms var(--ease); }
+.stops .stop:hover :is(h2, h3) { color: var(--kalkstein); }
+.stops .stop:hover { background: rgb(20 36 33 / 0.95); }
+.stop--mid-left     { left: var(--gutter); top: 50%; translate: 0 -50%; }
+.stop--top-right    { right: calc(var(--gutter) + var(--rail) + 2.5rem); top: 16vh; }
+.stop--bottom-left  { left: var(--gutter); bottom: 10vh; }
+.stop--top-left     { left: calc(var(--gutter) + 4vw); top: 20vh; }
+.stop--bottom-right { right: calc(var(--gutter) + var(--rail) + 2.5rem + 3vw); bottom: 12vh; }
+.stop--mid-right    { right: calc(var(--gutter) + var(--rail) + 2.5rem); top: 50%; translate: 0 -50%; }
+.stop h2, .stop h3 {
+  margin: 0; color: var(--kalkstein);
+  font-weight: 700; line-height: 1.12;
+}
+.stop h2 { font-size: clamp(1.9rem, 1.2rem + 2vw, 3rem); }
+.stop h3 { font-size: clamp(1.6rem, 1.1rem + 1.4vw, 2.4rem); }
+.stop p {
+  margin: 1.1rem 0 0;
+  font-size: clamp(1.05rem, 0.98rem + 0.35vw, 1.3rem); line-height: 1.6;
+  color: color-mix(in srgb, var(--kalkstein) 88%, var(--salbei));
+}
+
+/* Large screens: all six services in one column on the left, over the film.
+   The current one (garden.js: is-current) is lit and open with its text and
+   brass edge; the others show only their title, muted. Under reduced motion
+   nothing is lit, so there all stay as they are. */
+@media (min-width: 761px) and (prefers-reduced-motion: no-preference) {
+  /* Anchored at the top: opening a card only moves the ones below it. */
+  .stops {
+    inset: auto; left: var(--gutter); top: clamp(7rem, 20vh, 12rem); translate: none;
+    width: min(30rem, 38vw);
+    display: flex; flex-direction: column; gap: 0.4rem;
+  }
+  .stops .stop {
+    position: relative; inset: auto; translate: none; width: auto;
+    display: grid; grid-template-rows: auto 0fr; row-gap: 0;
+    padding: 0.9rem 1.5rem;
+    border-top-color: transparent;
+    background: rgb(20 36 33 / 0.62);
+    box-shadow: none;
+    transition: grid-template-rows 450ms var(--ease), row-gap 450ms var(--ease),
+      background-color 450ms var(--ease), border-color 450ms var(--ease), box-shadow 450ms var(--ease);
+  }
+  /* Same title size open or closed: only the text opens, so the column keeps
+     its height and nothing jumps. */
+  .stops .stop :is(h2, h3) {
+    font-size: clamp(1.15rem, 0.95rem + 0.6vw, 1.55rem);
+    color: color-mix(in srgb, var(--kalkstein) 58%, transparent);
+    transition: color 450ms var(--ease);
+  }
+  .stops .stop p {
+    margin: 0; min-height: 0; overflow: hidden; opacity: 0;
+    transition: opacity 350ms var(--ease);
+  }
+  .stops .stop.is-current {
+    grid-template-rows: auto 1fr; row-gap: 0.7rem;
+    border-top-color: var(--messing);
+    background: rgb(20 36 33 / 0.92);
+    box-shadow: 0 2px 6px rgb(8 14 12 / 0.2), 0 18px 48px rgb(8 14 12 / 0.28);
+  }
+  .stops .stop.is-current :is(h2, h3) { color: var(--kalkstein); }
+  .stops .stop.is-current p { opacity: 1; transition-delay: 120ms; }
+}
+
+/* ------------------------------------------------------------------ weiter -- */
+/* Up and down at the right edge, on the whole page: one tab, square
+   on the outer side, sliding out from behind the rail (phones: the screen
+   edge). An arrow with nowhere to go is left out; when that changes the tab
+   slides out and comes back with one or two (steps.ts). Both glide one point. */
+.walk-steps {
+  position: fixed; z-index: 39; right: var(--rail); bottom: 2rem;
+  display: flex; flex-direction: column;
+  background: rgb(20 36 33 / 0.92);
+  border: 1.5px solid var(--messing); border-right: 0;
+  border-radius: 0.9rem 0 0 0.9rem; overflow: hidden;
+  box-shadow: 0 2px 6px rgb(8 14 12 / 0.2), 0 12px 32px rgb(8 14 12 / 0.28);
+  visibility: hidden; transform: translateX(calc(100% + 1rem));
+  transition: transform 500ms var(--ease), visibility 0s 500ms;
+  --step-h: 3.25rem;
+}
+.walk-steps.is-on { visibility: visible; transform: none; transition-delay: 0s; }
+.walk-steps button {
+  display: grid; place-items: center; padding: 0; cursor: pointer;
+  width: var(--step-h); height: var(--step-h);
+  color: var(--messing); background: none; border: 0;
+  transition: background-color 200ms var(--ease), color 200ms var(--ease);
+}
+.walk-steps button:disabled { display: none; }
+.walk-steps button:not(:disabled) + button:not(:disabled) { border-top: 1px solid color-mix(in srgb, var(--messing) 40%, transparent); }
+.walk-steps button:hover { background: var(--patina); color: var(--kalkstein); }
+/* Long press (steps.ts): the button fills with brass, down on the down arrow,
+   up on the up arrow; when full the page jumps all the way. */
+.walk-steps button {
+  position: relative; overflow: hidden;
+  touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+}
+.walk-steps button::before {
+  content: ""; position: absolute; inset: 0;
+  background: color-mix(in srgb, var(--messing) 45%, transparent);
+  transform: scaleY(0); transform-origin: top;
+}
+.walk-steps button[data-walk-prev]::before { transform-origin: bottom; }
+.walk-steps button.is-charging::before { animation: press-fill 750ms linear forwards; }
+.walk-steps button svg { position: relative; }
+@keyframes press-fill { to { transform: scaleY(1); } }
+.walk-steps svg {
+  width: 1.5rem; height: 1.5rem;
+  fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+}
+
+/* ----------------------------------------------------------------- sheets -- */
+.sheet {
+  position: relative; z-index: 3;
+  background: var(--kalkstein); color: var(--graphit);
+  /* Top: sections are landed on at their top, so leave room under the fixed logo. */
+  padding: clamp(8.5rem, 5rem + 8vw, 12rem) calc(var(--gutter) + var(--rail)) clamp(5rem, 11vw, 9rem) var(--gutter);
+  border-top: 1px solid color-mix(in srgb, var(--patina) 18%, transparent);
+}
+.sheet--about { background: color-mix(in srgb, var(--kalkstein) 70%, #fff); }
+.sheet--dark { background: var(--patina); color: var(--kalkstein); padding-bottom: 0; }
+.sheet__inner { max-width: 72rem; margin-inline: auto; }
+.sheet h2 {
+  margin: 0; color: var(--patina);
+  font-size: clamp(1.9rem, 1.2rem + 2.2vw, 3rem); font-weight: 700; line-height: 1.08;
+}
+.sheet--dark h2 { color: var(--kalkstein); }
+.intro { font-size: clamp(1.05rem, 1rem + 0.3vw, 1.2rem); line-height: 1.65; max-width: 44ch; margin: 0; }
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1.5rem, 4vw, 4rem); align-items: start; }
+
+.steps {
+  list-style: none; margin: clamp(3rem, 6vw, 4.5rem) 0 0; padding: 0;
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+/* Each step: its leaf in a brass circle, the circles joined by a brass line
+   from the centre of one to the centre of the next. */
+.steps li { position: relative; padding: 1.5rem 0.75rem 0; --ring: 3.5rem; }
+.steps li:not(:last-child)::before {
+  content: ""; position: absolute; left: 50%; width: 100%;
+  top: calc(1.5rem + var(--ring) / 2); height: 1.5px; translate: 0 -50%;
+  background: var(--messing);
+}
+.steps h3 { margin: 0; color: var(--patina); font-size: 1.15rem; font-weight: 700; text-align: center; }
+.steps h3::before {
+  content: ""; position: relative; display: block; box-sizing: border-box;
+  width: var(--ring); height: var(--ring); margin: 0 auto 1rem;
+  border: 1.5px solid var(--messing); border-radius: 50%;
+  background: var(--kalkstein) url("../assets/logo/zuern-leaf-messing.svg") no-repeat center / 1.9rem auto;
+}
+/* Cycling (phases.ts): one step at a time is lit, the others' titles recede. */
+.steps.is-cycling h3 { transition: color 800ms var(--ease); }
+.steps.is-cycling h3::before { transition: background-color 800ms var(--ease), transform 800ms var(--ease); }
+.steps.is-cycling li:not(.is-active) h3 { color: color-mix(in srgb, var(--patina) 40%, var(--kalkstein)); }
+.steps.is-cycling li.is-active h3::before {
+  background-color: color-mix(in srgb, var(--messing) 22%, var(--kalkstein)); transform: scale(1.1);
+}
+
+/* The pictures under the steps: one set per step, stacked; the lit step's
+   set shows, and within it one image at a time, crossfading (phases.ts). */
+.phase-show {
+  position: relative; margin-top: clamp(2.5rem, 5vw, 4rem);
+  aspect-ratio: 16 / 9; max-height: 75vh; width: 100%;
+  overflow: hidden; background: var(--patina);
+  border-top: 3px solid var(--messing);
+}
+.phase-show__set, .phase-show img { position: absolute; inset: 0; }
+.phase-show img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  opacity: 0; transition: opacity 1200ms var(--ease);
+  filter: var(--bild);
+}
+.phase-show__set.is-active img.is-on { opacity: 1; }
+.steps__now { display: none; }
+/* Bottom right of the pictures: fills until the next image (phases.ts). */
+.phase-show__next {
+  position: absolute; right: 0.9rem; bottom: 0.9rem; z-index: 1;
+  width: 1.6rem; height: 1.6rem; rotate: -90deg;
+  fill: rgb(20 36 33 / 0.55); stroke-width: 2.5;
+}
+.phase-show__next circle { stroke: color-mix(in srgb, var(--kalkstein) 35%, transparent); }
+.phase-show__next .phase-show__fill {
+  fill: none; stroke: var(--messing); stroke-linecap: round;
+  stroke-dasharray: 100; stroke-dashoffset: 100;
+}
+.phase-show__next.is-running .phase-show__fill { animation: phase-next var(--next, 3s) linear forwards; }
+@keyframes phase-next { to { stroke-dashoffset: 0; } }
+/* A step locked by click or tap: its circle filled brass. */
+.steps.is-cycling li { cursor: pointer; }
+.steps.is-cycling li.is-locked h3::before {
+  background-color: var(--messing);
+  background-image: none;
+}
+.steps.is-cycling li.is-locked h3::after {
+  content: ""; position: absolute; left: 50%; top: calc(1.5rem + var(--ring) / 2);
+  width: 1.9rem; aspect-ratio: 1127 / 527; translate: -50% -50%; scale: 1.1;
+  background: var(--patina);
+  -webkit-mask: url("../assets/logo/zuern-leaf-messing.svg") no-repeat center / contain;
+  mask: url("../assets/logo/zuern-leaf-messing.svg") no-repeat center / contain;
+}
+
+/* About: his picture on the right, the heading and the facts on the left. */
+.about {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 26rem);
+  gap: clamp(2rem, 5vw, 5rem); align-items: start;
+}
+.portrait img { display: block; width: 100%; height: auto; filter: var(--bild); }
+.facts { margin: 2rem 0 0; border-top: 1px solid color-mix(in srgb, var(--patina) 70%, transparent); }
+.facts div {
+  display: grid; grid-template-columns: 11rem 1fr; gap: 1rem; padding: 1rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--patina) 18%, transparent);
+}
+.facts dt { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--messing-ink); padding-top: 0.2rem; }
+.facts dd { margin: 0; line-height: 1.55; }
+
+.kontakt { max-width: 44rem; }
+/* The contact section's heading ("Kontakt") is for screen readers and the
+   dots only; what shows is the person you reach, set light. */
+.kontakt__name {
+  margin: 0 0 2.25rem;
+  font-size: clamp(1.6rem, 1.1rem + 1.7vw, 2.5rem); font-weight: 400; line-height: 1.15;
+  color: var(--kalkstein);
+}
+.sr-only {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+.kontakt__list { margin: 0 0 2.5rem; border-top: 1px solid color-mix(in srgb, var(--messing) 60%, transparent); }
+.kontakt__list div {
+  display: grid; grid-template-columns: 8rem 1fr; gap: 1rem; padding: 1rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--kalkstein) 14%, transparent);
+}
+.kontakt__list div:last-child { border-bottom: 0; }
+.kontakt__list dt { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--messing); padding-top: 0.2rem; }
+.kontakt__list dd { margin: 0; }
+.kontakt__list a { color: var(--kalkstein); font-weight: 700; text-decoration-color: var(--messing); text-underline-offset: 0.3em; }
+
+.sheet--dark .foot {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  max-width: 72rem; margin: clamp(4rem, 9vw, 7rem) auto 0; padding-block: 1.5rem 2rem;
+  color: color-mix(in srgb, var(--kalkstein) 70%, var(--salbei));
+  border-top: 1px solid color-mix(in srgb, var(--kalkstein) 14%, transparent);
+}
+
+/* On the dark footer: the all-white version of the logo, straight on the green. */
+.foot__logo { display: block; width: clamp(7.5rem, 11vw, 10rem); }
+.foot__logo img { display: block; width: 100%; height: auto; }
+.foot__legal { display: flex; gap: 1.5rem; }
+.foot__legal a { color: var(--kalkstein); text-decoration: none; border-bottom: 1px solid var(--messing); padding-block: 0.3rem; }
+.foot__legal a:hover { color: var(--messing); }
+
+/* ------------------------------------------------------------------ brand -- */
+/* The small logo, a tab on the left edge: the mirror of the up/down tab,
+   Kalkstein in a brass frame, square against the screen edge. It slides in
+   once the opening panel has gone and stays through the sections. */
+.brand {
+  position: fixed; z-index: 45; top: clamp(1rem, 2.2vw, 1.75rem); left: 0;
+  display: block; width: clamp(6.5rem, 8vw, 8.5rem);
+  padding: 0.6rem 0.85rem 0.55rem var(--gutter); box-sizing: content-box;
+  background: var(--kalkstein);
+  border: 1.5px solid var(--messing); border-left: 0; border-radius: 0 0.9rem 0.9rem 0;
+  box-shadow: 0 2px 6px rgb(8 14 12 / 0.2), 0 12px 32px rgb(8 14 12 / 0.28);
+  opacity: 0; visibility: hidden; transform: translateX(calc(-100% - 1rem));
+  transition: opacity 400ms var(--ease), transform 500ms var(--ease), visibility 0s 500ms;
+}
+.brand img { display: block; width: 100%; height: auto; }
+.brand.is-on { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+
+/* ------------------------------------------------------------------- dots -- */
+/* One dot per point of the walk and per section, built by steps.ts. Phones
+   always show them all; large screens show only the services' dots, next to
+   the rail (which covers the sections), while a service is on screen. */
+.dots {
+  position: fixed; z-index: 44; right: calc(var(--rail) + 0.75rem); top: 50%; translate: 0 -50%;
+  display: flex; flex-direction: column; gap: 0.1rem;
+  padding: 0.35rem 0.1rem;
+  opacity: 0; visibility: hidden;
+  transition: opacity 300ms var(--ease), visibility 0s 300ms;
+}
+.dots.is-service { opacity: 1; visibility: visible; transition-delay: 0s; }
+@media (min-width: 761px) { .dots__dot:not(.dots__dot--service) { display: none; } }
+.dots__dot {
+  display: grid; place-items: center; width: 1.75rem; height: 1.75rem;
+  padding: 0; border: 0; background: none; cursor: pointer;
+}
+.dots__dot::before {
+  content: ""; width: 0.45rem; height: 0.45rem; border-radius: 50%;
+  border: 1.5px solid var(--kalkstein); box-sizing: border-box;
+  box-shadow: 0 0 0 0.5px rgb(8 14 12 / 0.25), 0 1px 3px rgb(8 14 12 / 0.45);
+  transition: transform 200ms var(--ease), background-color 200ms var(--ease),
+    border-color 300ms var(--ease), box-shadow 300ms var(--ease);
+}
+.dots__dot:hover::before { background: color-mix(in srgb, var(--kalkstein) 40%, transparent); }
+/* No backdrop: over a light section (steps.ts sets is-light) the rings turn
+   dark green instead of Kalkstein, so they stay visible on either ground. */
+.dots.is-light .dots__dot::before { border-color: var(--patina); box-shadow: none; }
+.dots.is-light .dots__dot:hover::before { background: color-mix(in srgb, var(--patina) 30%, transparent); }
+.dots__dot[aria-current]::before { background: var(--messing); border-color: var(--messing); transform: scale(1.5); }
+.dots__dot { position: relative; }
+/* The target's name slides out to the left of a hovered or focused dot. */
+.dots__label {
+  position: absolute; right: calc(100% + 0.6rem); top: 50%;
+  padding: 0.45rem 0.8rem; border-radius: 0.4rem;
+  white-space: nowrap; pointer-events: none;
+  font-size: 0.85rem; font-weight: 600; letter-spacing: 0.01em; color: var(--kalkstein);
+  background: rgb(20 36 33 / 0.92);
+  box-shadow: 0 2px 6px rgb(8 14 12 / 0.2), 0 10px 24px rgb(8 14 12 / 0.25);
+  translate: 0.75rem -50%; opacity: 0; clip-path: inset(0 0 0 100% round 0.4rem);
+  transition: translate 300ms var(--ease), opacity 200ms var(--ease), clip-path 300ms var(--ease);
+}
+.dots__dot[aria-current] .dots__label { color: var(--messing); }
+.dots__dot:focus-visible .dots__label { translate: 0 -50%; opacity: 1; clip-path: inset(0 round 0.4rem); }
+@media (hover: hover) {
+  .dots__dot:hover .dots__label { translate: 0 -50%; opacity: 1; clip-path: inset(0 round 0.4rem); }
+}
+
+/* ----------------------------------------------------------------- mobile -- */
+@media (max-width: 760px) {
+  /* Phones: full-width bands whose brass edge sits level with their dot
+     (--card-top, set by steps.ts); centred until that is known. */
+  .stop { left: var(--gutter); right: var(--gutter); width: auto; top: 50%; bottom: auto; translate: 0 -50%; padding: 1.6rem 1.5rem 1.75rem; }
+  .stop[style*="--card-top"] { top: var(--card-top); translate: none; }
+  .stop h2 { font-size: clamp(1.6rem, 7vw, 2rem); }
+  .stop h3 { font-size: clamp(1.35rem, 6vw, 1.7rem); }
+  .stop p { font-size: 1rem; }
+  /* Room under the fixed logo tile: sections are landed on at their top. */
+  .sheet { padding-top: 8.5rem; padding-right: var(--gutter); }
+  .sheet--dark .foot { flex-direction: column; align-items: center; }
+  .foot__legal { justify-content: center; }
+  .dots { right: 0.4rem; opacity: 1; visibility: visible; }
+  /* In the strip right of the cards, under the dots, against the screen edge. */
+  .walk-steps { right: 0; bottom: max(1.5rem, env(safe-area-inset-bottom)); }
+  .walk-steps { --step-h: 2.75rem; }
+  .walk-steps svg { width: 1.25rem; height: 1.25rem; }
+  /* Keep cards clear of the dots. */
+  .stop { right: calc(var(--gutter) + 1.9rem); }
+  .split, .about, .kontakt { grid-template-columns: 1fr; }
+  /* Phones: the circles in one joined row, only the lit step's title below
+     it (.steps__now, from phases.ts), then the pictures. */
+  .steps li { padding-inline: 0; --ring: 3rem; }
+  .steps h3 { font-size: 0; }
+  .steps h3::before { margin-bottom: 0; }
+  .steps__now {
+    display: block; margin: 1.1rem 0 1.25rem; text-align: center;
+    font-size: 1.15rem; font-weight: 700; color: var(--patina);
+  }
+  .phase-show { margin-top: 0; }
+  .phase-show__next { right: calc(0.9rem + 1.9rem); }  /* clear of the dots */
+  .facts div, .kontakt__list div { grid-template-columns: 1fr; gap: 0.3rem; }
+}
+
+/* --------------------------------------------------------- reduced motion -- */
+/* No pinned walk: the poster, the claim, every stop in reading order, the offer. */
+@media (prefers-reduced-motion: reduce) {
+  .walk .garden__stage { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr)); align-content: end; gap: 1rem; }
+  .walk .garden__open { grid-column: 1 / -1; }
+  .walk .hello { grid-column: 1 / -1; width: auto; max-width: 30rem; justify-self: end; }
+  .stops { display: contents; }
+  .stop {
+    position: relative; left: auto; right: auto; top: auto; bottom: auto; width: auto; translate: none;
+    opacity: 1 !important; transform: none !important; visibility: visible;
+  }
+  .walk .garden__arrive { grid-column: 1 / -1; }
+  .walk-steps { display: none; }
+}

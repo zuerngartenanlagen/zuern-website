@@ -3,455 +3,200 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="description" content="Zürn Gartenanlagen in Beilstein — Garten- und Landschaftsbau mit fotorealistischer 3D-Planung und persönlicher Umsetzung im Bottwartal, Heilbronn, Ludwigsburg und Stuttgart." />
+  <meta name="description" content="Zürn Gartenanlagen in Beilstein: Garten- und Landschaftsbau mit 3D-Planung und persönlicher Umsetzung im Bottwartal, in Heilbronn, Ludwigsburg und Stuttgart." />
   <meta name="theme-color" content="#1F3A36" />
   <title>Zürn Gartenanlagen | Garten- und Landschaftsbau Beilstein</title>
-  <link rel="icon" href="assets/logo/primary-color.svg" type="image/svg+xml" />
-  <link rel="preload" href="fonts/montserrat-bold.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="preload" href="fonts/montserrat-regular.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="/src/assets/logo/zuern-leaf.svg" type="image/svg+xml" />
+  <link rel="preload" href="/fonts/montserrat-bold.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/montserrat-regular.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/caveat-latin-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/caveat-latin-600.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/src/walk/scrollcraft.css" />
+  <link rel="stylesheet" href="/src/walk/garden.css" />
+  <link rel="stylesheet" href="/src/walk/walk.css" />
 </head>
-<body>
+<body class="walk-page">
   <a class="skip" href="#inhalt">Zum Inhalt</a>
 
-  <svg xmlns="http://www.w3.org/2000/svg" class="icon-sprite" aria-hidden="true" focusable="false">
-    <symbol id="icon-planung" viewBox="0 0 48 48">
-      <rect x="10" y="10" width="28" height="28" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"/>
-      <path d="M24 16.5c-2.8 0-5 2.4-5 5.4 0 3.8 5 9.1 5 9.1s5-5.3 5-9.1c0-3-2.2-5.4-5-5.4Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-      <path d="M24 21.5v4.2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-    </symbol>
-    <symbol id="icon-anlage" viewBox="0 0 48 48">
-      <path d="M14 34c2.5-4.2 6.2-6.5 10-6.5s7.5 2.3 10 6.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-      <path d="M24 27.5V16.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-      <path d="M24 20.5c-2.2-2.4-5.2-3.2-7.2-2.6 1.4 2.4 3.8 4.2 7.2 5.1Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-      <path d="M24 20.5c2.2-2.4 5.2-3.2 7.2-2.6-1.4 2.4-3.8 4.2-7.2 5.1Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-      <circle cx="24" cy="15.2" r="1.4" fill="none" stroke="currentColor" stroke-width="1.5"/>
-    </symbol>
-    <symbol id="icon-pflanzung" viewBox="0 0 48 48">
-      <path d="M24 36V22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-      <path d="M24 24c-4.5-1.2-8-5.2-8.5-10.2 5.2.4 9.2 3.6 10.8 7.8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M24 21c4.5-1.8 7.8-5.8 8.2-10.5-4.8.8-8.5 4.2-9.8 8.2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M16 36h16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-    </symbol>
-    <symbol id="icon-naturstein" viewBox="0 0 48 48">
-      <path d="M12 32.5h24l-2.5 5.5H14.5L12 32.5Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-      <path d="M15 25.5h18l-2 5.5H17L15 25.5Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-      <path d="M18.5 18.5h11l-1.8 5.5H20.3l-1.8-5.5Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-    </symbol>
-    <symbol id="icon-pflege" viewBox="0 0 48 48">
-      <path d="M24 36V18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-      <path d="M24 28c-3.2-4.5-6.8-7.2-10.2-8.5 1.2 4.8 4.8 9.2 10.2 12.2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M24 26c3.2-5 7-8 10.5-9.2-1 5.2-4.8 9.8-10.5 12.8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M24 20c-1.8-3.8-4.2-6-6.8-7 .8 3.5 3 6.5 6.8 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M24 18c1.8-3.5 4.2-5.5 6.8-6.2-.6 3.2-2.8 6-6.8 8.2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-    </symbol>
-    <symbol id="icon-bauen" viewBox="0 0 48 48">
-      <path d="M12 34h24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-      <path d="M16 34V22l8-6 8 6v12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-      <path d="M22 34v-6h4v6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-    </symbol>
-    <symbol id="icon-sprig" viewBox="0 0 64 64">
-      <path d="M18 48c8-10 16-18 28-26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-      <path d="M32 30c-4.5-1-8.5-4.2-10-8.5 5.5.5 10 3.8 12.2 8.2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M38 24c-3.8-2.2-6.5-6-7-10.2 5.2 1.2 9.2 5 10.8 9.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M44 20c-2.8-3-4.5-6.8-4.2-10.5 4.5 1.8 7.5 5.8 8.2 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-    </symbol>
-  </svg>
+  <a class="brand" href="#top" data-g-brand>
+    <img src="/src/assets/logo/zuern-logo.svg" alt="Zürn Gartenanlagen, zum Anfang" width="1683" height="796" />
+  </a>
 
-  <div
-    class="scroll-progress"
-    role="progressbar"
-    aria-valuemin="0"
-    aria-valuemax="100"
-    aria-valuenow="0"
-    aria-label="Seitenfortschritt"
-  >
-    <span class="scroll-progress-bar"></span>
-  </div>
-
-  <header class="site-header" id="top">
-    <div class="header-inner">
-      <a class="logo" href="#top">
-        <img src="assets/logo/primary-color.svg" alt="Zürn Gartenanlagen" width="2941" height="1644" />
-      </a>
-
-      <a class="header-phone" href="tel:+491758270998">
-        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <path d="M8.5 3.8h-2A1.5 1.5 0 0 0 5 5.3c0 8 6.5 14.5 14.5 14.5a1.5 1.5 0 0 0 1.5-1.5v-2a1.5 1.5 0 0 0-1.1-1.45l-2.7-.7a1.5 1.5 0 0 0-1.5.5l-1.1 1.3a11.6 11.6 0 0 1-5.1-5.1l1.3-1.1a1.5 1.5 0 0 0 .5-1.5l-.7-2.7A1.5 1.5 0 0 0 8.5 3.8Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
-        </svg>
-        <span>0175 8270998</span>
-      </a>
-
-      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
-        <span class="sr-only">Menü</span>
-        <span class="nav-toggle-bars" aria-hidden="true"></span>
-      </button>
-
-      <nav class="nav" id="site-nav" aria-label="Hauptnavigation">
-        <a href="#leistungen" data-nav="leistungen">Leistungen</a>
-        <a href="#planung" data-nav="planung">3D-Planung</a>
-        <a href="#ablauf" data-nav="ablauf">Ablauf</a>
-        <a href="#ueber-mich" data-nav="ueber-mich">Über mich</a>
-        <a href="#kontakt" data-nav="kontakt">Kontakt</a>
-      </nav>
-    </div>
+  <header class="rail rail--nav" data-g-rail>
+    <nav class="rail__nav" aria-label="Hauptnavigation">
+      <a href="#leistungen">Leistungen</a>
+      <a href="#planung">Planung</a>
+      <a href="#ueber-mich">Über mich</a>
+      <a href="#kontakt">Kontakt</a>
+      <a href="tel:+491758270998" aria-label="Telefon 0175 8270998"><svg class="rail__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 3.5h2.6l1.4 4.1-2 1.5a12 12 0 0 0 6.3 6.3l1.5-2 4.1 1.4v2.6a2 2 0 0 1-2.1 2A16.5 16.5 0 0 1 4.6 5.6a2 2 0 0 1 2-2.1z"/></svg><span>0175 8270998</span></a>
+      <a href="mailto:info@zuern-gartenanlagen.de" title="info@zuern-gartenanlagen.de" aria-label="E-Mail an info@zuern-gartenanlagen.de"><svg class="rail__icon rail__icon--line" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="13" rx="1.5"/><path d="m4 7 8 6 8-6"/></svg><span>info@</span></a>
+    </nav>
   </header>
 
   <main id="inhalt">
-    <section class="hero" id="einstieg" aria-label="Einstieg" data-section="top">
-      <div class="hero-media" role="img" aria-label="Gartenatmosphäre — Projektfoto folgt"></div>
-      <div class="hero-shade" aria-hidden="true"></div>
-      <div class="hero-inner">
-        <p class="eyebrow eyebrow--light hero-anim" style="--delay: 0ms">Garten- &amp; Landschaftsbau · Beilstein</p>
-        <h1 class="hero-anim" style="--delay: 80ms">
-          <span class="hero-line">GESTALTEN.</span>
-          <span class="hero-line">PFLANZEN.</span>
-          <span class="hero-line hero-line--messing">LEBENSRÄUME.</span>
-        </h1>
-        <p class="hero-lead hero-anim" style="--delay: 200ms">
-          Geplant in fotorealistischem 3D und persönlich umgesetzt vom staatlich geprüften Techniker — zwischen Bottwartal, Heilbronn, Ludwigsburg und Stuttgart.
-        </p>
-        <div class="hero-actions hero-anim" style="--delay: 320ms">
-          <a class="btn btn-primary" href="#kontakt">Beratung anfragen</a>
-          <a class="text-link text-link--light" href="#planung">3D-Planung ansehen <span aria-hidden="true">›</span></a>
+    <!-- The walk: the reference film, scrubbed by scroll. Its own title card is
+         blurred out in the clip (tools/clean_video.sh); ours is real markup. -->
+    <section class="garden walk" id="top" data-sc-act="pin" data-sc-span="6"
+             data-garden data-walk aria-labelledby="hero-title">
+      <span class="walk__anchor" id="leistungen" aria-hidden="true"></span>
+      <div class="sc-stage garden__stage">
+        <picture>
+          <source media="(max-width: 760px)" srcset="/walk/seq/poster-m-end.webp" />
+          <img class="walk__poster" src="/walk/seq/poster-d-end.webp" width="1600" height="900"
+               alt="Ein stiller Gartenteich, Trittsteine führen durch Stauden und Gräser zu einem Haus mit Glasfront." />
+        </picture>
+        <canvas class="walk__frames" aria-hidden="true"
+                data-walk-d="walk/seq/d/" data-walk-h="walk/seq/h/" data-walk-m="walk/seq/m/" data-water="walk/seq/water" data-frames="161" data-hold="0.12" data-direction="reverse"></canvas>
+
+        <div class="garden__open" data-g-window="0 0 0.04 0.14" data-g-move="panel">
+          <img class="garden__logo" src="/src/assets/logo/zuern-logo.svg" alt="Zürn Gartenanlagen" width="1683" height="796" />
+          <h1 id="hero-title" class="claim">
+            <span>Gestalten.</span>
+            <span>Pflanzen.</span>
+            <span class="claim__accent">Lebensräume.</span>
+          </h1>
         </div>
-      </div>
-    </section>
 
-    <section class="trust" aria-label="Auf einen Blick">
-      <ul class="trust-list">
-        <li>Fotorealistische 3D-Planung</li>
-        <li>Staatlich geprüfter Techniker</li>
-        <li>Persönliche Bauleitung</li>
-      </ul>
-    </section>
+        <!-- Large screens: a quick hello from Marcel, over the garden on the
+             right of the opening panel, his face under the words. Clicking it
+             walks on to the services. -->
+        <a class="hello" href="#leistungen" data-g-window="0 0 0.04 0.14">
+          <span class="hello__bubble">
+            <strong>Schön, dass Sie da sind!</strong>
+            Ich bin Marcel Zürn. Ich plane und baue Gärten rund um Beilstein, von der ersten Skizze bis zur letzten Pflanze. Gehen Sie ruhig ein Stück mit durch den Garten.
+          </span>
+          <img class="hello__face" src="/src/assets/images/marcel-zuern-face.webp" width="240" height="240" alt="Marcel Zürn" />
+        </a>
 
-    <section class="band band--stone reveal" id="ausrichtung" aria-labelledby="intro-title">
-      <div class="wrap narrow">
-        <p class="eyebrow">Ausrichtung</p>
-        <h2 id="intro-title">Sie sehen Ihren Garten, <span class="title-break">bevor es ihn gibt.</span></h2>
-        <p class="lede">
-          Digitale Planung und handwerkliche Ausführung liegen in einer Hand — vom ersten Entwurf bis zur Pflege.
-        </p>
-        <svg class="icon icon--sprig" aria-hidden="true" focusable="false"><use href="#icon-sprig"></use></svg>
-      </div>
-
-      <div class="wrap">
-        <div class="usp" data-usp>
-          <div class="usp-tabs" role="tablist" aria-label="Leistungsbereiche">
-            <button type="button" class="usp-tab is-active" role="tab" id="usp-tab-1" aria-selected="true" aria-controls="usp-panel-1" data-usp-tab="1">
-              <svg class="icon icon--tab" aria-hidden="true" focusable="false"><use href="#icon-planung"></use></svg>
-              <span>Planen</span>
-            </button>
-            <button type="button" class="usp-tab" role="tab" id="usp-tab-2" aria-selected="false" aria-controls="usp-panel-2" data-usp-tab="2" tabindex="-1">
-              <svg class="icon icon--tab" aria-hidden="true" focusable="false"><use href="#icon-bauen"></use></svg>
-              <span>Bauen</span>
-            </button>
-            <button type="button" class="usp-tab" role="tab" id="usp-tab-3" aria-selected="false" aria-controls="usp-panel-3" data-usp-tab="3" tabindex="-1">
-              <svg class="icon icon--tab" aria-hidden="true" focusable="false"><use href="#icon-pflege"></use></svg>
-              <span>Pflegen</span>
-            </button>
+        <!-- Stops along the path: the services, one per stretch of the walk.
+             Phones: one card at a time. Large screens: all six in a column, the
+             current one lit (garden.js). -->
+        <div class="stops" data-g-window="0.170 0.195 0.815 0.842">
+          <div class="stop stop--mid-left" data-g-window="0.170 0.195 0.255 0.282">
+            <h2>Planung, Bau und Pflege aus einer Hand</h2>
+            <p>Ich plane Ihren Garten digital und setze den Plan anschließend selbst um. Von der ersten Begehung bis zur Pflege haben Sie denselben Ansprechpartner.</p>
           </div>
-          <div class="usp-panels">
-            <div class="usp-panel is-active" role="tabpanel" id="usp-panel-1" aria-labelledby="usp-tab-1" data-usp-panel="1">
-              <h3>Sehen, bevor gebaut wird</h3>
-              <p>
-                Im Ersttermin erfasse ich Ihr Grundstück digital. Daraus entstehen Plan und fotorealistische Visualisierung — Höhen, Beläge und Bepflanzung werden nachvollziehbar, solange Änderungen noch leicht fallen.
-              </p>
-              <a class="text-link" href="#planung">Zur 3D-Planung <span aria-hidden="true">›</span></a>
-            </div>
-            <div class="usp-panel" role="tabpanel" id="usp-panel-2" aria-labelledby="usp-tab-2" data-usp-panel="2" hidden>
-              <h3>Neuanlage und Umgestaltung</h3>
-              <p>
-                Vom Gesamtkonzept bis zur Ausführung: Terrassen, Naturstein, Wege, Mauersysteme, Sichtschutz, Bewässerung und Pflanzung — abgestimmt auf Haus, Grundstück und Nutzung.
-              </p>
-              <a class="text-link" href="#leistungen">Zu den Leistungen <span aria-hidden="true">›</span></a>
-            </div>
-            <div class="usp-panel" role="tabpanel" id="usp-panel-3" aria-labelledby="usp-tab-3" data-usp-panel="3" hidden>
-              <h3>Pflege mit Kontinuität</h3>
-              <p>
-                Auf Wunsch betreue ich die Anlage weiter: saisonale Pflege, Schnitt und Unterhalt — damit der Garten über Jahre dem entspricht, was geplant wurde.
-              </p>
-              <a class="text-link" href="#kontakt">Pflege anfragen <span aria-hidden="true">›</span></a>
-            </div>
+          <div class="stop stop--top-right" data-g-window="0.282 0.307 0.367 0.394">
+            <h3>CAD- und 3D-Planung</h3>
+            <p>Aufmaß, Grundriss und 3D-Ansicht. Auf dieser Grundlage entscheiden Sie, bevor gebaut wird.</p>
+          </div>
+          <div class="stop stop--bottom-left" data-g-window="0.394 0.419 0.479 0.506">
+            <h3>Neuanlage und Umgestaltung</h3>
+            <p>Gärten nach dem Hausbau oder die Neuordnung bestehender Anlagen, mit Blick auf Sitzplätze, Sichtachsen und den Übergang vom Haus.</p>
+          </div>
+          <div class="stop stop--top-left" data-g-window="0.506 0.531 0.591 0.618">
+            <h3>Pflaster, Naturstein und Mauern</h3>
+            <p>Wege, Terrassen, Einfahrten, Treppen und Mauersysteme aus Naturstein und Betonstein.</p>
+          </div>
+          <div class="stop stop--bottom-right" data-g-window="0.618 0.643 0.703 0.730">
+            <h3>Pflanzung, Wasser und Technik</h3>
+            <p>Stauden, Solitärgehölze, Rasen und Bewässerung. Wo es passt, auch Wasserflächen. Immer passend zu Standort und Pflegeaufwand.</p>
+          </div>
+          <div class="stop stop--mid-right" data-g-window="0.730 0.755 0.815 0.842">
+            <h3>Jahrespflege und Schnitt</h3>
+            <p>Saisonale Pflege, Beete, Form- und Gehölzschnitt, damit der Garten so bleibt, wie er geplant wurde.</p>
           </div>
         </div>
-      </div>
-    </section>
 
-    <section class="band band--patina" id="leistungen" aria-labelledby="leistungen-title" data-section="leistungen">
-      <div class="wrap reveal">
-        <p class="eyebrow eyebrow--light">Leistungen</p>
-        <h2 id="leistungen-title">Alles aus einer Hand.</h2>
-        <p class="section-lead section-lead--light">Details öffnen sich auf Klick.</p>
-
-        <div class="service-rail" data-services>
-          <article class="service is-open">
-            <button type="button" class="service-trigger" aria-expanded="true">
-              <span class="service-icon" aria-hidden="true">
-                <svg class="icon"><use href="#icon-planung"></use></svg>
-              </span>
-              <span class="service-body">
-                <span class="service-title-row">
-                  <h3>CAD- &amp; 3D-Planung</h3>
-                  <span class="service-toggle" aria-hidden="true"></span>
-                </span>
-              </span>
-            </button>
-            <div class="service-detail">
-              <p>Aufmaß, Grundriss, 3D-Ansicht und fotorealistische Visualisierung — die Grundlage für eine sichere Entscheidung und eine präzise Umsetzung.</p>
+        <div class="garden__scrim garden__scrim--arrive" data-g-window="0.83 0.89" aria-hidden="true"></div>
+        <div class="garden__arrive" data-g-window="0.85 0.91">
+          <h2 class="garden__title">Packen wir es an!</h2>
+          <div class="garden__actions">
+            <div class="garden__reach">
+              <a class="garden__link" href="tel:+491758270998">0175 8270998</a>
+              <a class="call" href="tel:+491758270998" aria-label="0175 8270998 anrufen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 3.5h2.6l1.4 4.1-2 1.5a12 12 0 0 0 6.3 6.3l1.5-2 4.1 1.4v2.6a2 2 0 0 1-2.1 2A16.5 16.5 0 0 1 4.6 5.6a2 2 0 0 1 2-2.1z"/></svg></a>
             </div>
-          </article>
-          <article class="service">
-            <button type="button" class="service-trigger" aria-expanded="false">
-              <span class="service-icon" aria-hidden="true">
-                <svg class="icon"><use href="#icon-anlage"></use></svg>
-              </span>
-              <span class="service-body">
-                <span class="service-title-row">
-                  <h3>Gartenneubau &amp; Umgestaltung</h3>
-                  <span class="service-toggle" aria-hidden="true"></span>
-                </span>
-              </span>
-            </button>
-            <div class="service-detail" hidden>
-              <p>Neuanlagen nach dem Hausbau oder die Neuordnung bestehender Gärten: Aufenthalt, Sichtachsen und der Übergang vom Haus in den Garten als Gesamtkonzept.</p>
+            <div class="garden__reach">
+              <a class="garden__link" href="mailto:info@zuern-gartenanlagen.de" aria-label="E-Mail an info@zuern-gartenanlagen.de"><span>info@</span><span class="garden__domain">zuern-gartenanlagen.de</span></a>
+              <a class="call" href="mailto:info@zuern-gartenanlagen.de" aria-label="E-Mail an info@zuern-gartenanlagen.de"><svg viewBox="0 0 24 24" aria-hidden="true" class="call__line"><rect x="3.5" y="5.5" width="17" height="13" rx="1.5"/><path d="m4 7 8 6 8-6"/></svg></a>
             </div>
-          </article>
-          <article class="service">
-            <button type="button" class="service-trigger" aria-expanded="false">
-              <span class="service-icon" aria-hidden="true">
-                <svg class="icon"><use href="#icon-naturstein"></use></svg>
-              </span>
-              <span class="service-body">
-                <span class="service-title-row">
-                  <h3>Pflaster, Naturstein &amp; Mauern</h3>
-                  <span class="service-toggle" aria-hidden="true"></span>
-                </span>
-              </span>
-            </button>
-            <div class="service-detail" hidden>
-              <p>Wege, Terrassen, Einfahrten, Naturstein und Mauersysteme — handwerklich präzise und materialgerecht.</p>
-            </div>
-          </article>
-          <article class="service">
-            <button type="button" class="service-trigger" aria-expanded="false">
-              <span class="service-icon" aria-hidden="true">
-                <svg class="icon"><use href="#icon-pflanzung"></use></svg>
-              </span>
-              <span class="service-body">
-                <span class="service-title-row">
-                  <h3>Pflanzung, Wasser &amp; Technik</h3>
-                  <span class="service-toggle" aria-hidden="true"></span>
-                </span>
-              </span>
-            </button>
-            <div class="service-detail" hidden>
-              <p>Stauden und Solitärgehölze, Rasen, Bewässerung und — wo es zum Konzept passt — Wasserflächen. Immer abgestimmt auf Standort und Pflegeaufwand.</p>
-            </div>
-          </article>
-          <article class="service">
-            <button type="button" class="service-trigger" aria-expanded="false">
-              <span class="service-icon" aria-hidden="true">
-                <svg class="icon"><use href="#icon-pflege"></use></svg>
-              </span>
-              <span class="service-body">
-                <span class="service-title-row">
-                  <h3>Jahrespflege &amp; Schnitt</h3>
-                  <span class="service-toggle" aria-hidden="true"></span>
-                </span>
-              </span>
-            </button>
-            <div class="service-detail" hidden>
-              <p>Saisonale Pflege, Beetpflege, Formschnitt und Gehölzschnitt — damit Ihre Anlage über das Jahr gepflegt bleibt.</p>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="band band--stone" id="planung" aria-labelledby="planung-title" data-section="planung">
-      <div class="wrap planung reveal">
-        <div class="planung-copy">
-          <p class="eyebrow">3D-Planung</p>
-          <h2 id="planung-title">Entscheidung mit Klarheit.</h2>
-          <p class="section-lead">
-            Sie sehen Wege, Höhen, Materialien und Bepflanzung im Zusammenhang — und entscheiden am Bild, nicht erst auf der Baustelle.
-          </p>
-          <ol class="quiet-steps">
-            <li><strong>Aufmaß</strong> digital vor Ort</li>
-            <li><strong>Entwurf</strong> in 2D und 3D</li>
-            <li><strong>Visualisierung</strong> fotorealistisch</li>
-            <li><strong>Umsetzung</strong> 1:1 nach Plan</li>
-          </ol>
-        </div>
-        <figure class="placeholder">
-          <div class="placeholder-frame" role="img" aria-label="Beispielvisualisierung folgt">
-            <span>Visualisierung folgt</span>
           </div>
-        </figure>
+        </div>
       </div>
     </section>
 
-    <section class="band band--patina" id="ablauf" aria-labelledby="ablauf-title" data-section="ablauf">
-      <div class="wrap reveal">
-        <p class="eyebrow eyebrow--light">Ablauf</p>
-        <h2 id="ablauf-title">Ein Ansprechpartner.</h2>
-        <p class="section-lead section-lead--light">Vom ersten Gespräch bis zur Pflege — ohne Schnittstellen.</p>
-        <ol class="timeline" id="ablauf-steps">
-          <li class="is-active" data-step="1">
-            <span class="step-no">1</span>
-            <div>
-              <h3>Vor-Ort</h3>
-              <p>Wünsche, Bestand und Rahmen. Digitales Aufmaß als Grundlage für den Entwurf.</p>
-            </div>
-          </li>
-          <li data-step="2">
-            <span class="step-no">2</span>
-            <div>
-              <h3>Plan &amp; Bild</h3>
-              <p>Entwurf und fotorealistische Darstellung. Sie prüfen und entscheiden in Ruhe.</p>
-            </div>
-          </li>
-          <li data-step="3">
-            <span class="step-no">3</span>
-            <div>
-              <h3>Umsetzung</h3>
-              <p>Handwerkliche Ausführung des abgestimmten Plans — begleitet bis zur Abnahme.</p>
-            </div>
-          </li>
-          <li data-step="4">
-            <span class="step-no">4</span>
-            <div>
-              <h3>Pflege</h3>
-              <p>Optional: kontinuierliche Betreuung, damit die Anlage hält, was der Plan verspricht.</p>
-            </div>
-          </li>
+    <section class="sheet" id="planung" aria-labelledby="planung-title">
+      <div class="sheet__inner" data-sc-in>
+        <div class="split">
+          <h2 id="planung-title">Erst sehen, dann bauen</h2>
+          <p class="intro">Nach dem Aufmaß vor Ort zeichne ich den Plan und ein 3D-Modell Ihres Gartens. Darin sehen Sie Wege, Höhen, Beläge und Pflanzen so, wie sie später zusammen wirken. Passt etwas nicht, ändern wir es, solange es noch einfach geht.</p>
+        </div>
+        <ol class="steps" data-sc-stagger="90">
+          <li data-sc-in><h3>Termin vor Ort</h3></li>
+          <li data-sc-in><h3>Plan und Ansicht</h3></li>
+          <li data-sc-in><h3>Bau</h3></li>
+          <li data-sc-in><h3>Pflege</h3></li>
         </ol>
+        <!-- Eine Bilderstrecke je Phase, gleiche Reihenfolge wie die Liste oben.
+             Platzhalter: Standbilder aus dem Film, bis echte Fotos da sind. -->
+        <div class="phase-show" aria-hidden="true">
+          <div class="phase-show__set is-active" data-phase="0">
+            <img class="is-on" src="/walk/seq/d/150.avif" width="1600" height="900" alt="" decoding="async" />
+            <img src="/walk/seq/d/140.avif" width="1600" height="900" alt="" loading="lazy" decoding="async" />
+            <img src="/walk/seq/d/130.avif" width="1600" height="900" alt="" loading="lazy" decoding="async" />
+          </div>
+          <div class="phase-show__set" data-phase="1">
+            <img class="is-on" src="/walk/seq/d/110.avif" width="1600" height="900" alt="" loading="lazy" decoding="async" />
+            <img src="/walk/seq/d/100.avif" width="1600" height="900" alt="" loading="lazy" decoding="async" />
+            <img src="/walk/seq/d/090.avif" width="1600" height="900" alt="" loading="lazy" decoding="async" />
+          </div>
+          <div class="phase-show__set" data-phase="2">
+            <img class="is-on" src="/walk/seq/d/070.avif" width="1600" height="900" alt="" loading="lazy" decoding="async" />
+            <img src="/walk/seq/d/060.avif" width="1600" height="900" alt="" loading="lazy" decoding="async" />
+            <img src="/walk/seq/d/050.avif" width="1600" height="900" alt="" loading="lazy" decoding="async" />
+          </div>
+          <div class="phase-show__set" data-phase="3">
+            <img class="is-on" src="/walk/seq/d/030.avif" width="1600" height="900" alt="" loading="lazy" decoding="async" />
+            <img src="/walk/seq/d/020.avif" width="1600" height="900" alt="" loading="lazy" decoding="async" />
+            <img src="/walk/seq/d/010.avif" width="1600" height="900" alt="" loading="lazy" decoding="async" />
+          </div>
+        </div>
       </div>
     </section>
 
-    <section class="band band--stone" id="ueber-mich" aria-labelledby="ueber-title" data-section="ueber-mich">
-      <div class="wrap about reveal">
-        <div class="about-copy">
-          <p class="eyebrow">Über mich</p>
+    <section class="sheet sheet--about" id="ueber-mich" aria-labelledby="ueber-title">
+      <div class="sheet__inner about" data-sc-in>
+        <div class="about__main">
           <h2 id="ueber-title">Marcel Zürn</h2>
-          <p class="lede">
-            Staatlich geprüfter Techniker für Garten- und Landschaftsbau (Bachelor Professional) mit mehrjähriger Bauleiter-Erfahrung in der Region Heilbronn-Franken und Stuttgart.
-          </p>
-          <p class="about-extra">
-            Planung und Ausführung bleiben bei mir. Zum 1.&nbsp;Oktober&nbsp;2026 gründe ich Zürn Gartenanlagen in Beilstein.
-          </p>
-          <ul class="cred-list">
-            <li>Staatlich geprüfter Techniker · Bachelor Professional</li>
-            <li>Bauleitung in der Praxis</li>
-            <li>Ausbildereignung (AdA)</li>
-            <li>Über acht Jahre im GaLaBau</li>
-          </ul>
+          <dl class="facts">
+            <div><dt>Abschluss</dt><dd>Staatlich geprüfter Techniker, Bachelor Professional</dd></div>
+            <div><dt>Erfahrung</dt><dd>Über acht Jahre im Garten- und Landschaftsbau, davon mehrere als Bauleiter</dd></div>
+            <div><dt>Ausbildereignung</dt><dd>AdA-Schein</dd></div>
+            <div><dt>Einsatzgebiet</dt><dd>Beilstein und das Bottwartal und 50&nbsp;km darum</dd></div>
+          </dl>
         </div>
-        <figure class="portrait">
-          <div class="placeholder-frame placeholder-frame--portrait" role="img" aria-label="Porträt folgt">
-            <span>Porträt folgt</span>
-          </div>
-        </figure>
+        <picture class="portrait">
+          <img src="/src/assets/images/marcel-zuern-800.webp" srcset="/src/assets/images/marcel-zuern-480.webp 480w, /src/assets/images/marcel-zuern-800.webp 800w, /src/assets/images/marcel-zuern-1200.webp 1200w"
+               sizes="(max-width: 760px) 100vw, 26rem" width="800" height="1000" loading="lazy" decoding="async"
+               alt="Marcel Zürn lacht nach einem Lauf am Hockenheimring, mit Finisher-Medaille im Trikot des TGV Eintracht Beilstein" />
+        </picture>
       </div>
     </section>
 
-    <section class="band band--patina band--compact reveal" id="gebiet" aria-labelledby="gebiet-title">
-      <div class="wrap narrow">
-        <p class="eyebrow eyebrow--light">Gebiet</p>
-        <h2 id="gebiet-title">Bottwartal und Umgebung.</h2>
-        <p class="section-lead section-lead--light">
-          Beilstein, Bottwartal, Ludwigsburg, Heilbronn und der nördliche Großraum Stuttgart — rund 50&nbsp;km Einsatzradius.
-        </p>
-      </div>
-    </section>
-
-    <section class="band band--stone" id="kontakt" aria-labelledby="kontakt-title" data-section="kontakt">
-      <div class="wrap kontakt reveal">
-        <div class="kontakt-copy">
-          <p class="eyebrow">Kontakt</p>
-          <h2 id="kontakt-title">Ihr Vorhaben.</h2>
-          <p class="section-lead">
-            Schildern Sie kurz Grundstück und Ziel. Ich melde mich persönlich.
-          </p>
-          <ul class="kontakt-list">
-            <li>
-              <span class="label">Telefon</span>
-              <a href="tel:+491758270998">0175 8270998</a>
-            </li>
-            <li>
-              <span class="label">E-Mail</span>
-              <a href="mailto:info@zuern-gartenanlagen.de">Info@zuern-gartenanlagen.de</a>
-            </li>
-            <li>
-              <span class="label">Adresse</span>
-              <span>Entengasse 13, 71717 Beilstein</span>
-            </li>
-          </ul>
+    <section class="sheet sheet--dark" id="kontakt" aria-labelledby="kontakt-title">
+      <div class="sheet__inner kontakt" data-sc-in>
+        <div>
+          <h2 id="kontakt-title" class="sr-only">Kontakt</h2>
+          <p class="kontakt__name">Marcel Zürn</p>
+          <dl class="kontakt__list">
+            <div><dt>Telefon</dt><dd><a href="tel:+491758270998">0175 8270998</a></dd></div>
+            <div><dt>E-Mail</dt><dd><a href="mailto:info@zuern-gartenanlagen.de">info@zuern-gartenanlagen.de</a></dd></div>
+            <div><dt>Adresse</dt><dd>Entengasse 13, 71717 Beilstein</dd></div>
+          </dl>
         </div>
-
-        <form class="anfrage" id="anfrage" action="mailto:info@zuern-gartenanlagen.de" method="post" enctype="text/plain" novalidate>
-          <div class="form-grid">
-            <div class="field">
-              <label for="name">Name <abbr title="Pflichtfeld">*</abbr></label>
-              <input id="name" name="name" type="text" autocomplete="name" required />
-            </div>
-            <div class="field">
-              <label for="tel">Telefon</label>
-              <input id="tel" name="tel" type="tel" autocomplete="tel" inputmode="tel" />
-            </div>
-            <div class="field">
-              <label for="email">E-Mail <abbr title="Pflichtfeld">*</abbr></label>
-              <input id="email" name="email" type="email" autocomplete="email" inputmode="email" required />
-            </div>
-            <div class="field">
-              <label for="anliegen">Anliegen</label>
-              <select id="anliegen" name="anliegen">
-                <option value="">Bitte wählen</option>
-                <option>Neuanlage</option>
-                <option>Umgestaltung</option>
-                <option>3D-Planung</option>
-                <option>Pflaster &amp; Naturstein</option>
-                <option>Pflanzung</option>
-                <option>Jahrespflege</option>
-                <option>Sonstiges</option>
-              </select>
-            </div>
-            <div class="field field--full">
-              <label for="nachricht">Nachricht <abbr title="Pflichtfeld">*</abbr></label>
-              <textarea id="nachricht" name="nachricht" rows="5" required placeholder="Ort, Grundstück, grobes Vorhaben …"></textarea>
-            </div>
-            <div class="field field--full field--check">
-              <input id="dsgvo" name="dsgvo" type="checkbox" value="ja" required />
-              <label for="dsgvo">Ich willige ein, dass meine Angaben zur Beantwortung dieser Anfrage verwendet werden. Details in der <a href="datenschutz.html">Datenschutzerklärung</a>. <abbr title="Pflichtfeld">*</abbr></label>
-            </div>
-          </div>
-          <button class="btn btn-primary" type="submit">Anfrage senden</button>
-          <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
-          <p class="form-note">Es wird nichts auf einem Server gespeichert. Das Formular öffnet Ihr E-Mail-Programm.</p>
-        </form>
       </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="wrap footer-grid">
-      <div>
-        <p class="footer-brand">Zürn Gartenanlagen</p>
-        <p class="footer-claim">GESTALTEN. PFLANZEN. LEBENSRÄUME.</p>
-      </div>
-      <div class="footer-meta">
-        <p>Entengasse 13, 71717 Beilstein</p>
-        <nav class="footer-legal" aria-label="Rechtliches">
+      <footer class="foot">
+        <a class="foot__logo" href="#top">
+          <img src="/src/assets/logo/zuern-logo-white.svg" alt="Zürn Gartenanlagen, zum Anfang" width="1683" height="796" loading="lazy" />
+        </a>
+        <nav class="foot__legal" aria-label="Rechtliches">
           <a href="impressum.html">Impressum</a>
           <a href="datenschutz.html">Datenschutz</a>
         </nav>
-        <p class="footer-copy">© 2026 Marcel Zürn</p>
-      </div>
-    </div>
-  </footer>
+      </footer>
+    </section>
+  </main>
 
-  <script src="site.js"></script>
+  <script type="module" src="/src/walk/main.ts"></script>
 </body>
 </html>
