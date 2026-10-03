@@ -39,7 +39,7 @@ jobs:
           # custom domain belongs to the Pages site in the main repo.
           BASE_PATH: ${{ steps.pages.outputs.base_path }}/
       - name: Ensure CNAME in dist
-        run: cp public/CNAME dist/CNAME
+        run: cp public/CNAME CNAME
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5
         with:
