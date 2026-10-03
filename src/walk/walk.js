@@ -44,7 +44,11 @@
   // on tall windows and the width on wide ones; the film is 16:9.
   var needH = Math.max(cv.clientHeight, cv.clientWidth * 9 / 16) * (devicePixelRatio || 1);
   var hd = !phone && !!cv.dataset.walkH && needH > 1000;
-  var base = phone ? cv.dataset.walkM : hd ? cv.dataset.walkH : cv.dataset.walkD;
+  // Frame prefixes read from the data-walk-* attributes, resolved against the
+  // document so the site works under any base path (a project subpath, the
+  // custom domain, a folder opened from disk).
+  function at(path) { return new URL(path, document.baseURI).href; }
+  var base = at(phone ? cv.dataset.walkM : hd ? cv.dataset.walkH : cv.dataset.walkD);
   var N = parseInt(cv.dataset.frames, 10);
   var HOLD = parseFloat(cv.dataset.hold) || 0;
   var query = new URLSearchParams(location.search).get('walk');
@@ -211,7 +215,7 @@
 
     // ---- water: atlas on the GPU, a CPU copy to place drops on the water ----
     var water = null;
-    var prefix = cv.dataset.water;
+    var prefix = at(cv.dataset.water);
     if (prefix) {
       Promise.all([
         fetch(prefix + '.json').then(function (r) { if (!r.ok) throw new Error('water.json ' + r.status); return r.json(); }),
