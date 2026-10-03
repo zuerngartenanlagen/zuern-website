@@ -35,7 +35,8 @@ jobs:
       - name: Type-check and build
         run: npm run build
         env:
-          # "/zuern-website" as a project site, "" once a custom domain is set
+          # This repo is a project site, so it always lives under /<repo>/. The
+          # custom domain belongs to the Pages site in the main repo.
           BASE_PATH: ${{ steps.pages.outputs.base_path }}/
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5

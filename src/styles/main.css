@@ -6,7 +6,7 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url("/fonts/montserrat-regular.woff2") format("woff2");
+  src: url("../assets/fonts/montserrat-regular.woff2") format("woff2");
 }
 
 @font-face {
@@ -14,7 +14,7 @@
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url("/fonts/montserrat-bold.woff2") format("woff2");
+  src: url("../assets/fonts/montserrat-bold.woff2") format("woff2");
 }
 
 :root {
