@@ -32,6 +32,8 @@ jobs:
         uses: actions/configure-pages@v6
       - name: Install dependencies
         run: npm ci
+      - name: Copy CNAME
+        run: cp public/CNAME dist/CNAME
       - name: Type-check and build
         run: npm run build
         env:
