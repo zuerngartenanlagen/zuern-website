@@ -53,7 +53,3 @@ tools/images.sh mein/portrait.jpg mein/gesicht.jpg   # oder zwei andere Dateien
 ```
 
 Die Bilderstrecke unter den Phasen steht in `index.html` im Block `phase-show`, ein Satz Bilder je Phase in derselben Reihenfolge wie die Liste darüber. Noch Platzhalter: Standbilder aus dem Film, bis echte Fotos da sind.
-
-## Deployment
-
-GitHub Actions (`.github/workflows/static.yml`) prüft die Typen, baut bei jedem Push auf `main` und veröffentlicht `dist/` auf GitHub Pages: https://bernhardrode.github.io/zuern-website/. Den Basispfad liefert `actions/configure-pages` (`BASE_PATH`). Wird die Domain zuern-gartenanlagen.de später in den Pages-Einstellungen dieses Repos eingetragen, baut die Seite automatisch für `/`.
