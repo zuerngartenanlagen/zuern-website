@@ -34,16 +34,6 @@ jobs:
         run: npm ci
       - name: Type-check and build
         run: npm run build
-        env:
-          # This repo is a project site, so it always lives under /<repo>/. The
-          # custom domain belongs to the Pages site in the main repo.
-          BASE_PATH: ${{ steps.pages.outputs.base_path }}/
-      - name: Ensure CNAME in dist
-        run: cp public/CNAME CNAME
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v5
-        with:
-          path: dist
 
   deploy:
     needs: build
@@ -52,6 +42,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
