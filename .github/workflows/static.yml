@@ -38,7 +38,7 @@ jobs:
           # This repo is a project site, so it always lives under /<repo>/. The
           # custom domain belongs to the Pages site in the main repo.
           BASE_PATH: ${{ steps.pages.outputs.base_path }}/
-      - name: Copy CNAME
+      - name: Ensure CNAME in dist
         run: cp public/CNAME dist/CNAME
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5
