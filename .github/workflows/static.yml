@@ -17,7 +17,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  cicd:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -27,16 +27,22 @@ jobs:
         with:
           node-version: 24
           cache: npm
-      - name: Setup Pages
-        id: pages
-        uses: actions/configure-pages@v6
       - name: Install dependencies
         run: npm ci
       - name: Type-check and build
         run: npm run build
-      - name: LS
-        run: ls dist
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5
         with:
           path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

@@ -4,8 +4,9 @@ import { defineConfig } from 'vite';
 const page = (file: string) => resolve(import.meta.dirname, file);
 
 export default defineConfig({
-  // GitHub Pages project sites live under /<repo>/; CI passes the path from actions/configure-pages
-  base: process.env.BASE_PATH || '/',
+  // Custom domain zuern-gartenanlagen.de serves this Pages site from /.
+  // The project path /zuern-website/ 404s there, so assets must not use it.
+  base: '/',
   build: {
     rolldownOptions: {
       input: {
