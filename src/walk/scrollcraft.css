@@ -94,7 +94,16 @@
 
 /* --------------------------------------------------------------- reset -- */
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  /* One scrollport: the document. overflow-x:clip on body as well makes
+     iOS Safari promote the other axis and nest a second scroller under the
+     sticky walk, which is where a touch dies at the next section. */
+  overflow-x: clip;
+  overflow-y: auto;
+  overscroll-behavior-x: none;
+}
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
 body {
@@ -108,7 +117,7 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   font-synthesis-weight: none;
-  overflow-x: clip;
+  max-width: 100%;
 }
 img, video, canvas, svg { display: block; max-width: 100%; }
 button, input, select, textarea { font: inherit; color: inherit; }
