@@ -184,7 +184,7 @@ html::-webkit-scrollbar { display: none; }
   content: ""; position: relative; display: block; box-sizing: border-box;
   width: var(--ring); height: var(--ring); margin: 0 auto 1rem;
   border: 1.5px solid var(--messing); border-radius: 50%;
-  background: var(--kalkstein) url("../assets/logo/zuern-leaf-messing.svg") no-repeat center / 1.9rem auto;
+  background: var(--kalkstein) url("../assets/logo/zuern-mark-messing.png") no-repeat center / 1.9rem auto;
 }
 /* Cycling (phases.ts): one step at a time is lit, the others' titles recede. */
 .steps.is-cycling h3 { transition: color 800ms var(--ease); }
@@ -233,8 +233,8 @@ html::-webkit-scrollbar { display: none; }
   content: ""; position: absolute; left: 50%; top: calc(1.5rem + var(--ring) / 2);
   width: 1.9rem; aspect-ratio: 1127 / 527; translate: -50% -50%; scale: 1.1;
   background: var(--patina);
-  -webkit-mask: url("../assets/logo/zuern-leaf-messing.svg") no-repeat center / contain;
-  mask: url("../assets/logo/zuern-leaf-messing.svg") no-repeat center / contain;
+  -webkit-mask: url("../assets/logo/zuern-mark-messing.png") no-repeat center / contain;
+  mask: url("../assets/logo/zuern-mark-messing.png") no-repeat center / contain;
 }
 
 /* About: his picture on the right, the heading and the facts on the left. */
@@ -280,7 +280,7 @@ html::-webkit-scrollbar { display: none; }
   border-top: 1px solid color-mix(in srgb, var(--kalkstein) 14%, transparent);
 }
 
-/* On the dark footer: the all-white version of the logo, straight on the green. */
+/* On the dark footer: the Kalkstein negative of the logo, straight on the green. */
 .foot__logo { display: block; width: clamp(7.5rem, 11vw, 10rem); }
 .foot__logo img { display: block; width: 100%; height: auto; }
 .foot__legal { display: flex; gap: 1.5rem; }

@@ -226,7 +226,7 @@ body {
 }
 .garden__title::after {
   content: ""; display: block; width: 2.75rem; aspect-ratio: 1127 / 527; margin: 1.25rem auto 0;
-  background: url("../assets/logo/zuern-leaf-messing.svg") no-repeat center / contain;
+  background: url("../assets/logo/zuern-mark-messing.png") no-repeat center / contain;
 }
 /* Number over the phone button, address over the mail button: two centred
    columns of equal width side by side, so the buttons sit symmetrically about
