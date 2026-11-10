@@ -63,10 +63,11 @@ async function fingerSwipe(page: Page, browserName: string): Promise<Swipe> {
         await page.evaluate((d) => window.scrollBy({ top: d, left: 0, behavior: 'instant' }), delta);
       }
     }
-    const during = await scrollY(page);
     await send('touchEnd', y2);
-    await page.waitForTimeout(browserName === 'chromium' ? 280 : 40);
-    return { duringDelta: during - start, end: await scrollY(page), prevented };
+    // A phone snap moves on release, then eases into place. Count that move.
+    await page.waitForTimeout(520);
+    const end = await scrollY(page);
+    return { duringDelta: end - start, end, prevented };
   } finally {
     await client?.detach();
   }
