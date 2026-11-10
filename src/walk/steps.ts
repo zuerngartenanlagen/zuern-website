@@ -2,10 +2,19 @@
 //
 // Inside the walk the page never rests between points: the opening, each
 // service card at the middle of its hold, the arrival, and the top of the
-// first section. Scrolling is held there (Lenis stopped) and every gesture (a
-// wheel or trackpad swipe, a touch swipe, a page key) glides exactly one point
-// on. Past the last point the sections scroll freely; scrolling back up into
-// the walk lands on the nearest point and stepping resumes.
+// first section. On a large screen scrolling is held there (Lenis stopped) and
+// every gesture (a wheel or trackpad swipe, a touch swipe, a page key) glides
+// exactly one point on. Past the last point the sections scroll freely;
+// scrolling back up into the walk lands on the nearest point and stepping resumes.
+//
+// Phones do not take that lock. iOS Safari will not scroll a document again
+// after a non-passive touchmove has called preventDefault, so handing control
+// back at „Erst sehen, dann bauen“ leaves the finger stuck (only the dots
+// still move, because they call scrollTo). The address bar also changes
+// innerHeight while the finger is down; snapping back to a point on that
+// resize pulls the page out from under the thumb. On phones the walk scrubs
+// with native scrolling, and that section is its own scroll-driven scene
+// (phases.ts).
 //
 // The arrow keys and the up/down tab at the right edge step one point on or
 // back anywhere on the page, sections included. One point on or back glides;
@@ -249,7 +258,9 @@ export function initSteps(lenis: Lenis | null): void {
     if (lenis) lenis.scrollTo(y, { immediate: true, force: true });
     else scrollTo({ top: y, behavior: 'instant' });
     pointBefore = nearestZone();
-    hold(holdsAt(y));
+    // Stopping Lenis sets overflow:clip and makes its own touch listener
+    // call preventDefault. On a phone that lock does not release.
+    hold(phone.matches ? false : holdsAt(y));
     markActive();
   }
 
@@ -282,6 +293,9 @@ export function initSteps(lenis: Lenis | null): void {
 
   // One point on or back glides; anything further jumps.
   function glideTo(y: number): void {
+    // A glide holds the document for a second. On a phone the finger is the
+    // scroll, so a dot or an arrow jumps and lets go.
+    if (phone.matches) { jumpTo(y); return; }
     if (!lenis || stepsTo(y) > 1) { jumpTo(y); return; }
     const stays = holdsAt(y);
     gliding = true;
@@ -314,6 +328,7 @@ export function initSteps(lenis: Lenis | null): void {
   let taken = 0;         // points already moved for it
   let wheelDir = 0;
   addEventListener('wheel', (e: WheelEvent) => {
+    if (phone.matches) return;
     if (!inZoneNow() || (e.deltaY > 0 && atZoneEnd() && !gliding)) { hold(false); return; }
     e.preventDefault();
     const dir = e.deltaY > 0 ? 1 : -1;
@@ -326,22 +341,44 @@ export function initSteps(lenis: Lenis | null): void {
     while (taken < due) { taken += 1; arrowStep(dir); }
   }, { passive: false });
 
-  // Touch: a swipe steps; the page does not move under the finger.
+  // Touch, large screens only: a swipe steps and the page does not move under
+  // the finger. The listeners are not registered on phones. A non-passive
+  // touchmove on the window is enough for iOS Safari to take the document
+  // away from native scrolling, including the gesture that was meant to leave
+  // the section.
   let touchY: number | null = null;
-  addEventListener('touchstart', (e: TouchEvent) => { touchY = e.touches[0]?.clientY ?? null; }, { passive: true });
-  addEventListener('touchmove', (e: TouchEvent) => {
+  const onTouchStart = (e: TouchEvent): void => { touchY = e.touches[0]?.clientY ?? null; };
+  const onTouchMove = (e: TouchEvent): void => {
     if (!inZoneNow() || touchY === null) return;
     const dy = touchY - (e.touches[0]?.clientY ?? touchY);
     if (dy > 0 && atZoneEnd() && !gliding) { hold(false); return; }   // leaving downward
     e.preventDefault();
-  }, { passive: false });
-  addEventListener('touchend', (e: TouchEvent) => {
+  };
+  const onTouchEnd = (e: TouchEvent): void => {
     if (touchY === null) return;
     const dy = touchY - (e.changedTouches[0]?.clientY ?? touchY);
     touchY = null;
     if (!inZoneNow() || Math.abs(dy) < SWIPE_MIN || (dy > 0 && atZoneEnd())) return;
     step(dy > 0 ? 1 : -1);
-  }, { passive: true });
+  };
+  const useTouchLock = (on: boolean): void => {
+    removeEventListener('touchstart', onTouchStart);
+    removeEventListener('touchmove', onTouchMove);
+    removeEventListener('touchend', onTouchEnd);
+    if (!on) return;
+    addEventListener('touchstart', onTouchStart, { passive: true });
+    addEventListener('touchmove', onTouchMove, { passive: false });
+    addEventListener('touchend', onTouchEnd, { passive: true });
+  };
+  const syncPhone = (): void => {
+    if (phone.matches) { useTouchLock(false); hold(false); return; }
+    useTouchLock(true);
+  };
+  phone.addEventListener('change', () => {
+    syncPhone();
+    if (!phone.matches) hold(holdsAt(scrollY));
+  });
+  syncPhone();
 
   // Keys. The arrow keys go one point up or down anywhere on the page, like the
   // up/down tab. Page keys and space step through the walk; in the sections
@@ -428,7 +465,9 @@ export function initSteps(lenis: Lenis | null): void {
   // carries on through the points instead of stopping there.
   lenis.on('scroll', () => {
     markActive();
-    if (!held && !gliding && scrollY < zoneEnd() - 2) {
+    // On a phone this recapture fights the finger: any scroll above the
+    // section is pulled back into a glide and the document locks again.
+    if (!phone.matches && !held && !gliding && scrollY < zoneEnd() - 2) {
       const pt = zone[Math.min(nearestZone(), zone.length - 2)];
       if (!pt) return;
       glideTo(pt.y());
@@ -446,12 +485,17 @@ export function initSteps(lenis: Lenis | null): void {
   addEventListener('resize', () => {
     clearTimeout(resizeTimer);
     resizeTimer = window.setTimeout(() => {
+      // The phone address bar opens and closes without a rotation. innerHeight
+      // changes, point positions move, and scrolling back to one yanks the
+      // page while the finger is still down. Scrollcraft ignores that resize
+      // for the same reason.
+      if (phone.matches) { pointBefore = nearestZone(); markActive(); return; }
       const pt = zone[pointBefore];
       if (held && pt) lenis.scrollTo(pt.y(), { immediate: true, force: true });
       markActive();
     }, 150);
   });
 
-  hold(holdsAt(scrollY));
+  if (!phone.matches) hold(holdsAt(scrollY));
   markActive();
 }

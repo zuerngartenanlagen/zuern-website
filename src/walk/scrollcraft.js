@@ -142,8 +142,21 @@
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   var fineMQ = matchMedia('(hover: hover) and (pointer: fine)');
   var smallMQ = matchMedia('(max-width: 860px)');
+  var phoneMQ = matchMedia('(max-width: 760px)');
   var coarse = matchMedia('(hover: none) and (pointer: coarse)').matches;
   var isMobile = function () { return coarse || smallMQ.matches; };
+  // 100vh follows the large viewport; 100svh is the small one and does not
+  // change when the iOS address bar shows or hides. The stage is 100svh, so
+  // a pin measured in vh is taller than the stage and the next section peeks
+  // through while touch scrolling is still captive.
+  function svhPx() {
+    var probe = document.createElement('div');
+    probe.style.cssText = 'position:absolute;height:100svh;width:0;pointer-events:none';
+    document.body.appendChild(probe);
+    var h = probe.getBoundingClientRect().height;
+    probe.remove();
+    return h || innerHeight;
+  }
 
   var clamp = function (x, a, b) { return x < a ? a : x > b ? b : x; };
   var clamp01 = function (x) { return clamp(x, 0, 1); };
@@ -552,9 +565,10 @@
 
     // ---- layout -----------------------------------------------------------
     function layout() {
-      vh = innerHeight; vw = innerWidth;
+      vh = phoneMQ.matches ? svhPx() : innerHeight; vw = innerWidth;
+      var pinUnit = phoneMQ.matches ? 'svh' : 'vh';
       acts.forEach(function (a) {
-        if (a.pinned) a.el.style.height = (a.span * 100) + 'vh';
+        if (a.pinned) a.el.style.height = (a.span * 100) + pinUnit;
       });
       // The spacer is the whole document flow of a worldflight. Its height is
       // the sum of the leg weights plus one viewport: without that extra screen
@@ -1179,8 +1193,10 @@
     var lastW = innerWidth;
     addEventListener('resize', function () {
       // Ignore URL-bar-only height changes on phones. Relaying out on those
-      // makes the page jump under the reader's thumb for no reason.
-      if (innerWidth === lastW && isMobile()) { vh = innerHeight; return; }
+      // makes the page jump under the reader's thumb for no reason. vh stays
+      // on the svh ruler too: writing innerHeight here would skip the film
+      // ahead when the bar hides, because the stage itself does not grow.
+      if (innerWidth === lastW && isMobile()) return;
       lastW = innerWidth;
       layout();
     }, { passive: true });

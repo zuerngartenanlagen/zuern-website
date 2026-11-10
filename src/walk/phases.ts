@@ -5,9 +5,14 @@
 // A click or tap locks a step (its images keep playing); clicking the locked
 // step again unlocks it and the steps take turns again. Only while the list is
 // on screen; under reduced motion all stay equal and nothing moves.
+//
+// Phones do not use the timer. The section is a sticky frame (walk.css) and
+// the finger scrubs the same four steps, image by image, then the pin ends
+// and the page scrolls on.
 
 const PHASE_MS = 3800;   // how long each step stays highlighted
 const SLIDE_MS = 2600;   // how long each image shows while a step is held
+const phone = matchMedia('(max-width: 760px)');
 
 export function initPhases(): void {
   const list = document.querySelector<HTMLElement>('.steps');
@@ -16,6 +21,7 @@ export function initPhases(): void {
   if (steps.length < 2) return;
   const stage = document.querySelector<HTMLElement>('.phase-show');
   const sets = stage ? Array.from(stage.querySelectorAll<HTMLElement>('.phase-show__set')) : [];
+  const section = document.getElementById('planung');
 
   let current = 0;
   let cycle = 0;
@@ -23,6 +29,7 @@ export function initPhases(): void {
   let inView = false;
   let held = false;                 // mouse resting on a step or the picture
   let locked: number | null = null; // a step picked by click or tap
+  let cleanup = (): void => {};
 
   // Phones show only the lit step's title, in one line under the row.
   const now = document.createElement('p');
@@ -36,6 +43,7 @@ export function initPhases(): void {
   ring.setAttribute('viewBox', '0 0 24 24');
   ring.innerHTML = '<circle cx="12" cy="12" r="10" pathLength="100"/><circle class="phase-show__fill" cx="12" cy="12" r="10" pathLength="100"/>';
   stage?.append(ring);
+  const fill = ring.querySelector<SVGCircleElement>('.phase-show__fill');
   const countdown = (ms: number | null): void => {
     ring.classList.remove('is-running');
     if (ms === null) return;
@@ -95,20 +103,103 @@ export function initPhases(): void {
     locked = i; stopCycle(); show(i); startSlides();
   };
 
-  list.classList.add('is-cycling');
-  show(0);
+  const frames = sets.map((set) => Array.from(set.querySelectorAll('img')));
 
-  new IntersectionObserver((entries) => {
-    inView = entries.some((e) => e.isIntersecting);
-    if (inView) startCycle(); else { stopCycle(); release(); }
-  }, { threshold: 0.3 }).observe(list);
+  // 0 when the sticky frame pins, 1 as it lets go. The track and the frame
+  // are both svh, so the address bar does not move this ruler.
+  const scrubProgress = (): number => {
+    if (!section) return 0;
+    const frame = section.querySelector('.sheet__inner');
+    const travel = section.offsetHeight - (frame?.getBoundingClientRect().height || innerHeight);
+    if (travel <= 1) return 0;
+    return Math.min(1, Math.max(0, (scrollY - section.offsetTop) / travel));
+  };
+  const renderScrub = (): void => {
+    const flat = frames.flat();
+    if (!flat.length) return;
+    const x = scrubProgress() * (flat.length - 1);
+    const i0 = Math.floor(x);
+    const i1 = Math.min(flat.length - 1, i0 + 1);
+    const blend = x - i0;
+    flat.forEach((img, k) => {
+      let opacity = 0;
+      if (k === i0) opacity = 1 - (i0 === i1 ? 0 : blend);
+      if (k === i1) opacity = Math.max(opacity, i0 === i1 ? 1 : blend);
+      img.style.opacity = opacity.toFixed(3);
+    });
+    const phaseCount = Math.max(1, frames.length);
+    const phase = Math.min(phaseCount - 1, Math.floor(scrubProgress() * phaseCount));
+    const local = scrubProgress() * phaseCount - phase;
+    show(phase);
+    if (fill) fill.style.strokeDashoffset = String(100 - Math.min(1, local) * 100);
+  };
 
-  const isMouse = (e: PointerEvent): boolean => e.pointerType === 'mouse';
-  steps.forEach((li, i) => {
-    li.addEventListener('pointerenter', (e) => { if (isMouse(e)) hold(i); });
-    li.addEventListener('pointerleave', (e) => { if (isMouse(e)) release(); });
-    li.addEventListener('click', () => toggleLock(i));
-  });
-  stage?.addEventListener('pointerenter', (e) => { if (isMouse(e)) hold(current); });
-  stage?.addEventListener('pointerleave', (e) => { if (isMouse(e)) release(); });
+  const mountScrub = (): void => {
+    section?.classList.add('is-scrub');
+    stage?.classList.add('is-scrub');
+    list.classList.add('is-cycling');
+    locked = null;
+    held = false;
+    stopCycle();
+    stopSlides();
+    ring.classList.remove('is-running');
+    const onScroll = (): void => renderScrub();
+    addEventListener('scroll', onScroll, { passive: true });
+    addEventListener('resize', onScroll);
+    renderScrub();
+    cleanup = () => {
+      removeEventListener('scroll', onScroll);
+      removeEventListener('resize', onScroll);
+      section?.classList.remove('is-scrub');
+      stage?.classList.remove('is-scrub');
+      frames.flat().forEach((img) => img.style.removeProperty('opacity'));
+      if (fill) fill.style.removeProperty('stroke-dashoffset');
+    };
+  };
+
+  const mountCycle = (): void => {
+    list.classList.add('is-cycling');
+    show(0);
+    const io = new IntersectionObserver((entries) => {
+      inView = entries.some((e) => e.isIntersecting);
+      if (inView) startCycle(); else { stopCycle(); release(); }
+    }, { threshold: 0.3 });
+    io.observe(list);
+
+    const isMouse = (e: PointerEvent): boolean => e.pointerType === 'mouse';
+    const bound = steps.map((li, i) => {
+      const enter = (e: PointerEvent): void => { if (isMouse(e)) hold(i); };
+      const leave = (e: PointerEvent): void => { if (isMouse(e)) release(); };
+      const click = (): void => toggleLock(i);
+      li.addEventListener('pointerenter', enter);
+      li.addEventListener('pointerleave', leave);
+      li.addEventListener('click', click);
+      return { li, enter, leave, click };
+    });
+    const stageEnter = (e: PointerEvent): void => { if (isMouse(e)) hold(current); };
+    const stageLeave = (e: PointerEvent): void => { if (isMouse(e)) release(); };
+    stage?.addEventListener('pointerenter', stageEnter);
+    stage?.addEventListener('pointerleave', stageLeave);
+
+    cleanup = () => {
+      io.disconnect();
+      stopCycle();
+      stopSlides();
+      bound.forEach(({ li, enter, leave, click }) => {
+        li.removeEventListener('pointerenter', enter);
+        li.removeEventListener('pointerleave', leave);
+        li.removeEventListener('click', click);
+      });
+      stage?.removeEventListener('pointerenter', stageEnter);
+      stage?.removeEventListener('pointerleave', stageLeave);
+    };
+  };
+
+  const apply = (): void => {
+    cleanup();
+    if (phone.matches && section) mountScrub();
+    else mountCycle();
+  };
+  phone.addEventListener('change', apply);
+  apply();
 }
