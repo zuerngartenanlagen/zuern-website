@@ -7,14 +7,14 @@
 // exactly one point on. Past the last point the sections scroll freely;
 // scrolling back up into the walk lands on the nearest point and stepping resumes.
 //
-// Phones do not take that lock. iOS Safari will not scroll a document again
-// after a non-passive touchmove has called preventDefault, so handing control
-// back at „Erst sehen, dann bauen“ leaves the finger stuck (only the dots
-// still move, because they call scrollTo). The address bar also changes
-// innerHeight while the finger is down; snapping back to a point on that
-// resize pulls the page out from under the thumb. On phones the walk scrubs
-// with native scrolling, and that section is its own scroll-driven scene
-// (phases.ts).
+// Phones snap. A finger swipe, however fast, moves exactly one topic: each
+// dot, and inside „Erst sehen, dann bauen“ each of the four phases, then the
+// next section. The page never hands the gesture back to Safari. iOS will not
+// scroll natively again after a touchmove called preventDefault, so the swipe
+// itself always does the scrolling. A short move is ignored. Momentum is not:
+// one gesture is one step, and the address bar must not pull the page back.
+// prefers-reduced-motion keeps native scrolling (no snap animation, no
+// preventDefault), so the footer stays reachable without a forced glide.
 //
 // The arrow keys and the up/down tab at the right edge step one point on or
 // back anywhere on the page, sections included. One point on or back glides;
@@ -31,6 +31,7 @@ interface Point {
   inWalk: boolean;
   isService?: boolean;
   card?: HTMLElement;
+  sectionId?: string;
 }
 
 const ARROWS_SLIDE_MS = 500;  // the tab's slide, as in walk.css
@@ -45,6 +46,8 @@ const WHEEL_MIN = 12;         // ignore tiny wheel jitter (px)
 const WHEEL_QUIET_MS = 220;   // a pause this long ends a wheel/trackpad gesture
 const WHEEL_MORE_PX = 300;    // scrolling on this much further in one gesture adds a point
 const SWIPE_MIN = 40;         // touch travel that counts as a swipe (px)
+const SNAP_MIN = 56;          // phone: shorter than this is not a step
+const SNAP_S = 0.38;          // phone snap, short enough to feel settled
 
 const ease = (t: number): number => 1 - Math.pow(1 - t, 3);
 
@@ -73,7 +76,7 @@ function collectPoints(act: HTMLElement): Point[] {
   ['planung', 'ueber-mich', 'kontakt'].forEach((id) => {
     const section = document.getElementById(id);
     const title = section?.querySelector('h2')?.textContent?.trim();
-    if (section && title) points.push({ label: title, y: () => section.offsetTop, inWalk: false });
+    if (section && title) points.push({ label: title, y: () => section.offsetTop, inWalk: false, sectionId: id });
   });
   return points;
 }
@@ -249,6 +252,111 @@ export function initSteps(lenis: Lenis | null): void {
     nav?.classList.toggle('is-service', Boolean(points[best]?.isService));
     nav?.classList.toggle('is-light', lightBehind(nav));
     arrows?.show(true, Boolean(prevPoint()), Boolean(nextPoint()));
+    if (phone.matches && !snapBusy) publishSnap(nearestSnap());
+  }
+
+  // Phone snap targets: the same points as the dots, except the planning
+  // section is four phase stops while its sticky scene is up. Positions are
+  // read live so an address-bar resize does not require a scroll correction.
+  function snapList(): Point[] {
+    const section = document.getElementById('planung');
+    if (!phone.matches || !section?.classList.contains('is-scrub')) return points;
+    const heads = Array.from(section.querySelectorAll('.steps h3'))
+      .map((h) => h.textContent?.trim() || '')
+      .filter(Boolean);
+    const frameCount = section.querySelectorAll('.phase-show img').length;
+    if (heads.length < 2 || frameCount < 2) return points;
+    const per = frameCount / heads.length;
+    const out: Point[] = [];
+    for (const pt of points) {
+      if (pt.sectionId === 'kontakt') { out.push({ ...pt, y: () => footerSnap(pt.y()) }); continue; }
+      if (pt.sectionId !== 'planung') { out.push(pt); continue; }
+      heads.forEach((label, i) => {
+        out.push({
+          label, inWalk: false, sectionId: 'planung',
+          y: () => {
+            const frame = section.querySelector('.sheet__inner');
+            const travel = Math.max(0, section.offsetHeight - (frame?.clientHeight || innerHeight));
+            const progress = (i * per) / (frameCount - 1);
+            return clampScroll(section.offsetTop + progress * travel);
+          },
+        });
+      });
+    }
+    return out;
+  }
+
+  // The contact sheet is one topic. Land where its footer is on screen when
+  // the sheet is taller than the phone.
+  function footerSnap(top: number): number {
+    const foot = document.querySelector('footer');
+    if (!foot) return clampScroll(top);
+    const bottom = foot.getBoundingClientRect().bottom + scrollY;
+    return clampScroll(Math.max(top, bottom - innerHeight + 8));
+  }
+
+  function clampScroll(y: number): number {
+    return Math.max(0, Math.min(y, document.documentElement.scrollHeight - innerHeight));
+  }
+
+  function nearestSnap(): number {
+    const list = snapList();
+    let best = 0;
+    list.forEach((pt, i) => {
+      const bestY = list[best]?.y() ?? 0;
+      if (Math.abs(pt.y() - scrollY) < Math.abs(bestY - scrollY)) best = i;
+    });
+    return best;
+  }
+
+  function publishSnap(i: number): void {
+    const list = snapList();
+    const pt = list[i];
+    const root = document.documentElement;
+    root.dataset.snapIndex = String(i);
+    root.dataset.snapCount = String(list.length);
+    root.dataset.snapLabel = pt?.label ?? '';
+    if (pt) root.dataset.snapY = String(Math.round(clampScroll(pt.y())));
+  }
+
+  let snapAt = 0;
+  let snapBusy = false;
+  let snapToken = 0;
+
+  // One step, always by script. Never "let the browser scroll the rest".
+  function goSnap(index: number, immediate = false): void {
+    const list = snapList();
+    const next = Math.max(0, Math.min(list.length - 1, index));
+    const pt = list[next];
+    if (!pt) return;
+    snapAt = next;
+    publishSnap(next);
+    const y = clampScroll(pt.y());
+    const token = ++snapToken;
+    if (!lenis || immediate) {
+      snapBusy = false;
+      if (lenis) lenis.scrollTo(y, { immediate: true, force: true });
+      else scrollTo({ top: y, behavior: 'instant' });
+      markActive();
+      return;
+    }
+    snapBusy = true;
+    lenis.scrollTo(y, {
+      duration: SNAP_S, easing: ease, force: true,
+      onComplete: () => {
+        if (token !== snapToken) return;
+        snapBusy = false;
+        markActive();
+      },
+    });
+  }
+
+  function stepSnap(dir: 1 | -1): void {
+    if (!snapBusy) snapAt = nearestSnap();
+    const list = snapList();
+    const next = snapAt + dir;
+    if (next < 0 || next >= list.length) return;
+    goSnap(next);
   }
 
   // A jump: no glide through the film, straight to the target. It also cuts
@@ -261,6 +369,12 @@ export function initSteps(lenis: Lenis | null): void {
     // Stopping Lenis sets overflow:clip and makes its own touch listener
     // call preventDefault. On a phone that lock does not release.
     hold(phone.matches ? false : holdsAt(y));
+    if (phone.matches) {
+      snapBusy = false;
+      snapToken += 1;
+      snapAt = nearestSnap();
+      publishSnap(snapAt);
+    }
     markActive();
   }
 
@@ -370,8 +484,50 @@ export function initSteps(lenis: Lenis | null): void {
     addEventListener('touchmove', onTouchMove, { passive: false });
     addEventListener('touchend', onTouchEnd, { passive: true });
   };
+  // Phone: the finger never scrolls the document. Every touchmove is
+  // cancelled, and a deliberate swipe scrolls exactly one snap by script.
+  // A fast flick therefore cannot coast into the next topic, and there is
+  // no moment where Safari is asked to resume native scrolling.
+  let phoneX: number | null = null;
+  let phoneY: number | null = null;
+  const onPhoneStart = (e: TouchEvent): void => {
+    phoneX = e.touches[0]?.clientX ?? null;
+    phoneY = e.touches[0]?.clientY ?? null;
+  };
+  const onPhoneMove = (e: TouchEvent): void => {
+    if (phoneY === null) return;
+    e.preventDefault();
+  };
+  const finishPhone = (e: TouchEvent): void => {
+    if (phoneY === null || phoneX === null) { phoneY = null; phoneX = null; return; }
+    const t = e.changedTouches[0];
+    const dy = phoneY - (t?.clientY ?? phoneY);
+    const dx = phoneX - (t?.clientX ?? phoneX);
+    phoneY = null;
+    phoneX = null;
+    if (Math.abs(dy) < SNAP_MIN || Math.abs(dx) > Math.abs(dy)) return;
+    stepSnap(dy > 0 ? 1 : -1);
+  };
+  const usePhoneSnap = (on: boolean): void => {
+    removeEventListener('touchstart', onPhoneStart);
+    removeEventListener('touchmove', onPhoneMove);
+    removeEventListener('touchend', finishPhone);
+    removeEventListener('touchcancel', finishPhone);
+    document.documentElement.classList.toggle('is-snap', on);
+    if (!on) return;
+    addEventListener('touchstart', onPhoneStart, { passive: true });
+    addEventListener('touchmove', onPhoneMove, { passive: false });
+    addEventListener('touchend', finishPhone, { passive: true });
+    addEventListener('touchcancel', finishPhone, { passive: true });
+  };
   const syncPhone = (): void => {
-    if (phone.matches) { useTouchLock(false); hold(false); return; }
+    if (phone.matches) {
+      useTouchLock(false);
+      usePhoneSnap(true);
+      hold(false);
+      return;
+    }
+    usePhoneSnap(false);
     useTouchLock(true);
   };
   phone.addEventListener('change', () => {
@@ -498,4 +654,11 @@ export function initSteps(lenis: Lenis | null): void {
 
   if (!phone.matches) hold(holdsAt(scrollY));
   markActive();
+  // phases.ts adds the sticky scene after this function returns. Republish
+  // once that class is on, so the four phases are already in the snap list.
+  requestAnimationFrame(() => {
+    if (!phone.matches || snapBusy) return;
+    snapAt = nearestSnap();
+    publishSnap(snapAt);
+  });
 }
