@@ -11,7 +11,7 @@ Erscheinungsbild: Corporate Design **Patina & Messing**.
 - Graphit `#292B2A`
 - Claim: GESTALTEN. PFLANZEN. LEBENSRÄUME.
 - Schrift: nur Montserrat Bold und Regular (SIL Open Font License, `public/fonts/OFL.txt`)
-- Logo: `src/assets/logo/zuern-logo.png` (hell, Patina, für helle Flächen, 640×323); auf dunklem Grund: `src/assets/logo/zuern-logo-negativ.png` (Kalkstein, 320×161); Favicon: `src/assets/logo/favicon-32.png` und `apple-touch-icon.png` (Blattmarke); Schmuck-Blatt in Messing: `src/assets/logo/zuern-mark-messing.png`
+- Logo: `src/assets/logo/zuern-logo.png` (hell, Patina, für helle Flächen, 640×323); auf dunklem Grund: `src/assets/logo/zuern-logo-negativ.png` (Kalkstein, 320×161); Favicon: `public/favicon.ico`, `public/favicon.svg`, `public/favicon-32.png`, `public/apple-touch-icon.png` (Kalkstein-Marke auf Patina `#1f3a36`, unverändert aus dem CD-Paket); Schmuck-Blatt in Messing: `src/assets/logo/zuern-mark-messing.png`
 
 Startseite „Schritt in den Garten“: Beim Scrollen geht man den Weg vom Haus zurück zum Teich, die Leistungen erscheinen am Weg, danach folgen Planung (die vier Phasen mit Bilderstrecke), Über mich und Kontakt. Die Filmbilder und die Werkzeuge dafür liegen unter `scrollcraft/builds/zuern-garten`.
 
@@ -37,7 +37,8 @@ public/walk/seq/                                Filmbilder (AVIF), Poster, Wasse
 src/main.ts                                     Einstieg von Impressum und Datenschutz
 src/scripts/nav.ts                              Mobiles Menü von Impressum und Datenschutz
 src/styles/main.css                             Styles von Impressum und Datenschutz
-src/assets/                                     Logo, Favicon, Porträt (werden gehasht)
+src/assets/                                     Logo, Porträt (werden gehasht)
+public/favicon.ico, favicon.svg, …              Favicon-Set, site.webmanifest, OG-Bild (Domain-Wurzel)
 tools/images.sh                                 erzeugt die Bildvarianten aus raw/
 public/fonts/                                   Montserrat (feste URLs für preload)
 public/CNAME                                    Domain für GitHub Pages
