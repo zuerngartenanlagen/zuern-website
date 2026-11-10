@@ -16,11 +16,12 @@ const IPHONE = {
 interface StepLog {
   engine: string;
   kind: string;
-  dir: 1 | -1;
+  dir: 1 | -1 | 5 | -5;
   before: number;
   after: number;
   label: string;
-  y: number;
+  targetY: number;
+  settledY: number | null;
 }
 
 const logs: StepLog[] = [];
@@ -36,6 +37,28 @@ async function snapOf(page: Page): Promise<{ index: number; count: number; label
     label: document.documentElement.dataset.snapLabel ?? '',
     y: Number(document.documentElement.dataset.snapY ?? '0'),
   }));
+}
+
+async function activeDot(page: Page): Promise<string> {
+  return page.evaluate(() => document.querySelector('.dots__dot[aria-current]')?.getAttribute('aria-label') ?? '');
+}
+
+async function untilSettled(page: Page): Promise<number> {
+  let last = await scrollY(page);
+  let stable = 0;
+  const started = Date.now();
+  while (Date.now() - started < 5000) {
+    await page.waitForTimeout(50);
+    const now = await scrollY(page);
+    if (now === last) {
+      stable += 50;
+      if (stable >= 300) return now;
+    } else {
+      stable = 0;
+      last = now;
+    }
+  }
+  return last;
 }
 
 async function swipe(page: Page, browserName: string, dir: 1 | -1, kind: 'slow' | 'fast' | 'rapid'): Promise<void> {
@@ -66,10 +89,37 @@ async function swipe(page: Page, browserName: string, dir: 1 | -1, kind: 'slow' 
   } finally {
     await client?.detach();
   }
-  if (kind !== 'rapid') await page.waitForTimeout(560);
   const after = await snapOf(page);
-  logs.push({ engine: browserName, kind, dir, before: before.index, after: after.index, label: after.label, y: await scrollY(page) });
   expect(after.index, `${browserName} ${kind} ${after.label}`).toBe(before.index + dir);
+  if (kind === 'rapid') {
+    logs.push({
+      engine: browserName, kind, dir, before: before.index, after: after.index,
+      label: after.label, targetY: after.y, settledY: null,
+    });
+    return;
+  }
+  const settled = await untilSettled(page);
+  const parked = await snapOf(page);
+  logs.push({
+    engine: browserName, kind, dir, before: before.index, after: parked.index,
+    label: parked.label, targetY: parked.y, settledY: settled,
+  });
+  expect(parked.index, `${browserName} ${kind} settled index`).toBe(before.index + dir);
+  expect(Math.abs(settled - parked.y), `${browserName} ${kind} ${parked.label}`).toBeLessThanOrEqual(2);
+}
+
+async function expectSettledAt(page: Page, engine: string, index: number, from: number, dir: 5 | -5): Promise<void> {
+  const settled = await untilSettled(page);
+  const snap = await snapOf(page);
+  const dot = await activeDot(page);
+  logs.push({
+    engine, kind: 'rapid-settled', dir, before: from, after: snap.index,
+    label: snap.label, targetY: snap.y, settledY: settled,
+  });
+  expect(snap.index, `${engine} burst index`).toBe(index);
+  expect(Math.abs(settled - snap.y), `${engine} settled ${settled} vs target ${snap.y}`).toBeLessThanOrEqual(2);
+  expect(dot, `${engine} active dot`).toBe(snap.label);
+  if (index === 0) expect(Math.abs(settled), `${engine} home`).toBeLessThanOrEqual(2);
 }
 
 async function open(browserType: BrowserType, reduced = false): Promise<Page> {
@@ -120,15 +170,11 @@ for (const browserType of [webkit, chromium]) {
   test(`rapid flicks each move one step (${browserType.name()})`, async () => {
     const page = await open(browserType);
     const name = browserType.name();
+    const start = (await snapOf(page)).index;
     for (let i = 0; i < 5; i++) await swipe(page, name, 1, 'rapid');
-    await page.waitForTimeout(700);
-    const mid = await snapOf(page);
-    expect(mid.index).toBe(5);
-    expect(Math.abs((await scrollY(page)) - mid.y)).toBeLessThan(40);
+    await expectSettledAt(page, name, start + 5, start, 5);
     for (let i = 0; i < 5; i++) await swipe(page, name, -1, 'rapid');
-    await page.waitForTimeout(700);
-    const back = await snapOf(page);
-    expect(back.index).toBe(0);
+    await expectSettledAt(page, name, 0, start + 5, -5);
     await page.context().browser()?.close();
   });
 
@@ -252,11 +298,19 @@ test('record webkit fast flicks', async () => {
 
 test.afterAll(() => {
   mkdirSync(OUT, { recursive: true });
-  const lines = ['# Snap index log', '', 'One row per swipe. `after` must be `before + dir`.', ''];
+  const lines = [
+    '# Snap index log',
+    '',
+    'One row per swipe. `after` must be `before + dir`.',
+    'Rapid rows are logged as the flick lands on the index, while the scroll animation may still be moving (`settled scrollY` is —).',
+    'Each `rapid-settled` row is written after scrollY has not changed for 300ms. It must equal `target scrollY` within 2px.',
+    '',
+  ];
   for (const engine of ['webkit', 'chromium']) {
-    lines.push(`## ${engine}`, '', '| kind | dir | before | after | label | scrollY |', '|---|---:|---:|---:|---|---:|');
+    lines.push(`## ${engine}`, '', '| kind | dir | before | after | label | target scrollY | settled scrollY |', '|---|---:|---:|---:|---|---:|---:|');
     for (const row of logs.filter((r) => r.engine === engine)) {
-      lines.push(`| ${row.kind} | ${row.dir} | ${row.before} | ${row.after} | ${row.label} | ${row.y} |`);
+      const settled = row.settledY === null ? '—' : String(row.settledY);
+      lines.push(`| ${row.kind} | ${row.dir} | ${row.before} | ${row.after} | ${row.label} | ${row.targetY} | ${settled} |`);
     }
     lines.push('');
   }
