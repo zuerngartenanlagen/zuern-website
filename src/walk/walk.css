@@ -363,6 +363,15 @@ html::-webkit-scrollbar { display: none; }
   .stop p { font-size: 1rem; }
   /* Room under the fixed logo tile: sections are landed on at their top. */
   .sheet { padding-top: 8.5rem; padding-right: var(--gutter); }
+  /* Kontakt plus footer fill the phone. A shorter block ends above the fold,
+     and the snap that pins the footer then still shows the portrait. */
+  #kontakt {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100svh;
+  }
+  #kontakt .foot { margin-top: auto; }
   .sheet--dark .foot { flex-direction: column; align-items: center; }
   .foot__legal { justify-content: center; }
   .dots { right: 0.4rem; opacity: 1; visibility: visible; }
