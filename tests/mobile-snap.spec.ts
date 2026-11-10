@@ -61,7 +61,27 @@ async function untilSettled(page: Page): Promise<number> {
   return last;
 }
 
-async function swipe(page: Page, browserName: string, dir: 1 | -1, kind: 'slow' | 'fast' | 'rapid'): Promise<void> {
+async function untilRested(page: Page): Promise<number> {
+  const started = Date.now();
+  // The snap eases for 0.38s. Stillness only counts once that glide is over.
+  while (Date.now() - started < 800) await page.waitForTimeout(50);
+  let last = await scrollY(page);
+  let stable = 0;
+  while (Date.now() - started < 5000) {
+    await page.waitForTimeout(50);
+    const now = await scrollY(page);
+    if (now === last) {
+      stable += 50;
+      if (stable >= 300) return now;
+    } else {
+      stable = 0;
+      last = now;
+    }
+  }
+  return last;
+}
+
+async function swipe(page: Page, browserName: string, dir: 1 | -1, kind: 'slow' | 'fast' | 'rapid', afterGlide = false): Promise<void> {
   const view = page.viewportSize() ?? { width: 390, height: 844 };
   const x = 110;
   const travel = Math.round(view.height * 0.42);
@@ -98,7 +118,7 @@ async function swipe(page: Page, browserName: string, dir: 1 | -1, kind: 'slow' 
     });
     return;
   }
-  const settled = await untilSettled(page);
+  const settled = await (afterGlide ? untilRested(page) : untilSettled(page));
   const parked = await snapOf(page);
   logs.push({
     engine: browserName, kind, dir, before: before.index, after: parked.index,
@@ -263,6 +283,36 @@ test('desktop wheel still steps one point and reaches the footer', async () => {
   expect(foot).toBe(true);
   await browser.close();
 });
+
+for (const browserType of [webkit, chromium]) {
+  for (const size of [{ width: 390, height: 844 }, { width: 375, height: 667 }]) {
+    test(`contact fills the phone (${browserType.name()} ${size.width}×${size.height})`, async () => {
+      const browser = await browserType.launch();
+      const page = await (await browser.newContext({
+        ...IPHONE,
+        viewport: size,
+        reducedMotion: 'no-preference',
+      })).newPage();
+      await page.goto('/', { waitUntil: 'domcontentloaded' });
+      await page.waitForSelector('.dots', { state: 'attached' });
+      await page.waitForFunction(() => document.documentElement.dataset.snapCount === '14');
+      const name = browserType.name();
+      const count = (await snapOf(page)).count;
+      expect(count).toBe(14);
+      for (let i = 0; i < count - 1; i++) await swipe(page, name, 1, 'slow', true);
+      const edge = await page.evaluate(() => {
+        const kontakt = document.getElementById('kontakt')?.getBoundingClientRect().top ?? 1;
+        const about = document.getElementById('ueber-mich')?.getBoundingClientRect().bottom ?? 1;
+        return { kontakt, about };
+      });
+      expect(edge.kontakt, `${name} contact top`).toBeLessThanOrEqual(0);
+      expect(edge.about, `${name} section above contact`).toBeLessThanOrEqual(0);
+      for (let i = 0; i < count - 1; i++) await swipe(page, name, -1, 'slow', true);
+      expect((await snapOf(page)).index).toBe(0);
+      await browser.close();
+    });
+  }
+}
 
 test('record webkit fast flicks', async () => {
   mkdirSync('/tmp/snap-video', { recursive: true });
