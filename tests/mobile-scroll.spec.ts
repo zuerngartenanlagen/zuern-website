@@ -81,6 +81,25 @@ async function footerVisible(page: Page): Promise<boolean> {
   });
 }
 
+async function contactOpacity(page: Page): Promise<number> {
+  return page.evaluate(() => {
+    const el = document.querySelector('.kontakt');
+    return el ? parseFloat(getComputedStyle(el).opacity) : 0;
+  });
+}
+
+// data-sc-in fades the block in over 620ms once it has entered. The footer
+// can already be on screen while that transition is still running.
+async function waitForContactReveal(page: Page): Promise<number> {
+  let opacity = await contactOpacity(page);
+  for (let i = 0; i < 30 && opacity < 0.99; i++) {
+    await page.waitForTimeout(50);
+    opacity = await contactOpacity(page);
+  }
+  await page.waitForTimeout(700);
+  return contactOpacity(page);
+}
+
 async function arm(page: Page): Promise<void> {
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('.dots', { state: 'attached' });
@@ -103,8 +122,9 @@ async function shot(page: Page, name: string): Promise<void> {
   await page.screenshot({ path: `${dir}/${process.env.SHOT_LABEL ?? 'run'}_${browser}_${name}.png` });
 }
 
-async function swipeToFooter(page: Page, browserName: string): Promise<Swipe[]> {
+async function swipeToFooter(page: Page, browserName: string): Promise<{ samples: Swipe[]; contact: number }> {
   const samples: Swipe[] = [];
+  let contact = 1;
   let resized = false;
   let phaseShot = 0;
   let stuckShots = 0;
@@ -148,11 +168,14 @@ async function swipeToFooter(page: Page, browserName: string): Promise<Swipe[]> 
       if (stuckShots >= 2) break;
     }
     if (await footerVisible(page)) {
+      contact = await waitForContactReveal(page);
       await shot(page, 'after_section');
+      const reduced = await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches);
+      if (!reduced && browserName === 'webkit') await shot(page, 'contact_revealed');
       break;
     }
   }
-  return samples;
+  return { samples, contact };
 }
 
 async function openMobile(browserType: BrowserType, reduced = false): Promise<Page> {
@@ -167,10 +190,11 @@ for (const browserType of [webkit, chromium]) {
   test(`finger scroll reaches the footer (${browserType.name()})`, async () => {
     const page = await openMobile(browserType);
     await arm(page);
-    const samples = await swipeToFooter(page, browserType.name());
+    const { samples, contact } = await swipeToFooter(page, browserType.name());
     const stuck = samples.filter((s) => s.duringDelta < 40);
     expect(stuck, `scroll did not follow the finger: ${JSON.stringify(samples.map((s) => s.duringDelta))}`).toEqual([]);
     expect(await footerVisible(page)).toBe(true);
+    expect(contact).toBeGreaterThan(0.99);
     const pin = await page.locator('#planung').evaluate((el) => el.getBoundingClientRect().height);
     expect(pin).toBeGreaterThan(844 * 2);
     const wide = await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1);
@@ -181,9 +205,10 @@ for (const browserType of [webkit, chromium]) {
   test(`reduced motion stays static and scrollable (${browserType.name()})`, async () => {
     const page = await openMobile(browserType, true);
     await arm(page);
-    const samples = await swipeToFooter(page, browserType.name());
+    const { samples, contact } = await swipeToFooter(page, browserType.name());
     expect(samples.filter((s) => s.duringDelta < 40)).toEqual([]);
     expect(await footerVisible(page)).toBe(true);
+    expect(contact).toBeGreaterThan(0.99);
     const pin = await page.locator('#planung').evaluate((el) => el.getBoundingClientRect().height);
     expect(pin).toBeLessThan(844 * 2);
     const font = await page.locator('#planung .steps h3').first().evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
