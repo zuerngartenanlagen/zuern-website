@@ -224,17 +224,19 @@ export function initSteps(lenis: Lenis | null): void {
   points.forEach((pt) => {
     const card = pt.card;
     if (!card) return;
-    card.tabIndex = 0;
-    card.setAttribute('role', 'button');
     const go = (): void => { if (phone.matches) jumpTo(pt.y()); else glideTo(pt.y()); };
-    card.addEventListener('click', go);
-    // Enter and Space are taken before the page keys get them (below).
-    card.addEventListener('keydown', (e) => {
-      if (e.key !== 'Enter' && e.key !== ' ') return;
-      e.preventDefault();
-      e.stopPropagation();
-      go();
-    });
+    const toggle = card.querySelector<HTMLButtonElement>('.stop__toggle');
+    (toggle ?? card).addEventListener('click', go);
+    if (!toggle) {
+      card.tabIndex = 0;
+      card.setAttribute('role', 'button');
+      card.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        e.preventDefault();
+        e.stopPropagation();
+        go();
+      });
+    }
   });
   const align = (): void => alignCards(points, dots);
   align();
