@@ -147,7 +147,7 @@ for (const browserType of [webkit, chromium]) {
 
   test(`the welcome box sits under the start image (${browserType.name()})`, async () => {
     const page = await open(browserType, '/');
-    await page.waitForTimeout(250);
+    await page.waitForTimeout(400);
     const box = page.locator('.start-box');
     await expect(box).toBeVisible();
     await expect(box.locator('a[href="tel:+491751193001"]')).toHaveCount(1);
@@ -174,7 +174,13 @@ for (const browserType of [webkit, chromium]) {
     expect(metrics!.top).toBeGreaterThanOrEqual(metrics!.imgBottom - 2);
     expect(metrics!.top).toBeGreaterThanOrEqual(0);
     expect(metrics!.bottom).toBeLessThanOrEqual(metrics!.vh + 1);
-    await expect(box).toContainText('Schön, dass Sie da sind!');
+    const welcome = 'Schön, dass Sie da sind. Ich bin Marcel Zürn und gestalte private Gärten rund um Beilstein. Am besten gehen wir Ihren Garten gemeinsam durch, dann plane ich mit Ihnen, was dort entstehen soll.';
+    const shown = await box.locator('.start-box__text').evaluate((el) => ({
+      text: el.textContent?.trim() ?? '',
+      clipped: el.scrollHeight > el.clientHeight + 1,
+    }));
+    expect(shown.text).toBe(welcome);
+    expect(shown.clipped).toBe(false);
     await expect(page.locator('.walk-steps')).toBeHidden();
     const title = page.locator('.stop h3', { hasText: 'CAD- und' });
     await expect(title.locator('.nowrap')).toHaveText('3D\u2011Planung');
