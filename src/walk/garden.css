@@ -178,12 +178,15 @@ body {
   position: absolute; z-index: 2;
   right: calc(var(--gutter) + var(--rail) + 2.5rem); bottom: 12vh;
   width: min(25rem, 36vw); margin: 0;
-  display: flex; flex-direction: column; align-items: center; gap: 1.4rem;
-  color: inherit; text-decoration: none;
-  cursor: pointer;
+  color: inherit;
   will-change: opacity, transform;
 }
+.hello__go {
+  display: flex; flex-direction: column; align-items: center; gap: 1.4rem;
+  color: inherit; text-decoration: none; cursor: pointer;
+}
 .hello__face {
+  order: 2;
   width: 5.5rem; height: 5.5rem; border-radius: 50%; object-fit: cover; flex: none;
   border: 2px solid var(--messing);
   box-shadow: 0 2px 6px rgb(10 18 16 / 0.18);
@@ -191,6 +194,7 @@ body {
   animation: hello-face 500ms var(--ease) 700ms both;
 }
 .hello__bubble {
+  order: 1;
   position: relative;
   padding: 0.85rem 1.25rem 1rem; border-radius: 1rem;
   background: var(--patina); color: var(--kalkstein);
@@ -252,6 +256,7 @@ body {
 .call svg { width: 1.9rem; height: 1.9rem; fill: currentColor; }
 .call svg.call__line { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .call:hover { background: color-mix(in srgb, var(--messing) 86%, var(--kalkstein)); transform: scale(1.06); }
+.hello .hello__call { display: none; }
 
 /* ---------------------------------------------------------------- footer -- */
 
@@ -281,7 +286,6 @@ body {
     box-shadow: 0 1px 0 color-mix(in srgb, var(--messing) 60%, transparent), 0 12px 40px rgb(10 18 16 / 0.25);
   }
   .garden__logo { width: min(13rem, 62%); }
-  .hello { display: none; }
   .claim { margin-top: 1.5rem; font-size: clamp(2rem, 9vw, 2.6rem); }
 }
 

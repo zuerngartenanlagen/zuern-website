@@ -46,10 +46,13 @@ const WHEEL_MIN = 12;         // ignore tiny wheel jitter (px)
 const WHEEL_QUIET_MS = 220;   // a pause this long ends a wheel/trackpad gesture
 const WHEEL_MORE_PX = 300;    // scrolling on this much further in one gesture adds a point
 const SWIPE_MIN = 40;         // touch travel that counts as a swipe (px)
-const SNAP_MIN = 56;          // phone: shorter than this is not a step
-const SNAP_S = 0.38;          // phone snap, short enough to feel settled
+const SNAP_MIN = 56;          // phone: a slow drag shorter than this stays put
+const SNAP_FLICK = 32;        // a quick flick may be shorter and still counts
+const SNAP_VEL = 0.55;        // px/ms above this is a flick
+const SNAP_S = 0.42;          // slow settle, a soft tail rather than a hard stop
 
 const ease = (t: number): number => 1 - Math.pow(1 - t, 3);
+const easeSoft = (t: number): number => 1 - Math.pow(1 - t, 4);
 
 function windowOf(el: Element): number[] {
   return (el.getAttribute('data-g-window') ?? '').split(/\s+/).map(Number);
@@ -194,6 +197,7 @@ export function initSteps(lenis: Lenis | null): void {
   let gliding = false;
   let held = false;
   let pointBefore = 0;       // the point we rest on, for resizes
+  let phoneDrag = false;     // a finger is following, so the snap index stays put
 
   const hold = (on: boolean): void => {
     if (!lenis || on === held) return;
@@ -220,17 +224,19 @@ export function initSteps(lenis: Lenis | null): void {
   points.forEach((pt) => {
     const card = pt.card;
     if (!card) return;
-    card.tabIndex = 0;
-    card.setAttribute('role', 'button');
     const go = (): void => { if (phone.matches) jumpTo(pt.y()); else glideTo(pt.y()); };
-    card.addEventListener('click', go);
-    // Enter and Space are taken before the page keys get them (below).
-    card.addEventListener('keydown', (e) => {
-      if (e.key !== 'Enter' && e.key !== ' ') return;
-      e.preventDefault();
-      e.stopPropagation();
-      go();
-    });
+    const toggle = card.querySelector<HTMLButtonElement>('.stop__toggle');
+    (toggle ?? card).addEventListener('click', go);
+    if (!toggle) {
+      card.tabIndex = 0;
+      card.setAttribute('role', 'button');
+      card.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        e.preventDefault();
+        e.stopPropagation();
+        go();
+      });
+    }
   });
   const align = (): void => alignCards(points, dots);
   align();
@@ -251,8 +257,9 @@ export function initSteps(lenis: Lenis | null): void {
     dots.forEach((d, i) => d.toggleAttribute('aria-current', i === best));
     nav?.classList.toggle('is-service', Boolean(points[best]?.isService));
     nav?.classList.toggle('is-light', lightBehind(nav));
-    arrows?.show(true, Boolean(prevPoint()), Boolean(nextPoint()));
-    if (phone.matches && !snapBusy) publishSnap(nearestSnap());
+    const hideArrows = phone.matches && nearestSnap() === 0;
+    arrows?.show(!hideArrows, Boolean(prevPoint()), Boolean(nextPoint()));
+    if (phone.matches && !snapBusy && !phoneDrag) publishSnap(nearestSnap());
   }
 
   // Phone snap targets: the same points as the dots, except the planning
@@ -334,8 +341,17 @@ export function initSteps(lenis: Lenis | null): void {
   let snapBusy = false;
   let snapToken = 0;
 
+  // Longer when the flick is fast or the station is far, so the curve stays
+  // gentle instead of cramming a long move into a short snap.
+  function snapDuration(speed: number, distance: number): number {
+    const gentle = speed > 1.1 ? 0.58 : speed > SNAP_VEL ? 0.5 : SNAP_S;
+    const stretch = Math.min(0.14, Math.max(0, distance - 480) / 900);
+    return Math.min(0.72, gentle + stretch);
+  }
+
   // One step, always by script. Never "let the browser scroll the rest".
-  function goSnap(index: number, immediate = false): void {
+  // Quartic ease-out, no bounce. A fast flick gets the longer curve.
+  function goSnap(index: number, immediate = false, duration = SNAP_S): void {
     const list = snapList();
     const next = Math.max(0, Math.min(list.length - 1, index));
     const pt = list[next];
@@ -346,28 +362,32 @@ export function initSteps(lenis: Lenis | null): void {
     const token = ++snapToken;
     if (!lenis || immediate) {
       snapBusy = false;
+      document.documentElement.classList.remove('is-snapping');
       if (lenis) lenis.scrollTo(y, { immediate: true, force: true });
       else scrollTo({ top: y, behavior: 'instant' });
+      document.dispatchEvent(new CustomEvent('walk-snap'));
       markActive();
       return;
     }
     snapBusy = true;
+    document.documentElement.classList.add('is-snapping');
     lenis.scrollTo(y, {
-      duration: SNAP_S, easing: ease, force: true,
+      duration, easing: easeSoft, force: true,
       onComplete: () => {
         if (token !== snapToken) return;
         snapBusy = false;
+        document.documentElement.classList.remove('is-snapping');
+        document.dispatchEvent(new CustomEvent('walk-snap'));
         markActive();
       },
     });
   }
 
-  function stepSnap(dir: 1 | -1): void {
-    if (!snapBusy) snapAt = nearestSnap();
+  function stepSnap(dir: 1 | -1, from = snapBusy ? snapAt : nearestSnap(), duration = SNAP_S): void {
     const list = snapList();
-    const next = snapAt + dir;
-    if (next < 0 || next >= list.length) return;
-    goSnap(next);
+    const next = from + dir;
+    if (next < 0 || next >= list.length) { goSnap(from, false, duration); return; }
+    goSnap(next, false, duration);
   }
 
   // A jump: no glide through the film, straight to the target. It also cuts
@@ -383,8 +403,10 @@ export function initSteps(lenis: Lenis | null): void {
     if (phone.matches) {
       snapBusy = false;
       snapToken += 1;
+      document.documentElement.classList.remove('is-snapping');
       snapAt = nearestSnap();
       publishSnap(snapAt);
+      document.dispatchEvent(new CustomEvent('walk-snap'));
     }
     markActive();
   }
@@ -495,40 +517,85 @@ export function initSteps(lenis: Lenis | null): void {
     addEventListener('touchmove', onTouchMove, { passive: false });
     addEventListener('touchend', onTouchEnd, { passive: true });
   };
-  // Phone: the finger never scrolls the document. Every touchmove is
-  // cancelled, and a deliberate swipe scrolls exactly one snap by script.
-  // A fast flick therefore cannot coast into the next topic, and there is
-  // no moment where Safari is asked to resume native scrolling.
+  // Phone: the document does not free-scroll. The page follows the finger,
+  // but only as far as the next station, then eases into exactly one step.
+  // A fast flick can be shorter than a slow drag. Safari never gets the gesture.
   let phoneX: number | null = null;
   let phoneY: number | null = null;
+  let phoneT = 0;
+  let phoneFrom = 0;
+  let phonePlan = false;
+  let phoneAxis: 'x' | 'y' | null = null;
   let phoneHold: 'page' | 'carousel' | 'menu' = 'page';
-  const gestureKind = (e: TouchEvent): 'page' | 'carousel' | 'menu' => {
+  const gestureKind = (): 'page' | 'menu' => {
     if (document.getElementById('site-nav')?.classList.contains('is-open')) return 'menu';
-    const target = e.target;
-    if (target instanceof Element && target.closest('#planung .steps')) return 'carousel';
     return 'page';
   };
+  const followFinger = (dy: number): void => {
+    if (!lenis) return;
+    const list = snapList();
+    const fromY = clampScroll(list[phoneFrom]?.y() ?? scrollY);
+    const dir = dy > 0 ? 1 : -1;
+    const neighbor = list[phoneFrom + dir];
+    const span = neighbor ? Math.max(1, Math.abs(clampScroll(neighbor.y()) - fromY)) : innerHeight * 0.4;
+    const moved = Math.max(-span, Math.min(span, dy));
+    lenis.scrollTo(clampScroll(fromY + moved), { immediate: true, force: true });
+  };
   const onPhoneStart = (e: TouchEvent): void => {
-    phoneHold = gestureKind(e);
+    phoneHold = gestureKind();
     phoneX = e.touches[0]?.clientX ?? null;
     phoneY = e.touches[0]?.clientY ?? null;
+    phoneT = performance.now();
+    phoneAxis = null;
+    const target = e.target;
+    phonePlan = target instanceof Element && !!target.closest('#planung');
+    phoneDrag = phoneHold === 'page';
+    phoneFrom = snapBusy ? snapAt : nearestSnap();
   };
   const onPhoneMove = (e: TouchEvent): void => {
-    if (phoneY === null || phoneHold === 'carousel') return;
+    if (phoneY === null || phoneX === null || phoneHold !== 'page') return;
     e.preventDefault();
+    const y = e.touches[0]?.clientY ?? phoneY;
+    const x = e.touches[0]?.clientX ?? phoneX;
+    const dy = phoneY - y;
+    const dx = phoneX - x;
+    if (!phoneAxis && Math.max(Math.abs(dx), Math.abs(dy)) >= 12) {
+      phoneAxis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+    }
+    if (phoneAxis !== 'y') return;
+    followFinger(dy);
   };
   const finishPhone = (e: TouchEvent): void => {
     const hold = phoneHold;
     phoneHold = 'page';
+    phoneDrag = false;
     if (phoneY === null || phoneX === null) { phoneY = null; phoneX = null; return; }
     const t = e.changedTouches[0];
     const dy = phoneY - (t?.clientY ?? phoneY);
     const dx = phoneX - (t?.clientX ?? phoneX);
+    const elapsed = Math.max(1, performance.now() - phoneT);
+    const velocity = dy / elapsed;
     phoneY = null;
     phoneX = null;
     if (hold !== 'page') return;
-    if (Math.abs(dy) < SNAP_MIN || Math.abs(dx) > Math.abs(dy)) return;
-    stepSnap(dy > 0 ? 1 : -1);
+    if (phoneAxis === 'x') {
+      if (phonePlan && Math.abs(dx) >= SNAP_FLICK) {
+        document.documentElement.setAttribute('data-plan-swipe', '');
+        document.dispatchEvent(new CustomEvent('plan-step', { detail: dx > 0 ? 1 : -1 }));
+        window.setTimeout(() => document.documentElement.removeAttribute('data-plan-swipe'), 400);
+      }
+      return;
+    }
+    const vertical = phoneAxis === 'y' || Math.abs(dy) >= Math.abs(dx);
+    const flick = Math.abs(velocity) >= SNAP_VEL && Math.abs(dy) >= SNAP_FLICK;
+    const dragged = Math.abs(dy) >= SNAP_MIN;
+    if (!vertical || (!flick && !dragged)) { goSnap(phoneFrom, false, 0.36); return; }
+    const speed = Math.abs(velocity);
+    const list = snapList();
+    const fromY = clampScroll(list[phoneFrom]?.y() ?? scrollY);
+    const neighbor = list[phoneFrom + (dy > 0 ? 1 : -1)];
+    const distance = neighbor ? Math.abs(clampScroll(neighbor.y()) - fromY) : 0;
+    stepSnap(dy > 0 ? 1 : -1, phoneFrom, snapDuration(speed, distance));
   };
   const usePhoneSnap = (on: boolean): void => {
     removeEventListener('touchstart', onPhoneStart);

@@ -98,37 +98,39 @@
         <!-- Large screens: a quick hello from Marcel, over the garden on the
              right of the opening panel, his face under the words. Clicking it
              walks on to the services. -->
-        <a class="hello" href="#leistungen" data-g-window="0 0 0.04 0.14">
-          <span class="hello__bubble">
-            <strong>Schön, dass Sie da sind!</strong>
-            Ich bin Marcel Zürn. Ich plane und baue Gärten rund um Beilstein, von der ersten Skizze bis zur letzten Pflanze. Gehen Sie ruhig ein Stück mit durch den Garten.
-          </span>
-          <img class="hello__face" src="./src/assets/images/marcel-zuern-face.webp" width="240" height="240" alt="Marcel Zürn" />
-        </a>
+        <div class="hello" data-g-window="0 0 0.04 0.14">
+          <a class="hello__go" href="#leistungen">
+            <img class="hello__face" src="./src/assets/images/marcel-zuern-face.webp" width="240" height="240" alt="Marcel Zürn" />
+            <span class="hello__bubble">
+              <strong>Schön, dass Sie da sind!</strong>
+              Ich bin Marcel Zürn. Ich plane und baue Gärten rund um Beilstein, von der ersten Skizze bis zur letzten Pflanze. Gehen Sie ruhig ein Stück mit durch den Garten.
+            </span>
+          </a>
+        </div>
 
         <!-- Stops along the path: the services, one per stretch of the walk.
              Phones: one card at a time. Large screens: the column, the current
              one lit (garden.js). -->
         <div class="stops" data-g-window="0.170 0.195 0.815 0.842">
           <div class="stop stop--mid-left" data-g-window="0.170 0.195 0.277 0.304">
-            <h2>Planung, Bau und Pflege aus einer Hand</h2>
-            <p>Ich bin Marcel Zürn, staatlich geprüfter Techniker und seit über acht Jahren im Garten- und Landschaftsbau tätig. Für private Gärten in Beilstein und Umgebung, von Heilbronn bis Ludwigsburg, übernehme ich alles aus einer Hand, von der Planung über den Bau bis zur Pflege.</p>
+            <h2><button type="button" class="stop__toggle" aria-expanded="false" aria-controls="leistung-kopf">Planung, Bau und Pflege aus einer Hand</button></h2>
+            <p id="leistung-kopf">Ihren Garten begleite ich persönlich, von der ersten Planung über den Bau bis zur Pflege.</p>
           </div>
           <div class="stop stop--top-right" data-g-window="0.304 0.329 0.412 0.439">
-            <h3>CAD- und 3D-Planung</h3>
-            <p>Am Anfang steht das Aufmaß, danach sehen Sie Ihren Garten als Plan und in 3D, bevor gebaut wird.</p>
+            <h3><button type="button" class="stop__toggle" aria-expanded="false" aria-controls="leistung-cad"><span>CAD- und <span class="nowrap">3D&#8209;Planung</span></span></button></h3>
+            <p id="leistung-cad">Ein durchdachter Entwurf, mit dem Sie schon vor dem Bau wissen, wie Ihr Garten wird.</p>
           </div>
           <div class="stop stop--bottom-left" data-g-window="0.439 0.464 0.546 0.573">
-            <h3>Neuanlage und Umgestaltung</h3>
-            <p>Diesen Plan setze ich selbst um, ob neuer Garten oder Umgestaltung.</p>
+            <h3><button type="button" class="stop__toggle" aria-expanded="false" aria-controls="leistung-neu">Neuanlage und Umgestaltung</button></h3>
+            <p id="leistung-neu">Aus einem neuen Grundstück oder einem in die Jahre gekommenen Garten wird ein Außenraum, der zu Ihrem Haus passt, sorgfältig gebaut bis ins Detail.</p>
           </div>
           <div class="stop stop--top-left" data-g-window="0.573 0.598 0.681 0.708">
-            <h3>Pflanzung</h3>
-            <p>Die Pflanzung macht den Garten komplett, abgestimmt auf Standort und gewünschten Pflegeaufwand.</p>
+            <h3><button type="button" class="stop__toggle" aria-expanded="false" aria-controls="leistung-pflanzung">Pflanzung</button></h3>
+            <p id="leistung-pflanzung">Die Pflanzung macht den Garten komplett, abgestimmt auf Standort und gewünschten Pflegeaufwand.</p>
           </div>
           <div class="stop stop--mid-right" data-g-window="0.708 0.733 0.815 0.842">
-            <h3>Jahrespflege und Schnitt</h3>
-            <p>Danach kümmere ich mich darum, dass Ihr Garten über die Jahre schön bleibt.</p>
+            <h3><button type="button" class="stop__toggle" aria-expanded="false" aria-controls="leistung-pflege">Jahrespflege und Schnitt</button></h3>
+            <p id="leistung-pflege">Ob frisch angelegt oder seit Jahren gewachsen, ich pflege Ihren Garten mit fachgerechtem Schnitt zur richtigen Jahreszeit, damit er in Form bleibt.</p>
           </div>
         </div>
 
@@ -153,16 +155,16 @@
       <div class="sheet__inner" data-sc-in>
         <div class="split">
           <h2 id="planung-title">Erst sehen, dann bauen</h2>
-          <p class="intro">Nach dem Aufmaß zeichne ich einen Plan und ein 3D-Modell Ihres Gartens. Änderungen fließen ein, solange sie noch einfach umzusetzen sind.</p>
+          <p class="intro">Alle wichtigen Entscheidungen treffen wir gemeinsam, bevor gebaut wird. So wissen Sie jederzeit, woran Sie sind.</p>
         </div>
         <ol class="steps" data-sc-stagger="90">
           <li data-sc-in>
             <h3>Termin vor Ort</h3>
-            <p>Ich sehe mir Ihr Grundstück an und nehme die Maße auf.</p>
+            <p>Ich sehe mir Ihr Grundstück an, höre Ihre Wünsche und nehme die Maße auf.</p>
           </li>
           <li data-sc-in>
             <h3>Plan und Ansicht</h3>
-            <p>Plan und 3D-Ansicht zeigen vorab, wie Ihr Garten wirkt. Danach erhalten Sie das Angebot.</p>
+            <p>Ich plane Ihren Garten, auf Wunsch auch in 3D. Änderungen fließen ein, danach folgt das Angebot.</p>
           </li>
           <li data-sc-in>
             <h3>Bau</h3>
@@ -170,7 +172,7 @@
           </li>
           <li data-sc-in>
             <h3>Pflege</h3>
-            <p>Auf Wunsch pflege ich Ihren Garten auch danach.</p>
+            <p>Zur Übergabe besprechen wir, was Ihr Garten in den ersten Jahren braucht und ob ich die Pflege übernehme.</p>
           </li>
         </ol>
         <p class="steps-hint">Wischen</p>
@@ -226,9 +228,9 @@
           <h2 id="kontakt-title" class="sr-only">Kontakt</h2>
           <p class="kontakt__name">Marcel Zürn</p>
           <dl class="kontakt__list">
-            <div><dt>Telefon</dt><dd><a href="tel:+491751193001">0175 1193001</a></dd></div>
-            <div><dt>E-Mail</dt><dd><a href="mailto:info@zuern-gartenanlagen.de">info@zuern-gartenanlagen.de</a></dd></div>
-            <div><dt>Adresse</dt><dd>Entengasse 13, 71717 Beilstein</dd></div>
+            <div><dt><svg class="kontakt-icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M18 14h-4a3 3 0 0 0-3 3c0 12 10 22 22 22a3 3 0 0 0 3-3v-4a3 3 0 0 0-2.2-2.9l-5.4-1.4a3 3 0 0 0-3 .9l-1.6 1.9a18 18 0 0 1-7.4-7.4l1.9-1.6a3 3 0 0 0 .9-3l-1.4-5.4A3 3 0 0 0 18 14Z"/></svg>Telefon</dt><dd><a href="tel:+491751193001">0175 1193001</a></dd></div>
+            <div><dt><svg class="kontakt-icon" viewBox="0 0 48 48" aria-hidden="true"><rect x="8" y="12" width="32" height="24" rx="2"/><path d="m10 16 14 10 14-10"/></svg>E-Mail</dt><dd><a href="mailto:info@zuern-gartenanlagen.de">info@zuern-gartenanlagen.de</a></dd></div>
+            <div><dt><svg class="kontakt-icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 5c-8.4 0-15.2 6.7-15.2 15 0 11.4 15.2 23 15.2 23s15.2-11.6 15.2-23C39.2 11.7 32.4 5 24 5Z"/><path d="M24 15.5v8"/></svg>Adresse</dt><dd>Entengasse 13, 71717 Beilstein</dd></div>
           </dl>
         </div>
       </div>

@@ -6,9 +6,8 @@
 // step again unlocks it and the steps take turns again. Only while the list is
 // on screen; under reduced motion all stay equal and nothing moves.
 //
-// Phones do not use the timer. The four steps are a horizontal carousel: one
-// card per step, and the picture below follows the card that is in view.
-// A sideways swipe stays in the carousel and does not move the page.
+// On a phone the same icons stay. A sideways swipe steps one topic and the
+// lit icon follows; a vertical swipe is left to the page and changes station.
 
 const PHASE_MS = 3800;   // how long each step stays highlighted
 const SLIDE_MS = 2600;   // how long each image shows while a step is held
@@ -21,7 +20,6 @@ export function initPhases(): void {
   if (steps.length < 2) return;
   const stage = document.querySelector<HTMLElement>('.phase-show');
   const sets = stage ? Array.from(stage.querySelectorAll<HTMLElement>('.phase-show__set')) : [];
-  const section = document.getElementById('planung');
 
   let current = 0;
   let cycle = 0;
@@ -57,6 +55,15 @@ export function initPhases(): void {
     const imgs = Array.from(set.querySelectorAll('img'));
     imgs.forEach((img, k) => img.classList.toggle('is-on', k === i % imgs.length));
   };
+  const paras = steps.map((li) => li.querySelector<HTMLParagraphElement>('p'));
+  const parkParas = (): void => {
+    paras.forEach((para, k) => {
+      const li = steps[k];
+      if (para && li && para.parentElement !== li) li.append(para);
+    });
+  };
+  // Phones show one topic under the icon row. The paragraph moves there;
+  // the words stay in the document and return to their step off a phone.
   const show = (i: number): void => {
     current = i;
     steps.forEach((li, k) => {
@@ -65,6 +72,11 @@ export function initPhases(): void {
     });
     sets.forEach((set, k) => set.classList.toggle('is-active', k === i));
     now.textContent = steps[i]?.querySelector('h3')?.textContent ?? '';
+    if (phone.matches) {
+      parkParas();
+      const para = paras[i];
+      if (para) now.after(para);
+    }
     picture(0);
   };
 
@@ -102,71 +114,6 @@ export function initPhases(): void {
     locked = i; stopCycle(); show(i); startSlides();
   };
 
-  const mountCarousel = (): void => {
-    section?.classList.add('is-carousel-on');
-    list.classList.add('is-carousel');
-    now.hidden = true;
-    show(0);
-    const hint = document.querySelector('.steps-hint');
-    const dots = document.createElement('div');
-    dots.className = 'steps-dots';
-    dots.setAttribute('aria-hidden', 'true');
-    const marks = steps.map(() => {
-      const mark = document.createElement('span');
-      dots.append(mark);
-      return mark;
-    });
-    hint?.after(dots);
-    const paint = (): void => {
-      const width = list.clientWidth || 1;
-      const index = Math.max(0, Math.min(steps.length - 1, Math.round(list.scrollLeft / width)));
-      show(index);
-      marks.forEach((mark, i) => mark.classList.toggle('is-on', i === index));
-    };
-    const dismiss = (): void => hint?.classList.add('is-gone');
-    let originX = 0;
-    let originLeft = 0;
-    let dragging = false;
-    const cardWidth = (): number => list.clientWidth || 1;
-    const onTouchStart = (event: TouchEvent): void => {
-      dragging = true;
-      originX = event.touches[0]?.clientX ?? 0;
-      originLeft = list.scrollLeft;
-    };
-    const onTouchMove = (event: TouchEvent): void => {
-      if (!dragging) return;
-      const dx = originX - (event.touches[0]?.clientX ?? originX);
-      if (Math.abs(dx) < 6) return;
-      event.preventDefault();
-      list.scrollLeft = originLeft + dx;
-    };
-    const onTouchEnd = (): void => {
-      if (!dragging) return;
-      dragging = false;
-      const width = cardWidth();
-      const index = Math.max(0, Math.min(steps.length - 1, Math.round(list.scrollLeft / width)));
-      list.scrollTo({ left: index * width, behavior: 'smooth' });
-      dismiss();
-    };
-    list.addEventListener('scroll', paint, { passive: true });
-    list.addEventListener('touchstart', onTouchStart, { passive: true });
-    list.addEventListener('touchmove', onTouchMove, { passive: false });
-    list.addEventListener('touchend', onTouchEnd);
-    list.addEventListener('touchcancel', onTouchEnd);
-    paint();
-    cleanup = () => {
-      list.removeEventListener('scroll', paint);
-      list.removeEventListener('touchstart', onTouchStart);
-      list.removeEventListener('touchmove', onTouchMove);
-      list.removeEventListener('touchend', onTouchEnd);
-      list.removeEventListener('touchcancel', onTouchEnd);
-      dots.remove();
-      now.hidden = false;
-      section?.classList.remove('is-carousel-on');
-      list.classList.remove('is-carousel');
-    };
-  };
-
   const mountCycle = (): void => {
     list.classList.add('is-cycling');
     show(0);
@@ -180,7 +127,10 @@ export function initPhases(): void {
     const bound = steps.map((li, i) => {
       const enter = (e: PointerEvent): void => { if (isMouse(e)) hold(i); };
       const leave = (e: PointerEvent): void => { if (isMouse(e)) release(); };
-      const click = (): void => toggleLock(i);
+      const click = (): void => {
+        if (document.documentElement.hasAttribute('data-plan-swipe')) return;
+        toggleLock(i);
+      };
       li.addEventListener('pointerenter', enter);
       li.addEventListener('pointerleave', leave);
       li.addEventListener('click', click);
@@ -192,6 +142,7 @@ export function initPhases(): void {
     stage?.addEventListener('pointerleave', stageLeave);
 
     cleanup = () => {
+      parkParas();
       io.disconnect();
       stopCycle();
       stopSlides();
@@ -205,10 +156,26 @@ export function initPhases(): void {
     };
   };
 
+  const stepTopic = (dir: number): void => {
+    const next = Math.max(0, Math.min(steps.length - 1, current + dir));
+    if (next === current) return;
+    locked = next;
+    held = false;
+    stopCycle();
+    show(next);
+    startSlides();
+  };
+  document.addEventListener('plan-step', (event) => {
+    const dir = (event as CustomEvent<number>).detail;
+    if (dir !== 1 && dir !== -1) return;
+    stepTopic(dir);
+  });
+
   const apply = (): void => {
     cleanup();
-    if (phone.matches && section) mountCarousel();
-    else mountCycle();
+    // Phones keep the clickable brass icons from the large-screen row.
+    // A sideways swipe steps one topic (plan-step); it does not replace the icons.
+    mountCycle();
   };
   phone.addEventListener('change', apply);
   apply();

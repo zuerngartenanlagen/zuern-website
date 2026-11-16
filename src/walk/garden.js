@@ -22,7 +22,7 @@
   var phone = matchMedia('(max-width: 760px)');
 
   function copyAt(p) {
-    var listed = !phone.matches;
+    var listed = true;
     // Large screens: within the services' stretch exactly one stop is current,
     // the one whose hold is nearest, so it changes once, halfway between two
     // points, and the column never passes through a moment with none open.
@@ -53,9 +53,14 @@
       if (listed && c.el.classList.contains('stop')) {
         // Large screens: all stops stand in one column; the one whose stretch
         // of the walk this is gets lit, the rest stay dimmed (walk.css).
+        // While a phone snap is gliding, keep the open card still. It changes
+        // once, after the scroll has landed (walk-snap).
         c.el.style.opacity = ''; c.el.style.transform = '';
         c.el.classList.remove('is-hidden');
+        if (document.documentElement.classList.contains('is-snapping')) return;
         c.el.classList.toggle('is-current', c.el === current);
+        var toggle = c.el.querySelector('.stop__toggle');
+        if (toggle) toggle.setAttribute('aria-expanded', c.el === current ? 'true' : 'false');
         return;
       }
       c.el.classList.remove('is-current');
@@ -103,6 +108,7 @@
   }
   // Crossing the phone breakpoint switches between one card and the column.
   phone.addEventListener('change', function () { copyAt(progress()); });
+  document.addEventListener('walk-snap', function () { last = -1; copyAt(progress()); });
   copyAt(progress());
   requestAnimationFrame(loop);
 })();
