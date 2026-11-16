@@ -255,7 +255,8 @@ export function initSteps(lenis: Lenis | null): void {
     dots.forEach((d, i) => d.toggleAttribute('aria-current', i === best));
     nav?.classList.toggle('is-service', Boolean(points[best]?.isService));
     nav?.classList.toggle('is-light', lightBehind(nav));
-    arrows?.show(true, Boolean(prevPoint()), Boolean(nextPoint()));
+    const hideArrows = phone.matches && nearestSnap() === 0;
+    arrows?.show(!hideArrows, Boolean(prevPoint()), Boolean(nextPoint()));
     if (phone.matches && !snapBusy && !phoneDrag) publishSnap(nearestSnap());
   }
 

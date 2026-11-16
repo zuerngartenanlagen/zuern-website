@@ -17,6 +17,34 @@ async function open(browserType: BrowserType, path: string, viewport = PHONE.vie
   return page;
 }
 
+async function stepDown(page: Page, browserName: string): Promise<void> {
+  const view = page.viewportSize() ?? { width: 390, height: 844 };
+  const x = 110;
+  const travel = Math.round(view.height * 0.42);
+  const y1 = Math.round(view.height * 0.78);
+  const y2 = y1 - travel;
+  const client = browserName === 'chromium' ? await page.context().newCDPSession(page) : null;
+  const wk = browserName === 'chromium' ? null : (page as unknown as {
+    _connection: { toImpl: (p: Page) => { delegate: { _pageProxySession: { send: (m: string, p: object) => Promise<void> } } } };
+  })._connection.toImpl(page).delegate._pageProxySession;
+  const send = async (type: 'touchStart' | 'touchMove' | 'touchEnd', y: number) => {
+    const point = { x, y, id: 0 };
+    if (client) await client.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [point] });
+    else await wk?.send('Input.dispatchTouchEvent', { type, touchPoints: [point] });
+  };
+  try {
+    await send('touchStart', y1);
+    for (let i = 1; i <= 14; i++) {
+      await send('touchMove', Math.round(y1 + (y2 - y1) * (i / 14)));
+      if (i % 2 === 0) await page.waitForTimeout(16);
+    }
+    await send('touchEnd', y2);
+  } finally {
+    await client?.detach();
+  }
+  await page.waitForTimeout(700);
+}
+
 async function flickCarousel(page: Page, browserName: string): Promise<void> {
   const box = await page.locator('#planung .steps').boundingBox();
   if (!box) throw new Error('no carousel');
@@ -147,6 +175,12 @@ for (const browserType of [webkit, chromium]) {
     expect(metrics!.top).toBeGreaterThanOrEqual(0);
     expect(metrics!.bottom).toBeLessThanOrEqual(metrics!.vh + 1);
     await expect(box).toContainText('Schön, dass Sie da sind!');
+    await expect(page.locator('.walk-steps')).toBeHidden();
+    const title = page.locator('.stop h3', { hasText: 'CAD- und' });
+    await expect(title.locator('.nowrap')).toHaveText('3D\u2011Planung');
+    await stepDown(page, browserType.name());
+    await expect(page.locator('.walk-steps')).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.dataset.snapIndex)).toBe('1');
     await page.context().browser()?.close();
   });
 }

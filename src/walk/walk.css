@@ -67,6 +67,7 @@ html::-webkit-scrollbar { display: none; }
   stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke;
 }
 .card-icon { width: 1.85rem; height: 1.85rem; flex: none; color: var(--messing); }
+.nowrap { white-space: nowrap; }
 .stop h2 { font-size: clamp(1.9rem, 1.2rem + 2vw, 3rem); }
 .stop h3 { font-size: clamp(1.6rem, 1.1rem + 1.4vw, 2.4rem); }
 .stop p {
