@@ -173,8 +173,25 @@ for (const browserType of [webkit, chromium]) {
     });
     expect(metrics).not.toBeNull();
     expect(metrics!.pos).not.toBe('fixed');
+    expect(metrics!.h).toBeLessThan(193);
     expect(metrics!.h).toBeLessThanOrEqual(metrics!.vh / 3 + 1);
     expect(metrics!.h).toBeGreaterThan(48);
+    const places = await page.evaluate(() => {
+      const face = document.querySelector('.hello__face')?.getBoundingClientRect();
+      const bubble = document.querySelector('.hello__bubble')?.getBoundingClientRect();
+      const call = document.querySelector('.hello__call')?.getBoundingClientRect();
+      if (!face || !bubble || !call) return null;
+      return {
+        faceLeft: face.left, bubbleRight: bubble.right,
+        callTop: call.top, faceBottom: face.bottom,
+        callCenter: call.left + call.width / 2,
+        faceCenter: face.left + face.width / 2,
+      };
+    });
+    expect(places).not.toBeNull();
+    expect(places!.faceLeft).toBeGreaterThan(places!.bubbleRight - 4);
+    expect(places!.callTop).toBeGreaterThanOrEqual(places!.faceBottom - 2);
+    expect(Math.abs(places!.callCenter - places!.faceCenter)).toBeLessThan(8);
     expect(metrics!.top).toBeGreaterThan(metrics!.imgTop);
     expect(metrics!.bottom).toBeLessThanOrEqual(metrics!.imgBottom + 1);
     expect(metrics!.bottom).toBeLessThanOrEqual(metrics!.vh + 1);
@@ -185,6 +202,34 @@ for (const browserType of [webkit, chromium]) {
     await stepDown(page, browserType.name());
     await expect(page.locator('.walk-steps')).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.dataset.snapIndex)).toBe('1');
+    await page.context().browser()?.close();
+  });
+
+  test(`service topics open in place and a tap lands on that station (${browserType.name()})`, async () => {
+    const page = await open(browserType, '/');
+    await page.waitForTimeout(300);
+    for (let n = 0; n < 6; n++) {
+      const label = await page.evaluate(() => document.documentElement.dataset.snapLabel ?? '');
+      if (label.startsWith('Planung, Bau und Pflege')) break;
+      await stepDown(page, browserType.name());
+    }
+    await expect(page.locator('.stops .stop')).toHaveCount(5);
+    await expect(page.locator('.stop__toggle[aria-expanded="true"]')).toContainText('Planung, Bau und Pflege aus einer Hand');
+    const before = await page.locator('.stops').evaluate((el) => Math.round(el.getBoundingClientRect().height));
+    await page.locator('.stop__toggle', { hasText: 'Neuanlage und Umgestaltung' }).click();
+    await page.waitForTimeout(250);
+    const landed = await page.evaluate(() => ({
+      y: Math.round(window.scrollY),
+      snap: Number(document.documentElement.dataset.snapY ?? '0'),
+      label: document.documentElement.dataset.snapLabel ?? '',
+    }));
+    expect(Math.abs(landed.y - landed.snap)).toBeLessThanOrEqual(2);
+    expect(landed.label).toBe('Neuanlage und Umgestaltung');
+    await expect(page.locator('.stop__toggle[aria-expanded="true"]')).toHaveText('Neuanlage und Umgestaltung');
+    const after = await page.locator('.stops').evaluate((el) => Math.round(el.getBoundingClientRect().height));
+    expect(Math.abs(after - before)).toBeLessThanOrEqual(2);
+    await stepDown(page, browserType.name());
+    await expect(page.locator('.stop__toggle[aria-expanded="true"]')).toHaveText('Pflanzung');
     await page.context().browser()?.close();
   });
 }

@@ -22,7 +22,7 @@
   var phone = matchMedia('(max-width: 760px)');
 
   function copyAt(p) {
-    var listed = !phone.matches;
+    var listed = true;
     // Large screens: within the services' stretch exactly one stop is current,
     // the one whose hold is nearest, so it changes once, halfway between two
     // points, and the column never passes through a moment with none open.
@@ -56,6 +56,8 @@
         c.el.style.opacity = ''; c.el.style.transform = '';
         c.el.classList.remove('is-hidden');
         c.el.classList.toggle('is-current', c.el === current);
+        var toggle = c.el.querySelector('.stop__toggle');
+        if (toggle) toggle.setAttribute('aria-expanded', c.el === current ? 'true' : 'false');
         return;
       }
       c.el.classList.remove('is-current');
@@ -91,6 +93,28 @@
   addEventListener('scroll', brandAt, { passive: true });
   addEventListener('resize', brandAt);
   brandAt();
+
+  // Phones: the open service text keeps the height of the longest paragraph,
+  // so switching station does not resize the list.
+  function reserveServiceSlot() {
+    if (!phone.matches) return;
+    var root = document.querySelector('.stops');
+    if (!root) return;
+    var max = 0;
+    var width = Math.max(120, root.clientWidth - 28);
+    var nodes = root.querySelectorAll('.stop p');
+    for (var i = 0; i < nodes.length; i++) {
+      var probe = nodes[i].cloneNode(true);
+      probe.style.cssText = 'position:absolute;left:0;top:0;visibility:hidden;display:block;height:auto;overflow:visible;width:' + width + 'px;margin:0;font-size:0.98rem;line-height:1.45;';
+      document.body.appendChild(probe);
+      max = Math.max(max, probe.offsetHeight);
+      probe.remove();
+    }
+    if (max) root.style.setProperty('--open-slot', Math.ceil(max) + 'px');
+  }
+  reserveServiceSlot();
+  addEventListener('resize', reserveServiceSlot);
+  if (document.fonts) document.fonts.ready.then(reserveServiceSlot);
 
   if (reduce) return;
 

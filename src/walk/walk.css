@@ -61,6 +61,11 @@ html::-webkit-scrollbar { display: none; }
   stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke;
 }
 .nowrap { white-space: nowrap; }
+.stop__toggle {
+  display: block; width: 100%; margin: 0; padding: 0; border: 0;
+  background: none; color: inherit; font: inherit; text-align: left; cursor: pointer;
+}
+.stop__toggle:focus-visible { outline: 2px solid var(--messing); outline-offset: 3px; }
 .stop h2 { font-size: clamp(1.9rem, 1.2rem + 2vw, 3rem); }
 .stop h3 { font-size: clamp(1.6rem, 1.1rem + 1.4vw, 2.4rem); }
 .stop p {
@@ -400,6 +405,40 @@ html::-webkit-scrollbar { display: none; }
   .walk-steps svg { width: 1.25rem; height: 1.25rem; }
   /* Keep cards clear of the dots. */
   .stop { right: calc(var(--gutter) + 1.9rem); }
+  /* Same column as on a large screen: every topic stays in the list, only the
+     current one is open. The open slot is as tall as the longest text, so the
+     box does not jump when the station changes. */
+  .stops {
+    inset: auto; left: var(--gutter); right: calc(var(--gutter) + 2.2rem); top: 6.4rem;
+    width: auto; display: flex; flex-direction: column; gap: 0.3rem; z-index: 3;
+  }
+  .stops .stop,
+  .stops .stop[style*="--card-top"] {
+    position: relative; inset: auto; top: auto; right: auto; left: auto; bottom: auto;
+    translate: none; width: auto;
+    display: grid; grid-template-rows: auto 0fr; row-gap: 0;
+    padding: 0.1rem 0.85rem;
+    border-top: 3px solid transparent;
+    background: rgb(20 36 33 / 0.94);
+    box-shadow: none;
+  }
+  .stops .stop :is(h2, h3) {
+    margin: 0; font-size: 1.05rem; line-height: 1.2; font-weight: 700;
+    color: #d4cec2;
+  }
+  .stops .stop p {
+    margin: 0; min-height: 0; overflow: hidden; opacity: 0;
+    font-size: 0.98rem; line-height: 1.45;
+    color: color-mix(in srgb, var(--kalkstein) 88%, var(--salbei));
+  }
+  .stops .stop.is-current {
+    grid-template-rows: auto auto; row-gap: 0.35rem;
+    border-top-color: var(--messing);
+    padding-bottom: 0.75rem;
+  }
+  .stops .stop.is-current :is(h2, h3) { color: var(--kalkstein); }
+  .stops .stop.is-current p { opacity: 1; min-height: var(--open-slot, 0px); }
+  .stops .stop__toggle { min-height: 44px; display: flex; align-items: center; }
   .split, .about, .kontakt { grid-template-columns: 1fr; }
   /* Text and portrait are two stations. The copy fills this screen, the
      picture starts on the next, so the lines never sit on the photograph. */
@@ -519,27 +558,31 @@ html::-webkit-scrollbar { display: none; }
     color: var(--patina);
   }
   #planung .steps.is-carousel h3::before { display: none; }
-  /* The desktop speech bubble, set into the lower part of the opening picture.
-     The call button sits under the handwriting so the lines stay long. */
+  /* Handwriting on the left. Portrait above the call button on the right,
+     so the lines stay wide and the box stays short. */
   .hello {
-    display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start;
-    column-gap: 0.7rem; row-gap: 0.45rem;
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start;
+    column-gap: 0.7rem; row-gap: 0.4rem;
     left: 0.7rem; right: 0.7rem; bottom: 0.85rem; width: auto;
     max-height: min(33svh, 280px); box-sizing: border-box;
-    padding: 0.7rem 0.8rem 0.65rem; border-radius: 1rem;
+    padding: 0.6rem 0.7rem 0.55rem; border-radius: 1rem;
     background: var(--patina); color: var(--kalkstein);
   }
   .hello__go { display: contents; }
-  .hello__face { grid-column: 1; grid-row: 1; width: 3.15rem; height: 3.15rem; animation: none; }
   .hello__bubble {
-    grid-column: 2; grid-row: 1; padding: 0; background: none; animation: none;
-    font-size: 1.2rem; line-height: 1.22;
+    grid-column: 1; grid-row: 1 / span 2; align-self: center;
+    padding: 0; background: none; animation: none;
+    font-size: 1.2rem; line-height: 1.18;
   }
   .hello__bubble::before { display: none; }
-  .hello__bubble strong { font-size: 1.4rem; }
+  .hello__bubble strong { font-size: 1.35rem; margin-bottom: 0; }
+  .hello__face {
+    grid-column: 2; grid-row: 1; justify-self: center;
+    width: 3.05rem; height: 3.05rem; animation: none;
+  }
   .hello .hello__call {
-    display: grid; grid-column: 2; grid-row: 2; justify-self: end;
-    width: 2.6rem; height: 2.6rem;
+    display: grid; grid-column: 2; grid-row: 2; justify-self: center;
+    width: 2.55rem; height: 2.55rem;
   }
   .hello__call svg { width: 1.25rem; height: 1.25rem; }
   #planung .steps.is-carousel p {
