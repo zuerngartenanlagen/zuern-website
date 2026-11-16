@@ -60,7 +60,7 @@ html::-webkit-scrollbar { display: none; }
   color: color-mix(in srgb, var(--kalkstein) 88%, var(--salbei));
 }
 
-/* Large screens: all six services in one column on the left, over the film.
+/* Large screens: the services in one column on the left, over the film.
    The current one (garden.js: is-current) is lit and open with its text and
    brass edge; the others show only their title, muted. Under reduced motion
    nothing is lit, so there all stay as they are. */
@@ -180,6 +180,13 @@ html::-webkit-scrollbar { display: none; }
   background: var(--messing);
 }
 .steps h3 { margin: 0; color: var(--patina); font-size: 1.15rem; font-weight: 700; text-align: center; }
+.steps p {
+  margin: 0.7rem 0 0;
+  color: var(--graphit);
+  font-size: 0.92rem;
+  line-height: 1.45;
+  text-align: center;
+}
 .steps h3::before {
   content: ""; position: relative; display: block; box-sizing: border-box;
   width: var(--ring); height: var(--ring); margin: 0 auto 1rem;
@@ -352,6 +359,12 @@ html::-webkit-scrollbar { display: none; }
   .dots__dot:hover .dots__label { translate: 0 -50%; opacity: 1; clip-path: inset(0 round 0.4rem); }
 }
 
+/* The phone menu lives in the corner. Desktop keeps the rail. */
+.walk-nav-toggle,
+.walk-nav,
+.steps-hint,
+.steps-dots { display: none; }
+
 /* ----------------------------------------------------------------- mobile -- */
 @media (max-width: 760px) {
   /* Phones: full-width bands whose brass edge sits level with their dot
@@ -373,6 +386,133 @@ html::-webkit-scrollbar { display: none; }
   /* Keep cards clear of the dots. */
   .stop { right: calc(var(--gutter) + 1.9rem); }
   .split, .about, .kontakt { grid-template-columns: 1fr; }
+  /* Text and portrait are two stations. The copy fills this screen, the
+     picture starts on the next, so the lines never sit on the photograph. */
+  #ueber-mich .about { display: flex; flex-direction: column; gap: 0; }
+  #ueber-mich .about__main {
+    min-height: calc(100vh - 8.5rem);
+    min-height: calc(100svh - 8.5rem);
+  }
+  #ueber-mich .portrait { margin: 0; }
+  #ueber-mich .portrait img { width: 100%; height: auto; display: block; }
+
+  .walk-nav-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    z-index: 60;
+    top: clamp(1rem, 2.2vw, 1.75rem);
+    right: 0.45rem;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    border: 1.5px solid var(--messing);
+    border-radius: 0.7rem;
+    background: var(--kalkstein);
+    color: var(--patina);
+    cursor: pointer;
+  }
+  .walk-nav-toggle .nav-toggle-bars,
+  .walk-nav-toggle .nav-toggle-bars::before,
+  .walk-nav-toggle .nav-toggle-bars::after {
+    position: relative;
+    display: block;
+    width: 1.1rem;
+    height: 1.5px;
+    margin: 0 auto;
+    background: var(--patina);
+  }
+  .walk-nav-toggle .nav-toggle-bars::before,
+  .walk-nav-toggle .nav-toggle-bars::after {
+    content: "";
+    position: absolute;
+    left: 0;
+  }
+  .walk-nav-toggle .nav-toggle-bars::before { top: -6px; }
+  .walk-nav-toggle .nav-toggle-bars::after { top: 6px; }
+  .walk-nav-toggle[aria-expanded="true"] .nav-toggle-bars { background: transparent; }
+  .walk-nav-toggle[aria-expanded="true"] .nav-toggle-bars::before { top: 0; transform: rotate(45deg); }
+  .walk-nav-toggle[aria-expanded="true"] .nav-toggle-bars::after { top: 0; transform: rotate(-45deg); }
+  .walk-nav {
+    position: fixed;
+    z-index: 55;
+    top: 6.4rem;
+    left: 0.75rem;
+    right: 0.75rem;
+    display: none;
+    flex-direction: column;
+    padding: 0.25rem 1.1rem 0.6rem;
+    background: var(--kalkstein);
+    border: 1.5px solid var(--messing);
+    border-radius: 0.7rem;
+  }
+  .walk-nav.is-open { display: flex; }
+  .walk-nav a {
+    padding: 0.85rem 0;
+    border-top: 1px solid color-mix(in srgb, var(--patina) 18%, transparent);
+    color: var(--patina);
+    font-size: 1rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .walk-nav a:first-child { border-top: 0; }
+
+  /* One card per planning step. A sideways flick stays inside the row. */
+  #planung.is-carousel-on .steps-hint {
+    display: block;
+    margin: 0.85rem 0 0;
+    text-align: center;
+    color: var(--messing);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  #planung.is-carousel-on .steps-hint.is-gone { display: none; }
+  .steps-dots { display: flex; justify-content: center; gap: 0.4rem; margin-top: 0.7rem; }
+  .steps-dots span {
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--patina) 28%, transparent);
+  }
+  .steps-dots span.is-on { background: var(--messing); }
+  #planung .steps.is-carousel {
+    display: flex;
+    gap: 0;
+    margin-top: 1rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x;
+    scrollbar-width: none;
+  }
+  #planung .steps.is-carousel::-webkit-scrollbar { display: none; }
+  #planung .steps.is-carousel li {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    padding: 1.15rem 1.1rem 1.3rem;
+    background: color-mix(in srgb, var(--kalkstein) 70%, #fff);
+    border-top: 1.5px solid var(--messing);
+  }
+  #planung .steps.is-carousel li::before { display: none; }
+  #planung .steps.is-carousel h3 {
+    font-size: 1.2rem;
+    text-align: left;
+    color: var(--patina);
+  }
+  #planung .steps.is-carousel h3::before { display: none; }
+  #planung .steps.is-carousel p {
+    margin: 0.65rem 0 0;
+    font-size: 1rem;
+    line-height: 1.5;
+    text-align: left;
+  }
+  #planung.is-carousel-on .steps__now { display: none; }
+  html.is-snap #planung .steps.is-carousel,
+  html.is-snap #planung .steps.is-carousel * { touch-action: pan-x; }
   /* Phones: the circles in one joined row, only the lit step's title below
      it (.steps__now, from phases.ts), then the pictures. */
   .steps li { padding-inline: 0; --ring: 3rem; }

@@ -5,6 +5,8 @@ import './garden.js';
 import './walk.js';
 import { initSteps } from './steps.ts';
 import { initPhases } from './phases.ts';
+import { initNav } from '../scripts/nav.ts';
 
 initSteps(lenis);
 initPhases();
+initNav();

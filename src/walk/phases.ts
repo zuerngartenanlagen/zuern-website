@@ -6,9 +6,9 @@
 // step again unlocks it and the steps take turns again. Only while the list is
 // on screen; under reduced motion all stay equal and nothing moves.
 //
-// Phones do not use the timer. The section is a sticky frame (walk.css) and
-// the finger scrubs the same four steps, image by image, then the pin ends
-// and the page scrolls on.
+// Phones do not use the timer. The four steps are a horizontal carousel: one
+// card per step, and the picture below follows the card that is in view.
+// A sideways swipe stays in the carousel and does not move the page.
 
 const PHASE_MS = 3800;   // how long each step stays highlighted
 const SLIDE_MS = 2600;   // how long each image shows while a step is held
@@ -43,7 +43,6 @@ export function initPhases(): void {
   ring.setAttribute('viewBox', '0 0 24 24');
   ring.innerHTML = '<circle cx="12" cy="12" r="10" pathLength="100"/><circle class="phase-show__fill" cx="12" cy="12" r="10" pathLength="100"/>';
   stage?.append(ring);
-  const fill = ring.querySelector<SVGCircleElement>('.phase-show__fill');
   const countdown = (ms: number | null): void => {
     ring.classList.remove('is-running');
     if (ms === null) return;
@@ -103,57 +102,68 @@ export function initPhases(): void {
     locked = i; stopCycle(); show(i); startSlides();
   };
 
-  const frames = sets.map((set) => Array.from(set.querySelectorAll('img')));
-
-  // 0 when the sticky frame pins, 1 as it lets go. The track and the frame
-  // are both svh, so the address bar does not move this ruler.
-  const scrubProgress = (): number => {
-    if (!section) return 0;
-    const frame = section.querySelector('.sheet__inner');
-    const travel = section.offsetHeight - (frame?.getBoundingClientRect().height || innerHeight);
-    if (travel <= 1) return 0;
-    return Math.min(1, Math.max(0, (scrollY - section.offsetTop) / travel));
-  };
-  const renderScrub = (): void => {
-    const flat = frames.flat();
-    if (!flat.length) return;
-    const x = scrubProgress() * (flat.length - 1);
-    const i0 = Math.floor(x);
-    const i1 = Math.min(flat.length - 1, i0 + 1);
-    const blend = x - i0;
-    flat.forEach((img, k) => {
-      let opacity = 0;
-      if (k === i0) opacity = 1 - (i0 === i1 ? 0 : blend);
-      if (k === i1) opacity = Math.max(opacity, i0 === i1 ? 1 : blend);
-      img.style.opacity = opacity.toFixed(3);
+  const mountCarousel = (): void => {
+    section?.classList.add('is-carousel-on');
+    list.classList.add('is-carousel');
+    now.hidden = true;
+    show(0);
+    const hint = document.querySelector('.steps-hint');
+    const dots = document.createElement('div');
+    dots.className = 'steps-dots';
+    dots.setAttribute('aria-hidden', 'true');
+    const marks = steps.map(() => {
+      const mark = document.createElement('span');
+      dots.append(mark);
+      return mark;
     });
-    const phaseCount = Math.max(1, frames.length);
-    const phase = Math.min(phaseCount - 1, Math.floor(scrubProgress() * phaseCount));
-    const local = scrubProgress() * phaseCount - phase;
-    show(phase);
-    if (fill) fill.style.strokeDashoffset = String(100 - Math.min(1, local) * 100);
-  };
-
-  const mountScrub = (): void => {
-    section?.classList.add('is-scrub');
-    stage?.classList.add('is-scrub');
-    list.classList.add('is-cycling');
-    locked = null;
-    held = false;
-    stopCycle();
-    stopSlides();
-    ring.classList.remove('is-running');
-    const onScroll = (): void => renderScrub();
-    addEventListener('scroll', onScroll, { passive: true });
-    addEventListener('resize', onScroll);
-    renderScrub();
+    hint?.after(dots);
+    const paint = (): void => {
+      const width = list.clientWidth || 1;
+      const index = Math.max(0, Math.min(steps.length - 1, Math.round(list.scrollLeft / width)));
+      show(index);
+      marks.forEach((mark, i) => mark.classList.toggle('is-on', i === index));
+    };
+    const dismiss = (): void => hint?.classList.add('is-gone');
+    let originX = 0;
+    let originLeft = 0;
+    let dragging = false;
+    const cardWidth = (): number => list.clientWidth || 1;
+    const onTouchStart = (event: TouchEvent): void => {
+      dragging = true;
+      originX = event.touches[0]?.clientX ?? 0;
+      originLeft = list.scrollLeft;
+    };
+    const onTouchMove = (event: TouchEvent): void => {
+      if (!dragging) return;
+      const dx = originX - (event.touches[0]?.clientX ?? originX);
+      if (Math.abs(dx) < 6) return;
+      event.preventDefault();
+      list.scrollLeft = originLeft + dx;
+    };
+    const onTouchEnd = (): void => {
+      if (!dragging) return;
+      dragging = false;
+      const width = cardWidth();
+      const index = Math.max(0, Math.min(steps.length - 1, Math.round(list.scrollLeft / width)));
+      list.scrollTo({ left: index * width, behavior: 'smooth' });
+      dismiss();
+    };
+    list.addEventListener('scroll', paint, { passive: true });
+    list.addEventListener('touchstart', onTouchStart, { passive: true });
+    list.addEventListener('touchmove', onTouchMove, { passive: false });
+    list.addEventListener('touchend', onTouchEnd);
+    list.addEventListener('touchcancel', onTouchEnd);
+    paint();
     cleanup = () => {
-      removeEventListener('scroll', onScroll);
-      removeEventListener('resize', onScroll);
-      section?.classList.remove('is-scrub');
-      stage?.classList.remove('is-scrub');
-      frames.flat().forEach((img) => img.style.removeProperty('opacity'));
-      if (fill) fill.style.removeProperty('stroke-dashoffset');
+      list.removeEventListener('scroll', paint);
+      list.removeEventListener('touchstart', onTouchStart);
+      list.removeEventListener('touchmove', onTouchMove);
+      list.removeEventListener('touchend', onTouchEnd);
+      list.removeEventListener('touchcancel', onTouchEnd);
+      dots.remove();
+      now.hidden = false;
+      section?.classList.remove('is-carousel-on');
+      list.classList.remove('is-carousel');
     };
   };
 
@@ -197,7 +207,7 @@ export function initPhases(): void {
 
   const apply = (): void => {
     cleanup();
-    if (phone.matches && section) mountScrub();
+    if (phone.matches && section) mountCarousel();
     else mountCycle();
   };
   phone.addEventListener('change', apply);
