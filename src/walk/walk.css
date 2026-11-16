@@ -419,12 +419,14 @@ html::-webkit-scrollbar { display: none; }
     display: grid; grid-template-rows: auto 0fr; row-gap: 0;
     padding: 0.1rem 0.85rem;
     border-top: 3px solid transparent;
-    background: rgb(20 36 33 / 0.94);
+    background: rgb(20 36 33 / 0.82);
     box-shadow: none;
+    transition: grid-template-rows 250ms ease, background-color 250ms ease, border-color 250ms ease;
   }
   .stops .stop :is(h2, h3) {
     margin: 0; font-size: 1.05rem; line-height: 1.2; font-weight: 700;
-    color: #d4cec2;
+    color: #d0c9bc;
+    transition: color 250ms ease;
   }
   .stops .stop p {
     margin: 0; min-height: 0; overflow: hidden; opacity: 0;
@@ -432,12 +434,13 @@ html::-webkit-scrollbar { display: none; }
     color: color-mix(in srgb, var(--kalkstein) 88%, var(--salbei));
   }
   .stops .stop.is-current {
-    grid-template-rows: auto auto; row-gap: 0.35rem;
+    grid-template-rows: auto 1fr; row-gap: 0.35rem;
     border-top-color: var(--messing);
+    background: rgb(20 36 33 / 0.9);
     padding-bottom: 0.75rem;
   }
   .stops .stop.is-current :is(h2, h3) { color: var(--kalkstein); }
-  .stops .stop.is-current p { opacity: 1; min-height: var(--open-slot, 0px); }
+  .stops .stop.is-current p { opacity: 1; }
   .stops .stop__toggle { min-height: 44px; display: flex; align-items: center; }
   .split, .about, .kontakt { grid-template-columns: 1fr; }
   /* Text and portrait are two stations. The copy fills this screen, the
@@ -648,6 +651,9 @@ html::-webkit-scrollbar { display: none; }
   #planung.is-scrub .steps.is-cycling h3::before { transition-duration: 220ms; }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .stops .stop { transition: none; }
+}
 @media (max-width: 760px) and (prefers-reduced-motion: reduce) {
   /* The cycling titles are injected by script, which does not run here.
      Show every step, still, in the document flow. */

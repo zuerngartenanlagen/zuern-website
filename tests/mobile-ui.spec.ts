@@ -215,19 +215,28 @@ for (const browserType of [webkit, chromium]) {
     }
     await expect(page.locator('.stops .stop')).toHaveCount(5);
     await expect(page.locator('.stop__toggle[aria-expanded="true"]')).toContainText('Planung, Bau und Pflege aus einer Hand');
-    const before = await page.locator('.stops').evaluate((el) => Math.round(el.getBoundingClientRect().height));
+    const before = await page.evaluate(() => ({
+      y: Math.round(window.scrollY),
+      top: Math.round(document.querySelector('.stops')?.getBoundingClientRect().top ?? 0),
+      open: Math.round(document.querySelector('.stop.is-current p')?.getBoundingClientRect().height ?? 0),
+    }));
     await page.locator('.stop__toggle', { hasText: 'Neuanlage und Umgestaltung' }).click();
-    await page.waitForTimeout(250);
+    await page.waitForTimeout(400);
     const landed = await page.evaluate(() => ({
       y: Math.round(window.scrollY),
       snap: Number(document.documentElement.dataset.snapY ?? '0'),
       label: document.documentElement.dataset.snapLabel ?? '',
+      top: Math.round(document.querySelector('.stops')?.getBoundingClientRect().top ?? 0),
+      open: Math.round(document.querySelector('.stop.is-current p')?.getBoundingClientRect().height ?? 0),
     }));
     expect(Math.abs(landed.y - landed.snap)).toBeLessThanOrEqual(2);
+    expect(Math.abs(landed.top - before.top)).toBeLessThanOrEqual(2);
     expect(landed.label).toBe('Neuanlage und Umgestaltung');
+    expect(landed.open).toBeLessThan(before.open - 20);
+    await page.waitForTimeout(300);
+    const held = await page.evaluate(() => Math.round(window.scrollY));
+    expect(Math.abs(held - landed.y)).toBeLessThanOrEqual(2);
     await expect(page.locator('.stop__toggle[aria-expanded="true"]')).toHaveText('Neuanlage und Umgestaltung');
-    const after = await page.locator('.stops').evaluate((el) => Math.round(el.getBoundingClientRect().height));
-    expect(Math.abs(after - before)).toBeLessThanOrEqual(2);
     await stepDown(page, browserType.name());
     await expect(page.locator('.stop__toggle[aria-expanded="true"]')).toHaveText('Pflanzung');
     await page.context().browser()?.close();

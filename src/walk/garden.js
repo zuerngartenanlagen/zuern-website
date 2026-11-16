@@ -94,28 +94,6 @@
   addEventListener('resize', brandAt);
   brandAt();
 
-  // Phones: the open service text keeps the height of the longest paragraph,
-  // so switching station does not resize the list.
-  function reserveServiceSlot() {
-    if (!phone.matches) return;
-    var root = document.querySelector('.stops');
-    if (!root) return;
-    var max = 0;
-    var width = Math.max(120, root.clientWidth - 28);
-    var nodes = root.querySelectorAll('.stop p');
-    for (var i = 0; i < nodes.length; i++) {
-      var probe = nodes[i].cloneNode(true);
-      probe.style.cssText = 'position:absolute;left:0;top:0;visibility:hidden;display:block;height:auto;overflow:visible;width:' + width + 'px;margin:0;font-size:0.98rem;line-height:1.45;';
-      document.body.appendChild(probe);
-      max = Math.max(max, probe.offsetHeight);
-      probe.remove();
-    }
-    if (max) root.style.setProperty('--open-slot', Math.ceil(max) + 'px');
-  }
-  reserveServiceSlot();
-  addEventListener('resize', reserveServiceSlot);
-  if (document.fonts) document.fonts.ready.then(reserveServiceSlot);
-
   if (reduce) return;
 
   // Copy follows the scroll progress of the pinned walk.
