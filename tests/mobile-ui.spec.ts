@@ -116,4 +116,37 @@ for (const browserType of [webkit, chromium]) {
       await page.context().browser()?.close();
     });
   }
+
+  test(`the welcome box sits under the start image (${browserType.name()})`, async () => {
+    const page = await open(browserType, '/');
+    await page.waitForTimeout(250);
+    const box = page.locator('.start-box');
+    await expect(box).toBeVisible();
+    await expect(box.locator('a[href="tel:+491751193001"]')).toHaveCount(1);
+    await expect(page.locator('#kontakt .start-box, #kontakt .kontakt-karte')).toHaveCount(0);
+    const metrics = await page.evaluate(() => {
+      const card = document.querySelector('.start-box');
+      const img = document.querySelector('.walk__poster');
+      if (!card || !img) return null;
+      const c = card.getBoundingClientRect();
+      const p = img.getBoundingClientRect();
+      return {
+        pos: getComputedStyle(card).position,
+        h: c.height,
+        top: c.top,
+        bottom: c.bottom,
+        imgBottom: p.bottom,
+        vh: innerHeight,
+      };
+    });
+    expect(metrics).not.toBeNull();
+    expect(metrics!.pos).not.toBe('fixed');
+    expect(metrics!.h).toBeLessThanOrEqual(metrics!.vh / 3 + 1);
+    expect(metrics!.h).toBeGreaterThan(48);
+    expect(metrics!.top).toBeGreaterThanOrEqual(metrics!.imgBottom - 2);
+    expect(metrics!.top).toBeGreaterThanOrEqual(0);
+    expect(metrics!.bottom).toBeLessThanOrEqual(metrics!.vh + 1);
+    await expect(box).toContainText('Schön, dass Sie da sind!');
+    await page.context().browser()?.close();
+  });
 }

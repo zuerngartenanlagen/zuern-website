@@ -127,15 +127,40 @@ export function initPhases(): void {
     let originX = 0;
     let originLeft = 0;
     let dragging = false;
+    let lastX = 0;
+    let lastT = 0;
+    let velX = 0;
+    let startIndex = 0;
     const cardWidth = (): number => list.clientWidth || 1;
+    const glideCard = (left: number, ms: number): void => {
+      const from = list.scrollLeft;
+      const delta = left - from;
+      const t0 = performance.now();
+      const tick = (now: number): void => {
+        const t = Math.min(1, (now - t0) / ms);
+        const eased = 1 - Math.pow(1 - t, 3);
+        list.scrollLeft = from + delta * eased;
+        if (t < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    };
     const onTouchStart = (event: TouchEvent): void => {
       dragging = true;
       originX = event.touches[0]?.clientX ?? 0;
       originLeft = list.scrollLeft;
+      lastX = originX;
+      lastT = performance.now();
+      velX = 0;
+      startIndex = Math.round(originLeft / cardWidth());
     };
     const onTouchMove = (event: TouchEvent): void => {
       if (!dragging) return;
-      const dx = originX - (event.touches[0]?.clientX ?? originX);
+      const x = event.touches[0]?.clientX ?? lastX;
+      const now = performance.now();
+      velX = (lastX - x) / Math.max(1, now - lastT);
+      lastX = x;
+      lastT = now;
+      const dx = originX - x;
       if (Math.abs(dx) < 6) return;
       event.preventDefault();
       list.scrollLeft = originLeft + dx;
@@ -144,8 +169,11 @@ export function initPhases(): void {
       if (!dragging) return;
       dragging = false;
       const width = cardWidth();
-      const index = Math.max(0, Math.min(steps.length - 1, Math.round(list.scrollLeft / width)));
-      list.scrollTo({ left: index * width, behavior: 'smooth' });
+      const flick = Math.abs(velX) > 0.45;
+      let index = flick ? startIndex + (velX > 0 ? 1 : -1) : Math.round(list.scrollLeft / width);
+      index = Math.max(startIndex - 1, Math.min(startIndex + 1, index));
+      index = Math.max(0, Math.min(steps.length - 1, index));
+      glideCard(index * width, Math.abs(velX) > 0.9 ? 220 : 320);
       dismiss();
     };
     list.addEventListener('scroll', paint, { passive: true });

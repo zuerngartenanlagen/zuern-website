@@ -46,10 +46,13 @@ const WHEEL_MIN = 12;         // ignore tiny wheel jitter (px)
 const WHEEL_QUIET_MS = 220;   // a pause this long ends a wheel/trackpad gesture
 const WHEEL_MORE_PX = 300;    // scrolling on this much further in one gesture adds a point
 const SWIPE_MIN = 40;         // touch travel that counts as a swipe (px)
-const SNAP_MIN = 56;          // phone: shorter than this is not a step
-const SNAP_S = 0.38;          // phone snap, short enough to feel settled
+const SNAP_MIN = 56;          // phone: a slow drag shorter than this stays put
+const SNAP_FLICK = 32;        // a quick flick may be shorter and still counts
+const SNAP_VEL = 0.55;        // px/ms above this is a flick
+const SNAP_S = 0.42;          // slow settle, a soft tail rather than a hard stop
 
 const ease = (t: number): number => 1 - Math.pow(1 - t, 3);
+const easeSoft = (t: number): number => 1 - Math.pow(1 - t, 4);
 
 function windowOf(el: Element): number[] {
   return (el.getAttribute('data-g-window') ?? '').split(/\s+/).map(Number);
@@ -194,6 +197,7 @@ export function initSteps(lenis: Lenis | null): void {
   let gliding = false;
   let held = false;
   let pointBefore = 0;       // the point we rest on, for resizes
+  let phoneDrag = false;     // a finger is following, so the snap index stays put
 
   const hold = (on: boolean): void => {
     if (!lenis || on === held) return;
@@ -252,7 +256,7 @@ export function initSteps(lenis: Lenis | null): void {
     nav?.classList.toggle('is-service', Boolean(points[best]?.isService));
     nav?.classList.toggle('is-light', lightBehind(nav));
     arrows?.show(true, Boolean(prevPoint()), Boolean(nextPoint()));
-    if (phone.matches && !snapBusy) publishSnap(nearestSnap());
+    if (phone.matches && !snapBusy && !phoneDrag) publishSnap(nearestSnap());
   }
 
   // Phone snap targets: the same points as the dots, except the planning
@@ -335,7 +339,8 @@ export function initSteps(lenis: Lenis | null): void {
   let snapToken = 0;
 
   // One step, always by script. Never "let the browser scroll the rest".
-  function goSnap(index: number, immediate = false): void {
+  // A fast flick uses a short ease; a slow drag keeps a longer, softer tail.
+  function goSnap(index: number, immediate = false, duration = SNAP_S): void {
     const list = snapList();
     const next = Math.max(0, Math.min(list.length - 1, index));
     const pt = list[next];
@@ -353,7 +358,7 @@ export function initSteps(lenis: Lenis | null): void {
     }
     snapBusy = true;
     lenis.scrollTo(y, {
-      duration: SNAP_S, easing: ease, force: true,
+      duration, easing: easeSoft, force: true,
       onComplete: () => {
         if (token !== snapToken) return;
         snapBusy = false;
@@ -362,12 +367,11 @@ export function initSteps(lenis: Lenis | null): void {
     });
   }
 
-  function stepSnap(dir: 1 | -1): void {
-    if (!snapBusy) snapAt = nearestSnap();
+  function stepSnap(dir: 1 | -1, from = snapBusy ? snapAt : nearestSnap(), duration = SNAP_S): void {
     const list = snapList();
-    const next = snapAt + dir;
-    if (next < 0 || next >= list.length) return;
-    goSnap(next);
+    const next = from + dir;
+    if (next < 0 || next >= list.length) { goSnap(from, false, Math.min(duration, 0.32)); return; }
+    goSnap(next, false, duration);
   }
 
   // A jump: no glide through the film, straight to the target. It also cuts
@@ -495,12 +499,13 @@ export function initSteps(lenis: Lenis | null): void {
     addEventListener('touchmove', onTouchMove, { passive: false });
     addEventListener('touchend', onTouchEnd, { passive: true });
   };
-  // Phone: the finger never scrolls the document. Every touchmove is
-  // cancelled, and a deliberate swipe scrolls exactly one snap by script.
-  // A fast flick therefore cannot coast into the next topic, and there is
-  // no moment where Safari is asked to resume native scrolling.
+  // Phone: the document does not free-scroll. The page follows the finger,
+  // but only as far as the next station, then eases into exactly one step.
+  // A fast flick can be shorter than a slow drag. Safari never gets the gesture.
   let phoneX: number | null = null;
   let phoneY: number | null = null;
+  let phoneT = 0;
+  let phoneFrom = 0;
   let phoneHold: 'page' | 'carousel' | 'menu' = 'page';
   const gestureKind = (e: TouchEvent): 'page' | 'carousel' | 'menu' => {
     if (document.getElementById('site-nav')?.classList.contains('is-open')) return 'menu';
@@ -508,27 +513,54 @@ export function initSteps(lenis: Lenis | null): void {
     if (target instanceof Element && target.closest('#planung .steps')) return 'carousel';
     return 'page';
   };
+  const followFinger = (dy: number): void => {
+    if (!lenis) return;
+    const list = snapList();
+    const fromY = clampScroll(list[phoneFrom]?.y() ?? scrollY);
+    const dir = dy > 0 ? 1 : -1;
+    const neighbor = list[phoneFrom + dir];
+    const span = neighbor ? Math.max(1, Math.abs(clampScroll(neighbor.y()) - fromY)) : innerHeight * 0.4;
+    const moved = Math.max(-span, Math.min(span, dy));
+    lenis.scrollTo(clampScroll(fromY + moved), { immediate: true, force: true });
+  };
   const onPhoneStart = (e: TouchEvent): void => {
     phoneHold = gestureKind(e);
     phoneX = e.touches[0]?.clientX ?? null;
     phoneY = e.touches[0]?.clientY ?? null;
+    phoneT = performance.now();
+    phoneDrag = phoneHold === 'page';
+    phoneFrom = snapBusy ? snapAt : nearestSnap();
   };
   const onPhoneMove = (e: TouchEvent): void => {
-    if (phoneY === null || phoneHold === 'carousel') return;
+    if (phoneY === null || phoneX === null || phoneHold !== 'page') return;
     e.preventDefault();
+    const y = e.touches[0]?.clientY ?? phoneY;
+    const x = e.touches[0]?.clientX ?? phoneX;
+    const dy = phoneY - y;
+    const dx = phoneX - x;
+    if (Math.abs(dx) > Math.abs(dy)) return;
+    followFinger(dy);
   };
   const finishPhone = (e: TouchEvent): void => {
     const hold = phoneHold;
     phoneHold = 'page';
+    phoneDrag = false;
     if (phoneY === null || phoneX === null) { phoneY = null; phoneX = null; return; }
     const t = e.changedTouches[0];
     const dy = phoneY - (t?.clientY ?? phoneY);
     const dx = phoneX - (t?.clientX ?? phoneX);
+    const elapsed = Math.max(1, performance.now() - phoneT);
+    const velocity = dy / elapsed;
     phoneY = null;
     phoneX = null;
     if (hold !== 'page') return;
-    if (Math.abs(dy) < SNAP_MIN || Math.abs(dx) > Math.abs(dy)) return;
-    stepSnap(dy > 0 ? 1 : -1);
+    const vertical = Math.abs(dy) >= Math.abs(dx);
+    const flick = Math.abs(velocity) >= SNAP_VEL && Math.abs(dy) >= SNAP_FLICK;
+    const dragged = Math.abs(dy) >= SNAP_MIN;
+    if (!vertical || (!flick && !dragged)) { goSnap(phoneFrom, false, 0.28); return; }
+    const speed = Math.abs(velocity);
+    const duration = speed > 1.1 ? 0.24 : speed > SNAP_VEL ? 0.32 : SNAP_S;
+    stepSnap(dy > 0 ? 1 : -1, phoneFrom, duration);
   };
   const usePhoneSnap = (on: boolean): void => {
     removeEventListener('touchstart', onPhoneStart);
