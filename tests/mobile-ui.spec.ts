@@ -96,33 +96,45 @@ for (const browserType of [webkit, chromium]) {
     });
   }
 
-  test(`planning cards slide sideways without changing station (${browserType.name()})`, async () => {
+  test(`planning icons, a sideways swipe and a vertical swipe stay apart (${browserType.name()})`, async () => {
     const page = await open(browserType, '/');
-    await page.waitForSelector('#planung .steps.is-carousel');
     await page.locator('.nav-toggle').click();
     await page.locator('#site-nav a[href="#planung"]').click();
     await page.waitForTimeout(900);
-    const before = await page.evaluate(() => ({
-      index: document.documentElement.dataset.snapIndex,
-      left: document.querySelector<HTMLElement>('#planung .steps')?.scrollLeft ?? 0,
-    }));
-    expect(await page.locator('.steps-hint').isVisible()).toBe(true);
-    await flickCarousel(page, browserType.name());
-    await page.waitForTimeout(500);
-    const after = await page.evaluate(() => {
-      const row = document.querySelector<HTMLElement>('#planung .steps');
-      return {
-        index: document.documentElement.dataset.snapIndex,
-        left: row?.scrollLeft ?? 0,
-        width: row?.clientWidth ?? 1,
-        phase: document.querySelector('.phase-show__set.is-active')?.getAttribute('data-phase'),
-        hint: document.querySelector('.steps-hint')?.classList.contains('is-gone') === true,
-      };
+    const icon = await page.evaluate(() => {
+      const mark = getComputedStyle(document.querySelector('#planung .steps h3') as Element, '::before');
+      return { display: mark.display, w: parseFloat(mark.width) };
     });
-    expect(after.index).toBe(before.index);
-    expect(after.left).toBeGreaterThan(after.width * 0.6);
-    expect(after.phase).toBe('1');
-    expect(after.hint).toBe(true);
+    expect(icon.display).not.toBe('none');
+    expect(icon.w).toBeGreaterThan(30);
+    const station = await page.evaluate(() => document.documentElement.dataset.snapIndex ?? '');
+    await page.locator('#planung .steps li').nth(2).click();
+    await page.waitForTimeout(200);
+    const clicked = await page.evaluate(() => ({
+      index: document.documentElement.dataset.snapIndex ?? '',
+      active: [...document.querySelectorAll('#planung .steps li')].findIndex((li) => li.classList.contains('is-active')),
+      phase: document.querySelector('.phase-show__set.is-active')?.getAttribute('data-phase'),
+    }));
+    expect(clicked.index).toBe(station);
+    expect(clicked.active).toBe(2);
+    expect(clicked.phase).toBe('2');
+    await flickCarousel(page, browserType.name());
+    await page.waitForTimeout(300);
+    const sideways = await page.evaluate(() => ({
+      index: document.documentElement.dataset.snapIndex ?? '',
+      active: [...document.querySelectorAll('#planung .steps li')].findIndex((li) => li.classList.contains('is-active')),
+      phase: document.querySelector('.phase-show__set.is-active')?.getAttribute('data-phase'),
+    }));
+    expect(sideways.index).toBe(station);
+    expect(sideways.active).toBe(3);
+    expect(sideways.phase).toBe('3');
+    await stepDown(page, browserType.name());
+    const vertical = await page.evaluate(() => ({
+      index: document.documentElement.dataset.snapIndex ?? '',
+      phase: document.querySelector('.phase-show__set.is-active')?.getAttribute('data-phase'),
+    }));
+    expect(Number(vertical.index)).toBe(Number(station) + 1);
+    expect(vertical.phase).toBe('3');
     await page.context().browser()?.close();
   });
 
@@ -150,7 +162,9 @@ for (const browserType of [webkit, chromium]) {
     await page.waitForTimeout(400);
     const box = page.locator('.hello');
     await expect(box).toBeVisible();
-    await expect(box.locator('a[href="tel:+491751193001"]')).toHaveCount(1);
+    await expect(box.locator('a[href="tel:+491751193001"]')).toHaveCount(0);
+    await expect(box.locator('.hello__call')).toHaveCount(0);
+    await expect(page.locator('#kontakt a[href="tel:+491751193001"]')).toHaveCount(1);
     await expect(page.locator('.card-icon, .step-icon')).toHaveCount(0);
     await expect(page.locator('#kontakt .kontakt-icon')).toHaveCount(3);
     const metrics = await page.evaluate(() => {
@@ -177,21 +191,23 @@ for (const browserType of [webkit, chromium]) {
     expect(metrics!.h).toBeLessThanOrEqual(metrics!.vh / 3 + 1);
     expect(metrics!.h).toBeGreaterThan(48);
     const places = await page.evaluate(() => {
+      const card = document.querySelector('.hello')?.getBoundingClientRect();
       const face = document.querySelector('.hello__face')?.getBoundingClientRect();
       const bubble = document.querySelector('.hello__bubble')?.getBoundingClientRect();
-      const call = document.querySelector('.hello__call')?.getBoundingClientRect();
-      if (!face || !bubble || !call) return null;
+      const pad = card ? getComputedStyle(document.querySelector('.hello') as Element) : null;
+      if (!card || !face || !bubble || !pad) return null;
       return {
-        faceLeft: face.left, bubbleRight: bubble.right,
-        callTop: call.top, faceBottom: face.bottom,
-        callCenter: call.left + call.width / 2,
-        faceCenter: face.left + face.width / 2,
+        faceRight: face.right, cardRight: card.right,
+        bubbleRight: bubble.right, bubbleBottom: bubble.bottom, faceBottom: face.bottom,
+        pad: [pad.paddingTop, pad.paddingRight, pad.paddingBottom, pad.paddingLeft],
       };
     });
     expect(places).not.toBeNull();
-    expect(places!.faceLeft).toBeGreaterThan(places!.bubbleRight - 4);
-    expect(places!.callTop).toBeGreaterThanOrEqual(places!.faceBottom - 2);
-    expect(Math.abs(places!.callCenter - places!.faceCenter)).toBeLessThan(8);
+    expect(new Set(places!.pad).size).toBe(1);
+    expect(places!.cardRight - places!.faceRight).toBeGreaterThan(6);
+    expect(places!.cardRight - places!.faceRight).toBeLessThan(18);
+    expect(Math.abs(places!.bubbleRight - places!.faceRight)).toBeLessThan(3);
+    expect(places!.bubbleBottom).toBeGreaterThan(places!.faceBottom + 8);
     expect(metrics!.top).toBeGreaterThan(metrics!.imgTop);
     expect(metrics!.bottom).toBeLessThanOrEqual(metrics!.imgBottom + 1);
     expect(metrics!.bottom).toBeLessThanOrEqual(metrics!.vh + 1);
@@ -203,6 +219,25 @@ for (const browserType of [webkit, chromium]) {
     await expect(page.locator('.walk-steps')).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.dataset.snapIndex)).toBe('1');
     await page.context().browser()?.close();
+  });
+
+  test(`reduced motion stills the service accordion (${browserType.name()})`, async () => {
+    const browser = await browserType.launch();
+    const page = await (await browser.newContext({ ...PHONE, reducedMotion: 'reduce' })).newPage();
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('.stops .stop', { state: 'attached' });
+    const motion = await page.evaluate(() => {
+      const stop = document.querySelector('.stops .stop');
+      const duration = stop ? getComputedStyle(stop).transitionDuration : '';
+      return {
+        reduce: matchMedia('(prefers-reduced-motion: reduce)').matches,
+        duration,
+        still: duration.split(',').every((part) => parseFloat(part) === 0),
+      };
+    });
+    expect(motion.reduce).toBe(true);
+    expect(motion.still).toBe(true);
+    await browser.close();
   });
 
   test(`service topics open in place and a tap lands on that station (${browserType.name()})`, async () => {

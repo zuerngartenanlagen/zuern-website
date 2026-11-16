@@ -561,33 +561,27 @@ html::-webkit-scrollbar { display: none; }
     color: var(--patina);
   }
   #planung .steps.is-carousel h3::before { display: none; }
-  /* Handwriting on the left. Portrait above the call button on the right,
-     so the lines stay wide and the box stays short. */
+  /* Portrait sits in the top-right. The handwriting runs beside it and
+     continues across the full width underneath, with even padding. */
   .hello {
-    display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start;
-    column-gap: 0.7rem; row-gap: 0.4rem;
+    display: block;
     left: 0.7rem; right: 0.7rem; bottom: 0.85rem; width: auto;
     max-height: min(33svh, 280px); box-sizing: border-box;
-    padding: 0.6rem 0.7rem 0.55rem; border-radius: 1rem;
+    padding: 0.7rem; border-radius: 1rem;
     background: var(--patina); color: var(--kalkstein);
   }
-  .hello__go { display: contents; }
+  .hello__go { display: block; }
+  .hello__go::after { content: ""; display: block; clear: both; }
   .hello__bubble {
-    grid-column: 1; grid-row: 1 / span 2; align-self: center;
-    padding: 0; background: none; animation: none;
-    font-size: 1.2rem; line-height: 1.18;
+    display: block; padding: 0; background: none; animation: none;
+    font-size: 1.2rem; line-height: 1.25;
   }
   .hello__bubble::before { display: none; }
   .hello__bubble strong { font-size: 1.35rem; margin-bottom: 0; }
   .hello__face {
-    grid-column: 2; grid-row: 1; justify-self: center;
+    float: right; margin: 0 0 0.45rem 0.7rem;
     width: 3.05rem; height: 3.05rem; animation: none;
   }
-  .hello .hello__call {
-    display: grid; grid-column: 2; grid-row: 2; justify-self: center;
-    width: 2.55rem; height: 2.55rem;
-  }
-  .hello__call svg { width: 1.25rem; height: 1.25rem; }
   #planung .steps.is-carousel p {
     margin: 0.65rem 0 0;
     font-size: 1rem;
@@ -652,7 +646,9 @@ html::-webkit-scrollbar { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .stops .stop { transition: none; }
+  .stops .stop,
+  .stops .stop[style*="--card-top"],
+  .stops .stop :is(h2, h3) { transition: none; }
 }
 @media (max-width: 760px) and (prefers-reduced-motion: reduce) {
   /* The cycling titles are injected by script, which does not run here.

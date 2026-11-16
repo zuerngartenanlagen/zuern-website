@@ -6,9 +6,8 @@
 // step again unlocks it and the steps take turns again. Only while the list is
 // on screen; under reduced motion all stay equal and nothing moves.
 //
-// Phones do not use the timer. The four steps are a horizontal carousel: one
-// card per step, and the picture below follows the card that is in view.
-// A sideways swipe stays in the carousel and does not move the page.
+// On a phone the same icons stay. A sideways swipe steps one topic and the
+// lit icon follows; a vertical swipe is left to the page and changes station.
 
 const PHASE_MS = 3800;   // how long each step stays highlighted
 const SLIDE_MS = 2600;   // how long each image shows while a step is held
@@ -21,7 +20,6 @@ export function initPhases(): void {
   if (steps.length < 2) return;
   const stage = document.querySelector<HTMLElement>('.phase-show');
   const sets = stage ? Array.from(stage.querySelectorAll<HTMLElement>('.phase-show__set')) : [];
-  const section = document.getElementById('planung');
 
   let current = 0;
   let cycle = 0;
@@ -102,99 +100,6 @@ export function initPhases(): void {
     locked = i; stopCycle(); show(i); startSlides();
   };
 
-  const mountCarousel = (): void => {
-    section?.classList.add('is-carousel-on');
-    list.classList.add('is-carousel');
-    now.hidden = true;
-    show(0);
-    const hint = document.querySelector('.steps-hint');
-    const dots = document.createElement('div');
-    dots.className = 'steps-dots';
-    dots.setAttribute('aria-hidden', 'true');
-    const marks = steps.map(() => {
-      const mark = document.createElement('span');
-      dots.append(mark);
-      return mark;
-    });
-    hint?.after(dots);
-    const paint = (): void => {
-      const width = list.clientWidth || 1;
-      const index = Math.max(0, Math.min(steps.length - 1, Math.round(list.scrollLeft / width)));
-      show(index);
-      marks.forEach((mark, i) => mark.classList.toggle('is-on', i === index));
-    };
-    const dismiss = (): void => hint?.classList.add('is-gone');
-    let originX = 0;
-    let originLeft = 0;
-    let dragging = false;
-    let lastX = 0;
-    let lastT = 0;
-    let velX = 0;
-    let startIndex = 0;
-    const cardWidth = (): number => list.clientWidth || 1;
-    const glideCard = (left: number, ms: number): void => {
-      const from = list.scrollLeft;
-      const delta = left - from;
-      const t0 = performance.now();
-      const tick = (now: number): void => {
-        const t = Math.min(1, (now - t0) / ms);
-        const eased = 1 - Math.pow(1 - t, 3);
-        list.scrollLeft = from + delta * eased;
-        if (t < 1) requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
-    };
-    const onTouchStart = (event: TouchEvent): void => {
-      dragging = true;
-      originX = event.touches[0]?.clientX ?? 0;
-      originLeft = list.scrollLeft;
-      lastX = originX;
-      lastT = performance.now();
-      velX = 0;
-      startIndex = Math.round(originLeft / cardWidth());
-    };
-    const onTouchMove = (event: TouchEvent): void => {
-      if (!dragging) return;
-      const x = event.touches[0]?.clientX ?? lastX;
-      const now = performance.now();
-      velX = (lastX - x) / Math.max(1, now - lastT);
-      lastX = x;
-      lastT = now;
-      const dx = originX - x;
-      if (Math.abs(dx) < 6) return;
-      event.preventDefault();
-      list.scrollLeft = originLeft + dx;
-    };
-    const onTouchEnd = (): void => {
-      if (!dragging) return;
-      dragging = false;
-      const width = cardWidth();
-      const flick = Math.abs(velX) > 0.45;
-      let index = flick ? startIndex + (velX > 0 ? 1 : -1) : Math.round(list.scrollLeft / width);
-      index = Math.max(startIndex - 1, Math.min(startIndex + 1, index));
-      index = Math.max(0, Math.min(steps.length - 1, index));
-      glideCard(index * width, Math.abs(velX) > 0.9 ? 220 : 320);
-      dismiss();
-    };
-    list.addEventListener('scroll', paint, { passive: true });
-    list.addEventListener('touchstart', onTouchStart, { passive: true });
-    list.addEventListener('touchmove', onTouchMove, { passive: false });
-    list.addEventListener('touchend', onTouchEnd);
-    list.addEventListener('touchcancel', onTouchEnd);
-    paint();
-    cleanup = () => {
-      list.removeEventListener('scroll', paint);
-      list.removeEventListener('touchstart', onTouchStart);
-      list.removeEventListener('touchmove', onTouchMove);
-      list.removeEventListener('touchend', onTouchEnd);
-      list.removeEventListener('touchcancel', onTouchEnd);
-      dots.remove();
-      now.hidden = false;
-      section?.classList.remove('is-carousel-on');
-      list.classList.remove('is-carousel');
-    };
-  };
-
   const mountCycle = (): void => {
     list.classList.add('is-cycling');
     show(0);
@@ -208,7 +113,10 @@ export function initPhases(): void {
     const bound = steps.map((li, i) => {
       const enter = (e: PointerEvent): void => { if (isMouse(e)) hold(i); };
       const leave = (e: PointerEvent): void => { if (isMouse(e)) release(); };
-      const click = (): void => toggleLock(i);
+      const click = (): void => {
+        if (document.documentElement.hasAttribute('data-plan-swipe')) return;
+        toggleLock(i);
+      };
       li.addEventListener('pointerenter', enter);
       li.addEventListener('pointerleave', leave);
       li.addEventListener('click', click);
@@ -233,10 +141,26 @@ export function initPhases(): void {
     };
   };
 
+  const stepTopic = (dir: number): void => {
+    const next = Math.max(0, Math.min(steps.length - 1, current + dir));
+    if (next === current) return;
+    locked = next;
+    held = false;
+    stopCycle();
+    show(next);
+    startSlides();
+  };
+  document.addEventListener('plan-step', (event) => {
+    const dir = (event as CustomEvent<number>).detail;
+    if (dir !== 1 && dir !== -1) return;
+    stepTopic(dir);
+  });
+
   const apply = (): void => {
     cleanup();
-    if (phone.matches && section) mountCarousel();
-    else mountCycle();
+    // Phones keep the clickable brass icons from the large-screen row.
+    // A sideways swipe steps one topic (plan-step); it does not replace the icons.
+    mountCycle();
   };
   phone.addEventListener('change', apply);
   apply();
