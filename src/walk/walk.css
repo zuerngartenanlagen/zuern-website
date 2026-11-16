@@ -580,7 +580,7 @@ html::-webkit-scrollbar { display: none; }
   .hello__bubble strong { font-size: 1.35rem; margin-bottom: 0; }
   .hello__face {
     float: right; margin: 0 0 0.45rem 0.7rem;
-    width: 3.05rem; height: 3.05rem; padding: 0.34rem; animation: none;
+    width: 3.05rem; height: 3.05rem; animation: none;
   }
   #planung .steps.is-carousel p {
     margin: 0.65rem 0 0;
