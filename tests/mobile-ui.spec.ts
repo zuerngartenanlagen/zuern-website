@@ -107,7 +107,40 @@ for (const browserType of [webkit, chromium]) {
     });
     expect(icon.display).not.toBe('none');
     expect(icon.w).toBeGreaterThan(30);
+    const layoutOf = async () => page.evaluate(() => {
+      const visible = (el: Element) => {
+        const s = getComputedStyle(el);
+        const r = el.getBoundingClientRect();
+        return s.display !== 'none' && s.visibility !== 'hidden' && r.width > 2 && r.height > 2;
+      };
+      const texts = [...document.querySelectorAll('#planung h2, #planung .intro, #planung .steps__now, #planung .steps__now + p')]
+        .filter(visible)
+        .map((el) => {
+          const r = el.getBoundingClientRect();
+          return { t: (el.textContent ?? '').trim().slice(0, 32), l: r.left, r: r.right, top: r.top, b: r.bottom };
+        });
+      const circles = [...document.querySelectorAll('#planung .steps h3')].map((el) => {
+        const r = el.getBoundingClientRect();
+        return { l: r.left, r: r.right, top: r.top, b: r.bottom };
+      });
+      return { w: innerWidth, h: innerHeight, texts, circles };
+    });
+    const fits = (box: { l: number; r: number; top: number; b: number }, w: number, h: number) =>
+      box.l >= -1 && box.r <= w + 1 && box.top >= -1 && box.b <= h + 1 && box.r - box.l > 8;
+    const clear = (a: { l: number; r: number; top: number; b: number }, b: { l: number; r: number; top: number; b: number }) =>
+      a.r <= b.l + 1 || b.r <= a.l + 1 || a.b <= b.top + 1 || b.b <= a.top + 1;
     const station = await page.evaluate(() => document.documentElement.dataset.snapIndex ?? '');
+    await page.locator('#planung .steps li').nth(0).click();
+    await page.waitForTimeout(200);
+    const topic1 = await layoutOf();
+    expect(topic1.texts.length).toBeGreaterThan(2);
+    for (const box of topic1.texts) expect(fits(box, topic1.w, topic1.h), box.t).toBe(true);
+    for (let i = 0; i < topic1.texts.length; i++) {
+      for (let j = i + 1; j < topic1.texts.length; j++) {
+        expect(clear(topic1.texts[i], topic1.texts[j]), `${topic1.texts[i].t} / ${topic1.texts[j].t}`).toBe(true);
+      }
+      for (const circle of topic1.circles) expect(clear(topic1.texts[i], circle), topic1.texts[i].t).toBe(true);
+    }
     await page.locator('#planung .steps li').nth(2).click();
     await page.waitForTimeout(200);
     const clicked = await page.evaluate(() => ({
@@ -118,6 +151,13 @@ for (const browserType of [webkit, chromium]) {
     expect(clicked.index).toBe(station);
     expect(clicked.active).toBe(2);
     expect(clicked.phase).toBe('2');
+    const topic3 = await layoutOf();
+    for (const box of topic3.texts) expect(fits(box, topic3.w, topic3.h), box.t).toBe(true);
+    for (let i = 0; i < topic3.texts.length; i++) {
+      for (let j = i + 1; j < topic3.texts.length; j++) {
+        expect(clear(topic3.texts[i], topic3.texts[j]), `${topic3.texts[i].t} / ${topic3.texts[j].t}`).toBe(true);
+      }
+    }
     await flickCarousel(page, browserType.name());
     await page.waitForTimeout(300);
     const sideways = await page.evaluate(() => ({

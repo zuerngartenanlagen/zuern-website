@@ -187,7 +187,10 @@ body {
 }
 .hello__face {
   order: 2;
-  width: 5.5rem; height: 5.5rem; border-radius: 50%; object-fit: cover; flex: none;
+  width: 5.5rem; height: 5.5rem; border-radius: 50%; flex: none;
+  box-sizing: border-box; padding: 0.55rem;
+  object-fit: cover; object-position: center center;
+  background: var(--patina);
   border: 2px solid var(--messing);
   box-shadow: 0 2px 6px rgb(10 18 16 / 0.18);
   filter: var(--bild);

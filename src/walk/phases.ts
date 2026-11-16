@@ -55,6 +55,15 @@ export function initPhases(): void {
     const imgs = Array.from(set.querySelectorAll('img'));
     imgs.forEach((img, k) => img.classList.toggle('is-on', k === i % imgs.length));
   };
+  const paras = steps.map((li) => li.querySelector<HTMLParagraphElement>('p'));
+  const parkParas = (): void => {
+    paras.forEach((para, k) => {
+      const li = steps[k];
+      if (para && li && para.parentElement !== li) li.append(para);
+    });
+  };
+  // Phones show one topic under the icon row. The paragraph moves there;
+  // the words stay in the document and return to their step off a phone.
   const show = (i: number): void => {
     current = i;
     steps.forEach((li, k) => {
@@ -63,6 +72,11 @@ export function initPhases(): void {
     });
     sets.forEach((set, k) => set.classList.toggle('is-active', k === i));
     now.textContent = steps[i]?.querySelector('h3')?.textContent ?? '';
+    if (phone.matches) {
+      parkParas();
+      const para = paras[i];
+      if (para) now.after(para);
+    }
     picture(0);
   };
 
@@ -128,6 +142,7 @@ export function initPhases(): void {
     stage?.addEventListener('pointerleave', stageLeave);
 
     cleanup = () => {
+      parkParas();
       io.disconnect();
       stopCycle();
       stopSlides();
