@@ -232,7 +232,7 @@ for (const browserType of [webkit, chromium]) {
     expect(Math.abs(landed.y - landed.snap)).toBeLessThanOrEqual(2);
     expect(Math.abs(landed.top - before.top)).toBeLessThanOrEqual(2);
     expect(landed.label).toBe('Neuanlage und Umgestaltung');
-    expect(landed.open).toBeLessThan(before.open - 20);
+    expect(landed.open).toBeGreaterThan(before.open + 20);
     await page.waitForTimeout(300);
     const held = await page.evaluate(() => Math.round(window.scrollY));
     expect(Math.abs(held - landed.y)).toBeLessThanOrEqual(2);
