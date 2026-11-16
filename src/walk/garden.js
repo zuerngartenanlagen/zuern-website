@@ -92,22 +92,6 @@
   addEventListener('resize', brandAt);
   brandAt();
 
-  // The phone hello grows with its text. The picture above it stops where the
-  // box starts, so both stay in the first screen.
-  function fitStartBox() {
-    var box = document.querySelector('.start-box');
-    var stage = document.querySelector('.garden__stage');
-    if (!box || !stage) return;
-    if (!phone.matches || box.classList.contains('is-hidden')) {
-      stage.style.removeProperty('--start-box');
-      return;
-    }
-    stage.style.setProperty('--start-box', box.offsetHeight + 'px');
-  }
-  fitStartBox();
-  addEventListener('resize', fitStartBox);
-  if (document.fonts) document.fonts.ready.then(fitStartBox);
-
   if (reduce) return;
 
   // Copy follows the scroll progress of the pinned walk.

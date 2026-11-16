@@ -52,21 +52,14 @@ html::-webkit-scrollbar { display: none; }
   margin: 0; color: var(--kalkstein);
   font-weight: 700; line-height: 1.12;
 }
-.stop h3 { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; column-gap: 0.75rem; }
-.start-box { display: none; }
-.start-box.is-hidden { display: none; }
-.card-icon, .step-icon, .kontakt-icon, .start-box .call__line {
+.kontakt-icon {
   display: block; fill: none; stroke: currentColor; stroke-width: 1.5px;
   stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke;
 }
-.card-icon :is(path, rect, circle),
-.step-icon :is(path, rect, circle),
-.kontakt-icon :is(path, rect, circle),
-.start-box .call__line :is(path, rect, circle) {
+.kontakt-icon :is(path, rect, circle) {
   fill: none; stroke: currentColor; stroke-width: 1.5px;
   stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke;
 }
-.card-icon { width: 1.85rem; height: 1.85rem; flex: none; color: var(--messing); }
 .nowrap { white-space: nowrap; }
 .stop h2 { font-size: clamp(1.9rem, 1.2rem + 2vw, 3rem); }
 .stop h3 { font-size: clamp(1.6rem, 1.1rem + 1.4vw, 2.4rem); }
@@ -208,12 +201,7 @@ html::-webkit-scrollbar { display: none; }
   content: ""; position: relative; display: block; box-sizing: border-box;
   width: var(--ring); height: var(--ring); margin: 0 auto 1rem;
   border: 1.5px solid var(--messing); border-radius: 50%;
-  background: var(--kalkstein);
-}
-.step-icon {
-  position: absolute; z-index: 1; left: 50%; top: calc(var(--ring) / 2);
-  width: 1.65rem; height: 1.65rem; transform: translate(-50%, -50%);
-  color: var(--patina); pointer-events: none;
+  background: var(--kalkstein) url("../assets/logo/zuern-mark-messing.png") no-repeat center / 1.9rem auto;
 }
 /* Cycling (phases.ts): one step at a time is lit, the others' titles recede. */
 .steps.is-cycling h3 { transition: color 800ms var(--ease); }
@@ -531,34 +519,29 @@ html::-webkit-scrollbar { display: none; }
     color: var(--patina);
   }
   #planung .steps.is-carousel h3::before { display: none; }
-  #planung .steps.is-carousel .step-icon {
-    position: static; transform: none; width: 2.75rem; height: 2.75rem;
-    margin: 0 0 0.6rem; color: var(--patina);
+  /* The desktop speech bubble, set into the lower part of the opening picture.
+     The call button sits under the handwriting so the lines stay long. */
+  .hello {
+    display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start;
+    column-gap: 0.7rem; row-gap: 0.45rem;
+    left: 0.7rem; right: 0.7rem; bottom: 0.85rem; width: auto;
+    max-height: min(33svh, 280px); box-sizing: border-box;
+    padding: 0.7rem 0.8rem 0.65rem; border-radius: 1rem;
+    background: var(--patina); color: var(--kalkstein);
   }
-  .card-icon { width: 2.75rem; height: 2.75rem; }
-  .start-box {
-    display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center;
-    gap: 0.7rem 0.75rem;
-    position: relative; z-index: 5; margin-top: auto;
-    box-sizing: border-box; height: auto; max-height: min(33svh, 280px);
-    padding: 0.75rem 0.85rem; background: var(--kalkstein); color: var(--patina);
-    border-top: 1.5px solid var(--messing);
+  .hello__go { display: contents; }
+  .hello__face { grid-column: 1; grid-row: 1; width: 3.15rem; height: 3.15rem; animation: none; }
+  .hello__bubble {
+    grid-column: 2; grid-row: 1; padding: 0; background: none; animation: none;
+    font-size: 1.2rem; line-height: 1.22;
   }
-  .garden__stage:not(:has(.start-box.is-hidden)) .walk__poster,
-  .garden__stage:not(:has(.start-box.is-hidden)) .walk__frames {
-    top: 0; right: 0; left: 0; bottom: auto;
-    width: 100%; height: calc(100% - var(--start-box, 9.5rem)); object-fit: cover;
+  .hello__bubble::before { display: none; }
+  .hello__bubble strong { font-size: 1.4rem; }
+  .hello .hello__call {
+    display: grid; grid-column: 2; grid-row: 2; justify-self: end;
+    width: 2.6rem; height: 2.6rem;
   }
-  .start-box__face {
-    width: 3.4rem; height: 3.4rem; border-radius: 50%; object-fit: cover;
-    border: 1.5px solid var(--messing); filter: var(--bild);
-  }
-  .start-box__text {
-    margin: 0; min-width: 0;
-    font-size: 0.92rem; line-height: 1.35; color: var(--patina);
-  }
-  .start-box .call { width: 2.75rem; height: 2.75rem; }
-  .start-box .call svg { width: 1.35rem; height: 1.35rem; }
+  .hello__call svg { width: 1.25rem; height: 1.25rem; }
   #planung .steps.is-carousel p {
     margin: 0.65rem 0 0;
     font-size: 1rem;

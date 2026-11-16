@@ -145,17 +145,19 @@ for (const browserType of [webkit, chromium]) {
     });
   }
 
-  test(`the welcome box sits under the start image (${browserType.name()})`, async () => {
+  test(`the welcome box sits in the opening picture (${browserType.name()})`, async () => {
     const page = await open(browserType, '/');
     await page.waitForTimeout(400);
-    const box = page.locator('.start-box');
+    const box = page.locator('.hello');
     await expect(box).toBeVisible();
     await expect(box.locator('a[href="tel:+491751193001"]')).toHaveCount(1);
-    await expect(page.locator('#kontakt .start-box, #kontakt .kontakt-karte')).toHaveCount(0);
+    await expect(page.locator('.card-icon, .step-icon')).toHaveCount(0);
+    await expect(page.locator('#kontakt .kontakt-icon')).toHaveCount(3);
     const metrics = await page.evaluate(() => {
-      const card = document.querySelector('.start-box');
+      const card = document.querySelector('.hello');
       const img = document.querySelector('.walk__poster');
-      if (!card || !img) return null;
+      const bubble = document.querySelector('.hello__bubble');
+      if (!card || !img || !bubble) return null;
       const c = card.getBoundingClientRect();
       const p = img.getBoundingClientRect();
       return {
@@ -163,24 +165,20 @@ for (const browserType of [webkit, chromium]) {
         h: c.height,
         top: c.top,
         bottom: c.bottom,
+        imgTop: p.top,
         imgBottom: p.bottom,
         vh: innerHeight,
+        text: bubble.textContent?.replace(/\s+/g, ' ').trim() ?? '',
       };
     });
     expect(metrics).not.toBeNull();
     expect(metrics!.pos).not.toBe('fixed');
     expect(metrics!.h).toBeLessThanOrEqual(metrics!.vh / 3 + 1);
     expect(metrics!.h).toBeGreaterThan(48);
-    expect(metrics!.top).toBeGreaterThanOrEqual(metrics!.imgBottom - 2);
-    expect(metrics!.top).toBeGreaterThanOrEqual(0);
+    expect(metrics!.top).toBeGreaterThan(metrics!.imgTop);
+    expect(metrics!.bottom).toBeLessThanOrEqual(metrics!.imgBottom + 1);
     expect(metrics!.bottom).toBeLessThanOrEqual(metrics!.vh + 1);
-    const welcome = 'Schön, dass Sie da sind. Ich bin Marcel Zürn und gestalte private Gärten rund um Beilstein. Am besten gehen wir Ihren Garten gemeinsam durch, dann plane ich mit Ihnen, was dort entstehen soll.';
-    const shown = await box.locator('.start-box__text').evaluate((el) => ({
-      text: el.textContent?.trim() ?? '',
-      clipped: el.scrollHeight > el.clientHeight + 1,
-    }));
-    expect(shown.text).toBe(welcome);
-    expect(shown.clipped).toBe(false);
+    expect(metrics!.text).toBe('Schön, dass Sie da sind! Ich bin Marcel Zürn. Ich plane und baue Gärten rund um Beilstein, von der ersten Skizze bis zur letzten Pflanze. Gehen Sie ruhig ein Stück mit durch den Garten.');
     await expect(page.locator('.walk-steps')).toBeHidden();
     const title = page.locator('.stop h3', { hasText: 'CAD- und' });
     await expect(title.locator('.nowrap')).toHaveText('3D\u2011Planung');
