@@ -196,8 +196,11 @@ for (const browserType of [webkit, chromium]) {
     expect(stuck, `scroll did not follow the finger: ${JSON.stringify(samples.map((s) => s.duringDelta))}`).toEqual([]);
     expect(await footerVisible(page)).toBe(true);
     expect(contact).toBeGreaterThan(0.99);
+    // The four phases are a sideways carousel, so the section is one screen
+    // rather than a vertical scrub track.
     const pin = await page.locator('#planung').evaluate((el) => el.getBoundingClientRect().height);
-    expect(pin).toBeGreaterThan(844 * 2);
+    expect(pin).toBeGreaterThan(600);
+    expect(pin).toBeLessThan(844 * 1.8);
     const wide = await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1);
     expect(wide).toBe(true);
     await page.context().browser()?.close();

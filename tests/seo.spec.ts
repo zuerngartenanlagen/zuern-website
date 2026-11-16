@@ -31,4 +31,6 @@ test('the homepage JSON-LD is a landscaping business with the business phone', a
   expect(data.address.streetAddress).toBe('Entengasse 13');
   expect(data.address.postalCode).toBe('71717');
   expect(data.address.addressLocality).toBe('Beilstein');
+  expect(data.areaServed).toEqual(['Bottwartal', 'Heilbronn', 'Ludwigsburg']);
+  expect(JSON.stringify(data)).not.toMatch(/Stuttgart|Bewässerung|Wasserfläche|Objektpflege|\bWEG\b/);
 });

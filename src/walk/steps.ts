@@ -259,18 +259,29 @@ export function initSteps(lenis: Lenis | null): void {
   // section is four phase stops while its sticky scene is up. Positions are
   // read live so an address-bar resize does not require a scroll correction.
   function snapList(): Point[] {
+    if (!phone.matches) return points;
     const section = document.getElementById('planung');
-    if (!phone.matches || !section?.classList.contains('is-scrub')) return points;
-    const heads = Array.from(section.querySelectorAll('.steps h3'))
+    const heads = Array.from(section?.querySelectorAll('.steps h3') ?? [])
       .map((h) => h.textContent?.trim() || '')
       .filter(Boolean);
-    const frameCount = section.querySelectorAll('.phase-show img').length;
-    if (heads.length < 2 || frameCount < 2) return points;
-    const per = frameCount / heads.length;
+    const frameCount = section?.querySelectorAll('.phase-show img').length ?? 0;
+    const scrub = Boolean(section?.classList.contains('is-scrub') && heads.length >= 2 && frameCount >= 2);
+    const per = scrub ? frameCount / heads.length : 0;
     const out: Point[] = [];
     for (const pt of points) {
       if (pt.sectionId === 'kontakt') { out.push({ ...pt, y: () => footerSnap(pt.y()) }); continue; }
-      if (pt.sectionId !== 'planung') { out.push(pt); continue; }
+      if (pt.sectionId === 'ueber-mich') {
+        out.push(pt);
+        const picture = document.querySelector<HTMLElement>('#ueber-mich .portrait');
+        if (picture) {
+          out.push({
+            label: pt.label, inWalk: false, sectionId: 'ueber-mich',
+            y: () => clampScroll(picture.getBoundingClientRect().top + scrollY),
+          });
+        }
+        continue;
+      }
+      if (pt.sectionId !== 'planung' || !scrub || !section) { out.push(pt); continue; }
       heads.forEach((label, i) => {
         out.push({
           label, inWalk: false, sectionId: 'planung',
@@ -490,21 +501,32 @@ export function initSteps(lenis: Lenis | null): void {
   // no moment where Safari is asked to resume native scrolling.
   let phoneX: number | null = null;
   let phoneY: number | null = null;
+  let phoneHold: 'page' | 'carousel' | 'menu' = 'page';
+  const gestureKind = (e: TouchEvent): 'page' | 'carousel' | 'menu' => {
+    if (document.getElementById('site-nav')?.classList.contains('is-open')) return 'menu';
+    const target = e.target;
+    if (target instanceof Element && target.closest('#planung .steps')) return 'carousel';
+    return 'page';
+  };
   const onPhoneStart = (e: TouchEvent): void => {
+    phoneHold = gestureKind(e);
     phoneX = e.touches[0]?.clientX ?? null;
     phoneY = e.touches[0]?.clientY ?? null;
   };
   const onPhoneMove = (e: TouchEvent): void => {
-    if (phoneY === null) return;
+    if (phoneY === null || phoneHold === 'carousel') return;
     e.preventDefault();
   };
   const finishPhone = (e: TouchEvent): void => {
+    const hold = phoneHold;
+    phoneHold = 'page';
     if (phoneY === null || phoneX === null) { phoneY = null; phoneX = null; return; }
     const t = e.changedTouches[0];
     const dy = phoneY - (t?.clientY ?? phoneY);
     const dx = phoneX - (t?.clientX ?? phoneX);
     phoneY = null;
     phoneX = null;
+    if (hold !== 'page') return;
     if (Math.abs(dy) < SNAP_MIN || Math.abs(dx) > Math.abs(dy)) return;
     stepSnap(dy > 0 ? 1 : -1);
   };

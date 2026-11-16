@@ -11,6 +11,13 @@ function initToggle(toggle: HTMLButtonElement, nav: HTMLElement): void {
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') setOpen(false);
   });
+  document.addEventListener('pointerdown', (event) => {
+    if (!nav.classList.contains('is-open')) return;
+    const target = event.target;
+    if (!(target instanceof Node)) return;
+    if (nav.contains(target) || toggle.contains(target)) return;
+    setOpen(false);
+  });
 }
 
 export function initNav(): void {
