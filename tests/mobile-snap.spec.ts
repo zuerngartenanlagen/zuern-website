@@ -44,9 +44,13 @@ async function activeDot(page: Page): Promise<string> {
 }
 
 async function untilSettled(page: Page): Promise<number> {
+  const started = Date.now();
+  // The snap eases for 0.38s. A frame that freezes inside that glide keeps
+  // scrollY still, and a 300ms window would then call a moving page arrived.
+  // 800ms is past the glide: measured on WebKit the offset is gone by then.
+  while (Date.now() - started < 800) await page.waitForTimeout(50);
   let last = await scrollY(page);
   let stable = 0;
-  const started = Date.now();
   while (Date.now() - started < 5000) {
     await page.waitForTimeout(50);
     const now = await scrollY(page);
