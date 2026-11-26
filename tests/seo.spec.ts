@@ -16,8 +16,8 @@ test('robots.txt and sitemap.xml are copied and served unchanged', async ({ requ
   expect(sitemapResponse.ok()).toBeTruthy();
   expect(await sitemapResponse.text()).toBe(sitemap);
   expect(sitemap).toContain('<loc>https://zuern-gartenanlagen.de/</loc>');
-  expect(sitemap).toContain('<loc>https://zuern-gartenanlagen.de/impressum.html</loc>');
-  expect(sitemap).toContain('<loc>https://zuern-gartenanlagen.de/datenschutz.html</loc>');
+  expect(sitemap).not.toContain('impressum.html');
+  expect(sitemap).not.toContain('datenschutz.html');
 });
 
 test('the homepage JSON-LD is a landscaping business with the business phone', async ({ page }) => {
